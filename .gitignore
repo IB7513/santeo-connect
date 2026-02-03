@@ -8,3 +8,7 @@ android/.gradle/
 android/local.properties
 android/app/debug.keystore
 *.jks
+
+# Large video files
+assets/videos/*.mp4
+build/web/videos/*.mp4

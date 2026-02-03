@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <base href="/santeo-connect/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <!-- ═══════════════════════════════════════════════
+       SEO & Description
+  ═══════════════════════════════════════════════ -->
+  <meta name="description" content="SANTEO Connect — Votre assistant santé personnalisé, adapté au Pacifique. Exercices, bilan IA, suivi de progression.">
+  <meta name="keywords" content="santé, Pacifique, physiothérapie, exercices, bien-être, Nouvelle-Calédonie, Polynésie">
+  <meta name="author" content="SANTEO Connect">
+
+  <!-- ═══════════════════════════════════════════════
+       PWA — iOS Safari (Apple)
+  ═══════════════════════════════════════════════ -->
+  <!-- Activer le mode "app" sur iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Barre de statut : black-translucent = plein écran avec notch -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- Nom affiché sous l'icône sur l'écran d'accueil iOS -->
+  <meta name="apple-mobile-web-app-title" content="SANTEO">
+
+  <!-- Icônes Apple Touch (iPhone & iPad) -->
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+
+  <!-- ═══════════════════════════════════════════════
+       Splash Screens iOS (launch screens)
+       Couvre tous les modèles iPhone & iPad
+  ═══════════════════════════════════════════════ -->
+  <!-- iPhone 14 Pro Max -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+        href="splash/apple-splash-1290-2796.png">
+  <!-- iPhone 14 Pro -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+        href="splash/apple-splash-1179-2556.png">
+  <!-- iPhone 14 / 13 / 12 -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+        href="splash/apple-splash-1170-2532.png">
+  <!-- iPhone X / XS / 11 Pro -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+        href="splash/apple-splash-1125-2436.png">
+  <!-- iPhone 8 Plus -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+        href="splash/apple-splash-1080-1920.png">
+  <!-- iPhone 8 / SE 2nd gen -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+        href="splash/apple-splash-750-1334.png">
+  <!-- iPhone SE 1st gen -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+        href="splash/apple-splash-640-1136.png">
+  <!-- iPad Pro 12.9" -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+        href="splash/apple-splash-2048-2732.png">
+  <!-- iPad Pro 11" -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+        href="splash/apple-splash-1668-2388.png">
+  <!-- iPad mini / Air -->
+  <link rel="apple-touch-startup-image"
+        media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
+        href="splash/apple-splash-1536-2048.png">
+
+  <!-- ═══════════════════════════════════════════════
+       PWA — Android / Desktop
+  ═══════════════════════════════════════════════ -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0097A7">
+  <meta name="msapplication-TileColor" content="#26C6DA">
+  <meta name="msapplication-TileImage" content="icons/Icon-192.png">
+
+  <!-- Open Graph (partage réseaux sociaux) -->
+  <meta property="og:title" content="SANTEO Connect">
+  <meta property="og:description" content="Votre assistant santé personnalisé — adapté au Pacifique">
+  <meta property="og:image" content="icons/Icon-512.png">
+  <meta property="og:type" content="website">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+  <link rel="shortcut icon" href="favicon.png">
+
+  <!-- Manifest PWA -->
+  <link rel="manifest" href="manifest.json">
+
+  <title>SANTEO Connect</title>
+
+  <!-- ═══════════════════════════════════════════════
+       Style splash iOS inline (évite l'écran blanc)
+  ═══════════════════════════════════════════════ -->
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #26C6DA 0%, #0097A7 100%);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+    }
+    /* Empêche le rebond élastique iOS */
+    html {
+      height: -webkit-fill-available;
+      overflow: hidden;
+    }
+    /* Plein écran sous la notch iOS */
+    flt-glass-pane {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+    }
+  </style>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

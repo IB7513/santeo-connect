@@ -5,6 +5,8 @@ import 'exercises/exercises_screen.dart';
 import 'progress/progress_screen.dart';
 import 'chat/chat_screen.dart';
 import 'profile/profile_screen.dart';
+import 'academie/academie_screen.dart';
+import 'kine/parler_kine_screen.dart';
 
 class HomeNavigator extends StatefulWidget {
   const HomeNavigator({super.key});
@@ -19,6 +21,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
   final List<Widget> _screens = const [
     DashboardScreen(),
     ExercisesScreen(),
+    AcademieScreen(),
+    ParlerKineScreen(),
     ChatScreen(),
     ProgressScreen(),
     ProfileScreen(),
@@ -38,8 +42,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
         backgroundColor: Colors.white,
         selectedItemColor: AppTheme.primary,
         unselectedItemColor: Colors.grey[500],
-        selectedFontSize: 11,
-        unselectedFontSize: 10,
+        selectedFontSize: 9,
+        unselectedFontSize: 8,
         elevation: 12,
         items: const [
           BottomNavigationBarItem(
@@ -51,6 +55,16 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             icon: Icon(Icons.fitness_center_outlined),
             activeIcon: Icon(Icons.fitness_center),
             label: 'Exercices',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school_outlined),
+            activeIcon: Icon(Icons.school),
+            label: 'Académie',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.medical_services_outlined),
+            activeIcon: Icon(Icons.medical_services),
+            label: 'Kiné',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.psychology_outlined),
@@ -72,3 +86,4 @@ class _HomeNavigatorState extends State<HomeNavigator> {
     );
   }
 }
+

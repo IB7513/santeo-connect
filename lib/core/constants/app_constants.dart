@@ -5,7 +5,7 @@ import '../../models/app_models.dart';
 class AppConstants {
   // App Info
   static const String appName = 'SANTEO Connect';
-  static const String appTagline = 'La santé digitale du Pacifique';
+  static const String appTagline = 'Votre kiné en poche, votre santé en main.';
   static const String appVersion = '1.0.0';
 
   // OpenAI

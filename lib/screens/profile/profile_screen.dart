@@ -331,7 +331,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   Text(
-                    'SANTEO Connect v1.0.0 · EVERYWHERE · IA Embarquée',
+                    'SANTEO Connect v1.0.0 · IA Embarquée',
                     style: GoogleFonts.roboto(
                         fontSize: 11, color: AppTheme.textLight),
                   ),

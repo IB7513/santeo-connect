@@ -8,6 +8,8 @@ import '../../core/services/motivation_service.dart';
 import '../../providers/app_providers.dart';
 import '../../models/app_models.dart';
 import '../dashboard/assessment_result_screen.dart';
+import '../exercises/seance_personnalisee_screen.dart';
+import '../kine/parler_kine_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -68,6 +70,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                           const SizedBox(height: 16),
                           // Bilan IA
                           _AIAssessmentCard(provider: provider),
+                          const SizedBox(height: 16),
+                          // Actions rapides : Séance + Kiné
+                          _QuickActionsRow(provider: provider),
                           const SizedBox(height: 16),
                           // Métriques santé
                           _HealthMetricsRow(provider: provider),
@@ -1212,6 +1217,145 @@ class _WeeklyAnalysisCardState extends State<_WeeklyAnalysisCard> {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  QUICK ACTIONS ROW (Séance du jour + Parler à un kiné)
+// ═══════════════════════════════════════════════════
+class _QuickActionsRow extends StatelessWidget {
+  final AppProvider provider;
+  const _QuickActionsRow({required this.provider});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Bouton Ma séance du jour
+        Expanded(
+          child: InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const SeancePersonnaliseeScreen(),
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF42A5F5), Color(0xFF1565C0)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF42A5F5).withValues(alpha: 0.35),
+                    blurRadius: 14,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.fitness_center,
+                        color: Colors.white, size: 22),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Ma séance\ndu jour',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '10 exos • personnalisés',
+                    style: GoogleFonts.roboto(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Bouton Parler à un kiné
+        Expanded(
+          child: InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ParlerKineScreen(),
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF26C6DA), Color(0xFF00838F)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.primary.withValues(alpha: 0.35),
+                    blurRadius: 14,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.medical_services,
+                        color: Colors.white, size: 22),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Parler à\nun kiné',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '3 kinés disponibles',
+                    style: GoogleFonts.roboto(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

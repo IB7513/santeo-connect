@@ -44,7 +44,7 @@ class LandingScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       Text(
-                        'La santé digitale qui connecte\nle Pacifique au monde',
+                        'Votre kiné en poche,\nvotre santé en main.',
                         textAlign: TextAlign.center,
                         style: GoogleFonts.roboto(
                           fontSize: 18,

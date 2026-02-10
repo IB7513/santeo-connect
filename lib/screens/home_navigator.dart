@@ -62,8 +62,8 @@ class _HomeNavigatorState extends State<HomeNavigator> {
             label: 'Académie',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.medical_services_outlined),
-            activeIcon: Icon(Icons.medical_services),
+            icon: Icon(Icons.people_alt_outlined),
+            activeIcon: Icon(Icons.people_alt),
             label: 'Kiné',
           ),
           BottomNavigationBarItem(

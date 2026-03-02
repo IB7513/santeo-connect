@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/app_providers.dart';
+import 'core/services/subscription_service.dart';
 import 'screens/landing/landing_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
@@ -14,9 +15,15 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await StorageService.init();
 
+  final subService = SubscriptionService();
+  await subService.initialize();
+
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => AppProvider()..initialize(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppProvider()..initialize()),
+        ChangeNotifierProvider.value(value: subService),
+      ],
       child: const SanteoApp(),
     ),
   );

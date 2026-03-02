@@ -5,6 +5,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/assets/logo_data.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/common/common_widgets.dart';
+import '../../widgets/premium_gate.dart';
 import '../landing/landing_screen.dart';
 import '../../core/services/storage_service.dart';
 
@@ -138,6 +139,10 @@ class ProfileScreen extends StatelessWidget {
                   ),
 
                   const SizedBox(height: 12),
+
+                  // ── Statut abonnement ───────────────────────────
+                  const SubscriptionStatusCard(),
+                  const SizedBox(height: 4),
 
                   // ── Infos de santé ──────────────────────────────
                   if (profile != null) ...[

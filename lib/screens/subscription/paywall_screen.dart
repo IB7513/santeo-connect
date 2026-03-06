@@ -244,10 +244,10 @@ class _PaywallScreenState extends State<PaywallScreen>
 
   Widget _buildFeaturesList() {
     final features = [
-      (Icons.fitness_center_rounded,    'Séances personnalisées illimitées',  'Programme adapté à vos douleurs et objectifs'),
+      (Icons.fitness_center_rounded,    'Séances personnalisées',             'Programme adapté à vos douleurs et objectifs'),
       (Icons.people_alt_outlined,        'Accès à nos kinés',                  'Consultations télé avec Axel, Déborah, Maeva, Solenne'),
       (Icons.school_outlined,            'Académie SANI complète',             '6 pathologies + conseils personnalisés par l\'IA'),
-      (Icons.psychology_outlined,        'IA Chat santé',                      'Questions illimitées à l\'assistant santé'),
+      (Icons.psychology_outlined,        'IA Chat santé',                      'Posez vos questions à l\'assistant santé'),
       (Icons.bar_chart_rounded,          'Suivi de progression avancé',        'Graphiques détaillés et analyses hebdomadaires'),
       (Icons.video_library_outlined,     'Vidéos d\'exercices HD',             'Baby Stretch et toute la bibliothèque vidéo'),
     ];

@@ -164,53 +164,45 @@ class _ParlerKineScreenState extends State<ParlerKineScreen>
 class _KinesListTab extends StatelessWidget {
   final List<_KineData> _kines = const [
     _KineData(
-      nom: 'Axel Teriitehau',
+      nom: 'Axel',
       specialite: 'Kinésithérapeute • Dos, Lombaires, Sport',
       localisation: 'Nouméa, Nouvelle-Calédonie',
       disponible: true,
       experience: '8 ans',
       avatarColor: Color(0xFF26A69A),
-      avatarInitials: 'AT',
-      tshirtColor: Color(0xFF4DD0E1),
       langues: ['Français'],
       tarif: '4 000 XPF / consultation',
       note: 4.8,
     ),
     _KineData(
-      nom: 'Déborah Wambé',
+      nom: 'Déborah',
       specialite: 'Rééducation post-op, Cervicalgie, Arthrose',
       localisation: 'Papeete, Polynésie française',
       disponible: true,
       experience: '12 ans',
       avatarColor: Color(0xFFEC407A),
-      avatarInitials: 'DW',
-      tshirtColor: Color(0xFFF48FB1),
       langues: ['Français', 'Tahitien'],
       tarif: '3 500 XPF / consultation',
       note: 4.9,
     ),
     _KineData(
-      nom: 'Maeva Kauaka',
+      nom: 'Maeva',
       specialite: 'Bien-être, Sciatique, Tendinite',
       localisation: 'Bora Bora, Polynésie française',
       disponible: false,
       experience: '6 ans',
       avatarColor: Color(0xFF7E57C2),
-      avatarInitials: 'MK',
-      tshirtColor: Color(0xFFCE93D8),
       langues: ['Français', 'Anglais', 'Tahitien'],
       tarif: '3 200 XPF / consultation',
       note: 4.7,
     ),
     _KineData(
-      nom: 'Solenne Naïssa',
+      nom: 'Solenne',
       specialite: 'Hernie discale, Rééducation respiratoire',
       localisation: 'Koné, Nouvelle-Calédonie',
       disponible: true,
       experience: '10 ans',
       avatarColor: Color(0xFF42A5F5),
-      avatarInitials: 'SN',
-      tshirtColor: Color(0xFF90CAF9),
       langues: ['Français', 'Kanak'],
       tarif: '3 800 XPF / consultation',
       note: 5.0,
@@ -269,7 +261,7 @@ class _KineCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                // Avatar avec t-shirt (pas de blouse blanche, pas d'emoji médical)
+                // Avatar style Apple — cercle coloré + initiale
                 _KineAvatar(kine: kine),
                 const SizedBox(width: 12),
                 Expanded(
@@ -1125,7 +1117,7 @@ class _MessagesTab extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════
-//  AVATAR KINÉ — T-SHIRT (pas de blouse blanche)
+//  AVATAR KINÉ — Style Apple (cercle coloré + initiale)
 // ═══════════════════════════════════════════════════
 class _KineAvatar extends StatelessWidget {
   final _KineData kine;
@@ -1133,14 +1125,29 @@ class _KineAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 60,
-      height: 68,
-      child: CustomPaint(
-        painter: _TshirtAvatarPainter(
-          bgColor: kine.avatarColor,
-          tshirtColor: kine.tshirtColor,
-          initials: kine.avatarInitials,
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: kine.avatarColor,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: kine.avatarColor.withValues(alpha: 0.35),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          kine.nom[0].toUpperCase(),
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            height: 1.0,
+          ),
         ),
       ),
     );
@@ -1153,121 +1160,33 @@ class _KineAvatarLarge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: 80,
-      height: 90,
-      child: CustomPaint(
-        painter: _TshirtAvatarPainter(
-          bgColor: kine.avatarColor,
-          tshirtColor: kine.tshirtColor,
-          initials: kine.avatarInitials,
-          large: true,
+      height: 80,
+      decoration: BoxDecoration(
+        color: kine.avatarColor,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: kine.avatarColor.withValues(alpha: 0.40),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Center(
+        child: Text(
+          kine.nom[0].toUpperCase(),
+          style: GoogleFonts.montserrat(
+            color: Colors.white,
+            fontSize: 32,
+            fontWeight: FontWeight.w700,
+            height: 1.0,
+          ),
         ),
       ),
     );
   }
-}
-
-class _TshirtAvatarPainter extends CustomPainter {
-  final Color bgColor;
-  final Color tshirtColor;
-  final String initials;
-  final bool large;
-
-  const _TshirtAvatarPainter({
-    required this.bgColor,
-    required this.tshirtColor,
-    required this.initials,
-    this.large = false,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-    final cx = w / 2;
-
-    // === FOND ARRONDI ===
-    final bgPaint = Paint()..color = bgColor.withOpacity(0.15);
-    final bgRect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, w, h),
-      const Radius.circular(14),
-    );
-    canvas.drawRRect(bgRect, bgPaint);
-
-    // === TÊTE (cercle) ===
-    final headRadius = w * 0.22;
-    final headCy = h * 0.30;
-    final headPaint = Paint()..color = const Color(0xFFFFDDB4); // peau
-    canvas.drawCircle(Offset(cx, headCy), headRadius, headPaint);
-
-    // Cheveux (arc semi-circulaire)
-    final hairPaint = Paint()..color = const Color(0xFF795548);
-    canvas.drawArc(
-      Rect.fromCircle(center: Offset(cx, headCy), radius: headRadius),
-      3.14, // PI = demi-cercle haut
-      3.14,
-      true,
-      hairPaint,
-    );
-
-    // === T-SHIRT (corps) ===
-    final tshirtPaint = Paint()..color = tshirtColor;
-
-    // Corps principal du t-shirt
-    final bodyTop = headCy + headRadius * 0.7;
-    final bodyPath = Path();
-    bodyPath.moveTo(cx - w * 0.28, h); // bas gauche
-    bodyPath.lineTo(cx - w * 0.28, bodyTop + h * 0.05); // gauche
-    bodyPath.lineTo(cx - w * 0.38, bodyTop); // épaule gauche
-    bodyPath.lineTo(cx - w * 0.25, bodyTop - h * 0.04); // col gauche
-    bodyPath.quadraticBezierTo(cx, bodyTop - h * 0.06, cx + w * 0.25, bodyTop - h * 0.04); // col
-    bodyPath.lineTo(cx + w * 0.38, bodyTop); // épaule droite
-    bodyPath.lineTo(cx + w * 0.28, bodyTop + h * 0.05); // droite
-    bodyPath.lineTo(cx + w * 0.28, h); // bas droite
-    bodyPath.close();
-    canvas.drawPath(bodyPath, tshirtPaint);
-
-    // Manches courtes
-    final sleevePaint = Paint()..color = tshirtColor;
-    // Manche gauche
-    final leftSleeveP = Path();
-    leftSleeveP.moveTo(cx - w * 0.28, bodyTop + h * 0.05);
-    leftSleeveP.lineTo(cx - w * 0.38, bodyTop);
-    leftSleeveP.lineTo(cx - w * 0.44, bodyTop + h * 0.10);
-    leftSleeveP.lineTo(cx - w * 0.32, bodyTop + h * 0.18);
-    leftSleeveP.close();
-    canvas.drawPath(leftSleeveP, sleevePaint);
-    // Manche droite
-    final rightSleeveP = Path();
-    rightSleeveP.moveTo(cx + w * 0.28, bodyTop + h * 0.05);
-    rightSleeveP.lineTo(cx + w * 0.38, bodyTop);
-    rightSleeveP.lineTo(cx + w * 0.44, bodyTop + h * 0.10);
-    rightSleeveP.lineTo(cx + w * 0.32, bodyTop + h * 0.18);
-    rightSleeveP.close();
-    canvas.drawPath(rightSleeveP, sleevePaint);
-
-    // === INITIALES dans la tête ===
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: initials,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: large ? 13 : 10,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset(cx - textPainter.width / 2, headCy - textPainter.height / 2),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 // ═══════════════════════════════════════════════════
@@ -1280,8 +1199,6 @@ class _KineData {
   final bool disponible;
   final String experience;
   final Color avatarColor;
-  final String avatarInitials;
-  final Color tshirtColor;
   final List<String> langues;
   final String tarif;
   final double note;
@@ -1293,8 +1210,6 @@ class _KineData {
     required this.disponible,
     required this.experience,
     required this.avatarColor,
-    required this.avatarInitials,
-    required this.tshirtColor,
     required this.langues,
     required this.tarif,
     required this.note,

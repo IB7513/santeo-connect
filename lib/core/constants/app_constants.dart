@@ -14,8 +14,8 @@ class AppConstants {
 
   // Disclaimer
   static const String disclaimer =
-      'SANTEO Connect propose une approche de prévention fonctionnelle complémentaire aux parcours de soins. '
-      'Cette plateforme ne remplace pas un diagnostic médical ni une consultation médicale. '
+      'SANTEO Connect propose une approche de bien-être et de prévention complémentaire à votre parcours de santé. '
+      'Cette plateforme ne remplace pas l\'avis d\'un professionnel de santé. '
       'En cas de douleur persistante ou aiguë, consultez un professionnel de santé.';
 
   // Territories

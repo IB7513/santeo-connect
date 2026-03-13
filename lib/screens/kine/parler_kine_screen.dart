@@ -532,7 +532,7 @@ class _KineProfileSheet extends StatelessWidget {
                       const SizedBox(width: 10),
                       Text(
                         kine.disponible
-                            ? 'Disponible dès aujourd\'hui pour une téléconsultation'
+                            ? 'Disponible dès aujourd\'hui pour une séance kiné'
                             : 'Prochain créneau disponible dans 2-3 jours',
                         style: GoogleFonts.roboto(
                           fontSize: 13,
@@ -551,7 +551,7 @@ class _KineProfileSheet extends StatelessWidget {
                   height: 52,
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.video_call),
-                    label: const Text('Réserver une téléconsultation'),
+                    label: const Text('Réserver une séance kiné'),
                     onPressed: kine.disponible
                         ? () {
                             Navigator.pop(context);
@@ -638,7 +638,7 @@ class _KineProfileSheet extends StatelessWidget {
         title: Text('Réservation confirmée ✅',
             style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
         content: Text(
-          'Votre demande de téléconsultation avec ${kine.nom} a été envoyée.\n\nVous recevrez une confirmation sous 24h.',
+          'Votre demande de séance avec ${kine.nom} a été envoyée.\n\nVous recevrez une confirmation sous 24h.',
           style: GoogleFonts.roboto(height: 1.5),
         ),
         actions: [

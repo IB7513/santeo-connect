@@ -17,7 +17,7 @@ if (keyPropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.santeoconnect.health"
+    namespace = "com.santeoconnect.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -40,7 +40,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.santeoconnect.health"
+        applicationId = "com.santeoconnect.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

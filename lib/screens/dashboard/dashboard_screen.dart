@@ -13,6 +13,8 @@ import '../dashboard/assessment_result_screen.dart';
 import '../exercises/seance_personnalisee_screen.dart';
 import '../kine/parler_kine_screen.dart';
 import '../subscription/paywall_screen.dart';
+import '../exercises/exercise_guided_screen.dart';
+import '../../core/services/daily_plan_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -822,110 +824,440 @@ class _MetricCard extends StatelessWidget {
 // ═══════════════════════════════════════════════════
 //  TODAY'S PROGRAM
 // ═══════════════════════════════════════════════════
-class _TodayProgramSection extends StatelessWidget {
+// ═══════════════════════════════════════════════════
+//  PROGRAMME DU JOUR — 2 exercices IA avec déblocage
+// ═══════════════════════════════════════════════════
+class _TodayProgramSection extends StatefulWidget {
   final AppProvider provider;
   const _TodayProgramSection({required this.provider});
 
   @override
+  State<_TodayProgramSection> createState() => _TodayProgramSectionState();
+}
+
+class _TodayProgramSectionState extends State<_TodayProgramSection> {
+  final _planService = DailyPlanService();
+  List<DailyExerciseSlot> _slots = [];
+  bool _loading = true;
+  int _streak = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadPlan());
+  }
+
+  Future<void> _loadPlan() async {
+    if (!mounted) return;
+    setState(() => _loading = true);
+    try {
+      final slots = await _planService.getDailyPlan();
+      final streak = await _planService.getStreak();
+      if (mounted) setState(() { _slots = slots; _streak = streak; _loading = false; });
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _onSlotCompleted(int slot) async {
+    final updated = await _planService.markSlotCompleted(slot);
+    if (mounted) setState(() => _slots = updated);
+    if (mounted) _showCongrats(slot);
+  }
+
+  void _openGuidedScreen(DailyExerciseSlot s) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ExerciseGuidedScreen(
+          exerciseData: s.exerciseData,
+          isFromDailyPlan: true,
+          onCompleted: () => _onSlotCompleted(s.slot),
+        ),
+      ),
+    ).then((completed) {
+      if (completed == true) _onSlotCompleted(s.slot);
+    });
+  }
+
+  void _showCongrats(int slot) {
+    final both = _slots.every((s) => s.isCompleted);
+    final msg = both
+        ? '🏆 Les 2 exercices du jour complétés ! Streak : $_streak jours 🔥'
+        : '✅ Exercice ${slot + 1} terminé ! Le suivant est maintenant disponible 💪';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(children: [
+          const Icon(Icons.celebration, color: Colors.white, size: 20),
+          const SizedBox(width: 10),
+          Expanded(child: Text(msg, style: GoogleFonts.roboto(color: Colors.white, fontSize: 13))),
+        ]),
+        backgroundColor: both ? const Color(0xFFFF9E80) : AppTheme.success,
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 4),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final exercises = provider.exercises.take(3).toList();
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ── En-tête ─────────────────────────────────────────────────
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Programme du jour',
-              style: GoogleFonts.montserrat(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.textPrimary,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Exercices du jour',
+                  style: GoogleFonts.montserrat(
+                      fontSize: 16, fontWeight: FontWeight.w700,
+                      color: AppTheme.textPrimary),
+                ),
+                if (_streak > 0)
+                  Text(
+                    '🔥 $_streak jour${_streak > 1 ? "s" : ""} de suite',
+                    style: GoogleFonts.roboto(
+                        fontSize: 12, color: AppTheme.secondary,
+                        fontWeight: FontWeight.w600),
+                  ),
+              ],
             ),
-            TextButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.arrow_forward, size: 14),
-              label: const Text('Tout voir'),
-              style: TextButton.styleFrom(
-                foregroundColor: AppTheme.primary,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 4),
+            if (!_loading)
+              GestureDetector(
+                onTap: _loadPlan,
+                child: const Icon(Icons.refresh_rounded,
+                    color: AppTheme.textLight, size: 20),
               ),
-            ),
           ],
         ),
-        const SizedBox(height: 8),
-        if (exercises.isEmpty)
-          _EmptyProgramCard()
+        const SizedBox(height: 10),
+
+        // ── Contenu ─────────────────────────────────────────────────
+        if (_loading)
+          _buildSkeleton()
+        else if (_slots.isEmpty)
+          _buildEmptyState()
         else
-          ...exercises.map((ex) => _ExerciseListItem(
-                exercise: ex,
-                onStart: () =>
-                    _startSession(context, provider, ex),
-              )),
+          ..._slots.map((s) => _DailySlotCard(
+            slot: s,
+            onTap: s.isAvailable ? () => _openGuidedScreen(s) : null,
+          )),
       ],
     );
   }
 
-  Future<void> _startSession(
-      BuildContext context, AppProvider provider, Exercise ex) async {
-    final session = WorkoutSession(
-      id: 'session_${DateTime.now().millisecondsSinceEpoch}',
-      userId: provider.userId ?? '',
-      date: DateTime.now(),
-      exercicesCompletes: [ex.id],
-      dureeMinutes: ex.duration,
-      niveauDouleur: 2.0,
+  Widget _buildSkeleton() {
+    return Column(
+      children: List.generate(2, (_) => Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        height: 88,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(children: [
+            Container(width: 48, height: 48,
+                decoration: BoxDecoration(color: AppTheme.divider, borderRadius: BorderRadius.circular(14))),
+            const SizedBox(width: 12),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Container(height: 14, width: 120, decoration: BoxDecoration(
+                  color: AppTheme.divider, borderRadius: BorderRadius.circular(7))),
+              const SizedBox(height: 8),
+              Container(height: 10, width: 80, decoration: BoxDecoration(
+                  color: AppTheme.divider, borderRadius: BorderRadius.circular(5))),
+            ])),
+          ]),
+        ),
+      )),
     );
-    await provider.recordSession(session);
-    if (context.mounted) {
-      _showCongrats(context, provider, ex.name);
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(16)),
+      child: Column(children: [
+        const Icon(Icons.fitness_center, color: AppTheme.textLight, size: 40),
+        const SizedBox(height: 10),
+        Text('Catalogue en cours de chargement…',
+            style: GoogleFonts.roboto(
+                fontSize: 13, color: AppTheme.textSecondary),
+            textAlign: TextAlign.center),
+        const SizedBox(height: 10),
+        TextButton(
+          onPressed: _loadPlan,
+          child: const Text('Réessayer'),
+        ),
+      ]),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  DAILY SLOT CARD
+// ═══════════════════════════════════════════════════
+class _DailySlotCard extends StatelessWidget {
+  final DailyExerciseSlot slot;
+  final VoidCallback? onTap;
+  const _DailySlotCard({required this.slot, this.onTap});
+
+  Color get _catColor {
+    switch (slot.categorie) {
+      case 'renforcement': return const Color(0xFF5C6BC0);
+      case 'cardio':       return const Color(0xFFFF7043);
+      case 'mobilite':     return const Color(0xFF26A69A);
+      case 'etirement':    return AppTheme.primary;
+      case 'relaxation':   return const Color(0xFF7E57C2);
+      default:             return AppTheme.primary;
     }
   }
 
-  void _showCongrats(
-      BuildContext context, AppProvider provider, String exerciseName) {
-    final count = provider.totalSessionCount;
-    String msg;
-    Color color;
-    if (count == 1) {
-      msg = '🎉 Première séance complétée ! Vous avez démarré votre parcours santé !';
-      color = AppTheme.success;
-    } else if (count % 5 == 0) {
-      msg = '🏆 $count séances ! Performance incroyable, continuez !';
-      color = const Color(0xFFFF9E80);
-    } else {
-      msg = '✅ $exerciseName terminé ! Bravo, chaque séance vous rapproche de vos objectifs ! 💪';
-      color = AppTheme.success;
+  IconData get _catIcon {
+    switch (slot.categorie) {
+      case 'renforcement': return Icons.fitness_center;
+      case 'cardio':       return Icons.directions_run;
+      case 'mobilite':     return Icons.self_improvement;
+      case 'etirement':    return Icons.accessibility_new;
+      case 'relaxation':   return Icons.air_rounded;
+      default:             return Icons.sports_gymnastics;
     }
+  }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.celebration, color: Colors.white, size: 20),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                msg,
-                style: GoogleFonts.roboto(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500),
-              ),
+  String get _diffLabel {
+    switch (slot.difficulte) {
+      case 'debutant':      return 'Débutant';
+      case 'intermediaire': return 'Intermédiaire';
+      case 'avance':        return 'Avancé';
+      default:              return slot.difficulte;
+    }
+  }
+
+  Color get _diffColor {
+    switch (slot.difficulte) {
+      case 'avance':        return AppTheme.error;
+      case 'intermediaire': return AppTheme.warning;
+      default:              return AppTheme.success;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLocked    = slot.isLocked;
+    final isCompleted = slot.isCompleted;
+    final cardColor   = isLocked ? const Color(0xFFF5F7FA) : Colors.white;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          color: cardColor,
+          borderRadius: BorderRadius.circular(16),
+          border: isCompleted
+              ? Border.all(color: AppTheme.success.withValues(alpha: 0.4), width: 1.5)
+              : isLocked
+                  ? Border.all(color: AppTheme.divider, width: 1)
+                  : Border.all(color: _catColor.withValues(alpha: 0.25), width: 1.5),
+          boxShadow: isLocked ? [] : [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
             ),
           ],
         ),
-        backgroundColor: color,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14)),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              // ── Icône catégorie ────────────────────────────────────────
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: isLocked
+                      ? AppTheme.divider
+                      : _catColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: isLocked
+                    ? const Icon(Icons.lock_rounded, color: AppTheme.textLight, size: 22)
+                    : isCompleted
+                        ? const Icon(Icons.check_circle_rounded,
+                            color: AppTheme.success, size: 24)
+                        : Icon(_catIcon, color: _catColor, size: 24),
+              ),
+              const SizedBox(width: 12),
+
+              // ── Texte ──────────────────────────────────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Numéro slot + titre
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isLocked
+                                ? AppTheme.divider
+                                : _catColor.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Exercice ${slot.slot + 1}',
+                            style: GoogleFonts.roboto(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isLocked ? AppTheme.textLight : _catColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        if (isCompleted)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppTheme.success.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '✓ Complété',
+                              style: GoogleFonts.roboto(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppTheme.success),
+                            ),
+                          ),
+                        if (isLocked)
+                          Text(
+                            'Finissez l\'exercice 1 d\'abord',
+                            style: GoogleFonts.roboto(
+                                fontSize: 10, color: AppTheme.textLight),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      isLocked ? '???' : slot.titre,
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: isLocked
+                            ? AppTheme.textLight
+                            : AppTheme.textPrimary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (!isLocked) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          _Tag('${slot.estimatedMinutes} min',
+                              Icons.timer_outlined),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: _diffColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              _diffLabel,
+                              style: GoogleFonts.roboto(
+                                  fontSize: 10,
+                                  color: _diffColor,
+                                  fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              // ── Bouton action ──────────────────────────────────────────
+              if (!isLocked && !isCompleted)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [_catColor, _catColor.withValues(alpha: 0.7)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.play_arrow_rounded,
+                          color: Colors.white, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Commencer',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              else if (isLocked)
+                const Icon(Icons.lock_rounded,
+                    color: AppTheme.textLight, size: 20)
+              else
+                const Icon(Icons.check_circle_rounded,
+                    color: AppTheme.success, size: 24),
+            ],
+          ),
+        ),
       ),
     );
   }
 }
 
+class _Tag extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  const _Tag(this.label, this.icon);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: AppTheme.textLight),
+        const SizedBox(width: 3),
+        Text(label,
+            style: GoogleFonts.roboto(
+                fontSize: 11, color: AppTheme.textSecondary)),
+      ],
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  ANCIEN _ExerciseListItem (conservé pour compat)
+// ═══════════════════════════════════════════════════
 class _ExerciseListItem extends StatelessWidget {
   final Exercise exercise;
   final VoidCallback onStart;

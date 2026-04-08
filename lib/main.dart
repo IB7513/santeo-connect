@@ -17,10 +17,16 @@ import 'core/services/storage_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ── Initialisation Firebase ───────────────────────────────────────────────
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // ── Initialisation Firebase (non-bloquante) ───────────────────────────────
+  // L'app fonctionne même si Firebase est indisponible (ex: web sans app Web
+  // enregistrée dans Firebase Console)
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    debugPrint('Firebase init warning (non-bloquant): $e');
+  }
 
   await StorageService.init();
 

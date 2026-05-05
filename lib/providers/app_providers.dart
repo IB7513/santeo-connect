@@ -217,7 +217,7 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====== Génération Bilan IA Embarquée ======
+  // ====== Génération Programme Personnalisé Embarquée ======
   Future<void> generateAssessment() async {
     if (_userProfile == null) return;
 

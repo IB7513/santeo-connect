@@ -8,7 +8,15 @@ import '../../core/theme/app_theme.dart';
 // ═══════════════════════════════════════════════════
 class RgpdConsentScreen extends StatefulWidget {
   final VoidCallback onAccepted;
-  const RgpdConsentScreen({super.key, required this.onAccepted});
+  /// Callback optionnel : si fourni, remplace le bouton "Refuser et quitter l'app"
+  /// par un bouton "Annuler" (mode inscription). Si null → comportement originel.
+  final VoidCallback? onRefused;
+
+  const RgpdConsentScreen({
+    super.key,
+    required this.onAccepted,
+    this.onRefused,
+  });
 
   @override
   State<RgpdConsentScreen> createState() => _RgpdConsentScreenState();
@@ -430,9 +438,13 @@ class _RgpdConsentScreenState extends State<RgpdConsentScreen> {
             width: double.infinity,
             height: 44,
             child: TextButton(
-              onPressed: () => _handleRefuse(),
+              onPressed: () => widget.onRefused != null
+                  ? widget.onRefused!()
+                  : _handleRefuse(),
               child: Text(
-                'Refuser et quitter l\'app',
+                widget.onRefused != null
+                    ? 'Annuler'
+                    : 'Refuser et quitter l\'app',
                 style: GoogleFonts.roboto(
                   fontSize: 13,
                   color: AppTheme.textSecondary,
@@ -765,7 +777,10 @@ SANTEO Connect propose :
 4. ABONNEMENT PREMIUM
 
 4.1 Tarif
-L'abonnement Premium est proposé au tarif de 49,90€/mois.
+L'abonnement SANTEO Connect est proposé au tarif de 19,90€/mois.
+
+4.2 Prise en charge entreprise
+Si votre entreprise est partenaire SANTEO, votre abonnement peut être intégralement pris en charge. Entrez le code fourni par votre employeur lors de l'activation.
 
 4.2 Renouvellement
 L'abonnement se renouvelle automatiquement chaque mois. Vous pouvez le résilier à tout moment depuis votre profil.

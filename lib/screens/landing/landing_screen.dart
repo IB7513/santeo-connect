@@ -29,7 +29,6 @@ class LandingScreen extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(24, 44, 24, 40),
                   child: Column(
                     children: [
-                      // Logo SANTEO — cercle blanc + couleurs originales sur fond teal
                       Image.memory(
                         SanteoLogoData.bytes,
                         width: 220,
@@ -75,7 +74,7 @@ class LandingScreen extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            'Commencer l\'évaluation gratuite',
+                            'Commencer mon programme',
                             style: GoogleFonts.montserrat(
                                 fontWeight: FontWeight.w700, fontSize: 15),
                           ),
@@ -103,7 +102,7 @@ class LandingScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Votre santé, partout dans le Pacifique',
+                      'Conçu pour les zones éloignées, utile partout',
                       style: GoogleFonts.montserrat(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -111,89 +110,70 @@ class LandingScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
+
                     _FeatureItem(
                       icon: Icons.psychology,
                       color: AppTheme.primary,
-                      title: 'Bilan IA Personnalisé',
+                      title: 'Programme personnalisé',
                       description:
-                          'Évaluation intelligente adaptée à votre profil et au contexte insulaire du Pacifique.',
+                          'Répondez à quelques questions et recevez un programme de mouvements adapté à votre profil.',
                     ),
                     _FeatureItem(
                       icon: Icons.fitness_center,
                       color: AppTheme.secondary,
-                      title: 'Exercices Sans Équipement',
+                      title: 'Exercices guidés, sans matériel',
                       description:
-                          'Programmes adaptés au climat tropical, faisables à domicile sans matériel.',
+                          'Des séances simples et efficaces, réalisables à domicile, avec vidéo et coaching vocal.',
                     ),
                     _FeatureItem(
                       icon: Icons.trending_up,
                       color: AppTheme.success,
-                      title: 'Suivi & Progression',
+                      title: 'Suivi & progression',
                       description:
-                          'Analyse hebdomadaire IA de vos progrès avec recommandations personnalisées.',
+                          'Visualisez vos progrès semaine après semaine et recevez des conseils adaptés.',
                     ),
                     _FeatureItem(
-                      icon: Icons.video_call,
+                      icon: Icons.support_agent,
                       color: const Color(0xFF7E57C2),
-                      title: 'Télérééducation',
+                      title: 'Accompagnement professionnel',
                       description:
-                          'Détection automatique des signaux d\'alerte pour consultation professionnelle.',
+                          'Accédez à des conseils de professionnels du mouvement, où que vous soyez.',
                     ),
 
                     const SizedBox(height: 24),
 
-                    // Territories
+                    // Chiffres clés
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 18, horizontal: 12),
                       decoration: BoxDecoration(
                         color: AppTheme.surface,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Row(
-                            children: [
-                              const Icon(Icons.public,
-                                  color: AppTheme.primary, size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Disponible sur tous les territoires',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppTheme.textPrimary,
-                                ),
-                              ),
-                            ],
+                          _StatChip(
+                            value: '19,90€',
+                            label: 'Par mois\nseulement',
                           ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 6,
-                            children: [
-                              'Nouvelle-Calédonie',
-                              'Polynésie française',
-                              'Wallis-et-Futuna',
-                              'Vanuatu',
-                              'Fidji',
-                              '& plus...',
-                            ].map((t) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: AppTheme.primary.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                t,
-                                style: GoogleFonts.roboto(
-                                  fontSize: 12,
-                                  color: AppTheme.primary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            )).toList(),
+                          Container(
+                            width: 1,
+                            height: 40,
+                            color: AppTheme.divider,
+                          ),
+                          _StatChip(
+                            value: '5 min',
+                            label: 'Pour démarrer\nvotre programme',
+                          ),
+                          Container(
+                            width: 1,
+                            height: 40,
+                            color: AppTheme.divider,
+                          ),
+                          _StatChip(
+                            value: '',
+                            label: 'Exercices\nguidés',
                           ),
                         ],
                       ),
@@ -201,12 +181,11 @@ class LandingScreen extends StatelessWidget {
 
                     const SizedBox(height: 24),
                     PrimaryButton(
-                      label: 'Commencer gratuitement',
+                      label: 'Démarrer mon programme',
                       icon: Icons.arrow_forward,
                       onPressed: () =>
                           Navigator.pushNamed(context, '/register'),
                     ),
-                    const SizedBox(height: 16),
                     const SizedBox(height: 20),
                   ],
                 ),
@@ -219,6 +198,7 @@ class LandingScreen extends StatelessWidget {
   }
 }
 
+// ── Widget feature ─────────────────────────────────────────────────────────
 class _FeatureItem extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -275,6 +255,42 @@ class _FeatureItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── Widget stat ─────────────────────────────────────────────────────────────
+class _StatChip extends StatelessWidget {
+  final String value;
+  final String label;
+
+  const _StatChip({required this.value, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        if (value.isNotEmpty) ...[
+          Text(
+            value,
+            style: GoogleFonts.montserrat(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: AppTheme.primary,
+            ),
+          ),
+          const SizedBox(height: 4),
+        ],
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.roboto(
+            fontSize: 11,
+            color: AppTheme.textSecondary,
+            height: 1.4,
+          ),
+        ),
+      ],
     );
   }
 }

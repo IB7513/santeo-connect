@@ -311,7 +311,7 @@ class _AvatarSani extends StatelessWidget {
                       ),
                     ),
                     child: Center(
-                      child: Text('👩‍⚕️', style: TextStyle(fontSize: 36)),
+                      child: Text('👩', style: TextStyle(fontSize: 36)),
                     ),
                   ),
                 ),
@@ -564,7 +564,7 @@ class _PathologieDetail extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('👩‍⚕️', style: const TextStyle(fontSize: 24)),
+                          Text('👩', style: const TextStyle(fontSize: 24)),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(

@@ -5,12 +5,28 @@ class Exercise {
   final String id;
   final String name;
   final String description;
-  final int duration; // minutes
-  final String difficulty; // facile / moyen / difficile
+  final int duration;
+  final String difficulty;
   final String targetZone;
-  final String type; // etirement / renforcement / mobilite / cardio
+  final String type;
   final String? videoUrl;
   final String? thumbnailUrl;
+
+  // Données de séance
+  final int series;
+  final int reps;
+  final int dureeSerieSec;
+  final int reposSec;
+  final String typeComptage;
+
+  // Voix TTS
+  final String voixIntro;
+  final String voixPendant;
+  final String voixRepos;
+  final String voixFin;
+
+  final bool actif;
+  final int ordre;
 
   const Exercise({
     required this.id,
@@ -22,36 +38,97 @@ class Exercise {
     required this.type,
     this.videoUrl,
     this.thumbnailUrl,
+    this.series = 3,
+    this.reps = 10,
+    this.dureeSerieSec = 0,
+    this.reposSec = 30,
+    this.typeComptage = 'reps',
+    this.voixIntro = '',
+    this.voixPendant = '',
+    this.voixRepos = '',
+    this.voixFin = '',
+    this.actif = true,
+    this.ordre = 0,
   });
 
   factory Exercise.fromMap(Map<String, dynamic> map) {
     return Exercise(
       id: map['id']?.toString() ?? '',
-      name: map['name']?.toString() ?? '',
-      description: map['description']?.toString() ?? '',
-      duration: (map['duration'] is int)
-          ? map['duration'] as int
+      name: (map['titre'] ?? map['name'])?.toString() ?? '',
+      description: (map['description_courte'] ?? map['description'])?.toString() ?? '',
+      duration: (map['duration'] is int) ? map['duration'] as int
           : int.tryParse(map['duration']?.toString() ?? '0') ?? 0,
-      difficulty: map['difficulty']?.toString() ?? 'facile',
-      targetZone: map['targetZone']?.toString() ?? map['target_zone']?.toString() ?? '',
-      type: map['type']?.toString() ?? 'etirement',
-      videoUrl: map['videoUrl']?.toString() ?? map['video_url']?.toString(),
-      thumbnailUrl: map['thumbnailUrl']?.toString() ?? map['thumbnail_url']?.toString(),
+      difficulty: _mapDiff(map['difficulte']?.toString() ?? map['difficulty']?.toString()),
+      targetZone: _firstZone(map['zones']) ?? map['targetZone']?.toString() ?? '',
+      type: (map['categorie'] ?? map['type'])?.toString() ?? 'mobilite',
+      videoUrl: (map['video_url'] ?? map['videoUrl'])?.toString(),
+      thumbnailUrl: map['thumbnailUrl']?.toString(),
+      series: (map['series'] as num?)?.toInt() ?? 3,
+      reps: (map['reps'] as num?)?.toInt() ?? 10,
+      dureeSerieSec: (map['duree_serie_sec'] as num?)?.toInt() ?? 0,
+      reposSec: (map['repos_sec'] as num?)?.toInt() ?? 30,
+      typeComptage: map['type_comptage']?.toString() ?? 'reps',
+      voixIntro: map['voix_intro']?.toString() ?? '',
+      voixPendant: map['voix_pendant']?.toString() ?? '',
+      voixRepos: map['voix_repos']?.toString() ?? 'Soufflez. Récupérez quelques secondes.',
+      voixFin: map['voix_fin']?.toString() ?? '',
+      actif: (map['actif'] as bool?) ?? true,
+      ordre: (map['ordre'] as num?)?.toInt() ?? 0,
     );
   }
 
+  static String _mapDiff(String? v) {
+    switch (v) {
+      case 'intermediaire': return 'moyen';
+      case 'avance': return 'difficile';
+      case 'moyen': return 'moyen';
+      case 'difficile': return 'difficile';
+      default: return 'facile';
+    }
+  }
+
+  static String? _firstZone(dynamic z) {
+    if (z is List && z.isNotEmpty) return z.first?.toString();
+    return null;
+  }
+
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'name': name,
-    'description': description,
-    'duration': duration,
-    'difficulty': difficulty,
-    'targetZone': targetZone,
-    'type': type,
-    'videoUrl': videoUrl,
-    'thumbnailUrl': thumbnailUrl,
+    'id': id, 'name': name, 'description': description,
+    'duration': duration, 'difficulty': difficulty,
+    'targetZone': targetZone, 'type': type,
+    'videoUrl': videoUrl, 'series': series, 'reps': reps,
+    'dureeSerieSec': dureeSerieSec, 'reposSec': reposSec,
+    'typeComptage': typeComptage,
+    'voix_intro': voixIntro, 'voix_pendant': voixPendant,
+    'voix_repos': voixRepos, 'voix_fin': voixFin,
   };
+
+  String get difficultyLabel {
+    switch (difficulty) {
+      case 'difficile': return 'Avancé';
+      case 'moyen': return 'Intermédiaire';
+      default: return 'Débutant';
+    }
+  }
+
+  String get typeLabel {
+    switch (type) {
+      case 'renforcement': return 'Renforcement';
+      case 'mobilite': return 'Mobilité';
+      case 'etirement': return 'Étirement';
+      case 'cardio': return 'Cardio';
+      default: return 'Bien-être';
+    }
+  }
+
+  int get dureeTotaleSecondes {
+    if (typeComptage == 'duree') return series * dureeSerieSec + (series - 1) * reposSec;
+    return series * (reps * 3) + (series - 1) * reposSec;
+  }
+
+  int get dureeTotaleMinutes => (dureeTotaleSecondes / 60).ceil();
 }
+
 
 // ====== User Profile Model ======
 class UserProfile {

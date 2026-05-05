@@ -5,6 +5,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/constants/app_constants.dart';
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODÈLE — Slot exercice du plan quotidien
@@ -68,6 +69,51 @@ class DailyPlanService {
   DailyPlanService._internal();
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
+  // ── Cache des voix depuis seedExercises (indexé par id et titre) ──────────
+  static final Map<String, Map<String, String>> _voixCache = _buildVoixCache();
+
+  static Map<String, Map<String, String>> _buildVoixCache() {
+    final cache = <String, Map<String, String>>{};
+    for (final ex in AppConstants.seedExercises) {
+      final voix = {
+        'voix_intro':   ex.voixIntro,
+        'voix_pendant': ex.voixPendant,
+        'voix_fin':     ex.voixFin,
+        'voix_repos':   'Soufflez. Récupérez quelques secondes.',
+      };
+      // Index par ID
+      if (ex.id.isNotEmpty) cache[ex.id] = voix;
+      // Index par titre normalisé
+      final titre = ex.name.toLowerCase().trim();
+      if (titre.isNotEmpty) cache[titre] = voix;
+    }
+    return cache;
+  }
+
+  /// Enrichit une Map exercice Firestore avec les voix depuis seedExercises
+  /// si les champs voix_* sont manquants.
+  static Map<String, dynamic> _enrichWithVoix(Map<String, dynamic> data) {
+    // Déjà complet ?
+    final hasVoix = (data['voix_intro'] as String?)?.isNotEmpty == true ||
+        (data['voix_pendant'] as String?)?.isNotEmpty == true;
+    if (hasVoix) return data;
+
+    // Chercher par id
+    final id = data['id'] as String? ?? '';
+    var voix = _voixCache[id];
+
+    // Chercher par titre (fallback)
+    if (voix == null) {
+      final titre = (data['titre'] ?? data['name'] ?? '').toString().toLowerCase().trim();
+      voix = _voixCache[titre];
+    }
+
+    if (voix != null) {
+      return {...data, ...voix};
+    }
+    return data;
+  }
 
   // ── Clés SharedPreferences ────────────────────────────────────────────────
   static const _keyPlanDate       = 'daily_plan_date';
@@ -141,7 +187,7 @@ class DailyPlanService {
       final plan = [
         DailyExerciseSlot(
           slot: 0,
-          exerciseData: exercises.isNotEmpty ? exercises[0] : {},
+          exerciseData: exercises.isNotEmpty ? _enrichWithVoix(exercises[0]) : {},
           status: slot0Done
               ? DailySlotStatus.completed
               : DailySlotStatus.available,
@@ -149,7 +195,7 @@ class DailyPlanService {
         ),
         DailyExerciseSlot(
           slot: 1,
-          exerciseData: exercises.length > 1 ? exercises[1] : {},
+          exerciseData: exercises.length > 1 ? _enrichWithVoix(exercises[1]) : {},
           // Slot 1 verrouillé jusqu'à complétion du slot 0
           status: slot1Done
               ? DailySlotStatus.completed
@@ -244,7 +290,7 @@ class DailyPlanService {
       if (snapshot.docs.isEmpty) return [];
 
       var allExercises = snapshot.docs
-          .map((doc) => {'id': doc.id, ...doc.data()})
+          .map((doc) => _enrichWithVoix({'id': doc.id, ...doc.data()}))
           .toList();
 
       // ── Filtre profil utilisateur ─────────────────────────────────────────
@@ -317,7 +363,7 @@ class DailyPlanService {
       try {
         final doc = await _db.collection('exercises').doc(id).get();
         if (doc.exists && doc.data() != null) {
-          results.add({'id': doc.id, ...doc.data()!});
+          results.add(_enrichWithVoix({'id': doc.id, ...doc.data()!}));
         }
       } catch (_) {}
     }

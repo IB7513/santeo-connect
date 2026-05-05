@@ -454,7 +454,7 @@ Ia ora na, Sarah ! Votre parcours bien-être est en bonne voie 🌺''',
           preferencesExercices: ['Natation', 'Étirement', 'Renforcement symétrique'],
           createdAt: DateTime(2024, 9, 15),
         ),
-        aiAssessment: '''⭐ Bonjour Léa, voici ton bilan santé personnalisé SANTEO Connect !
+        aiAssessment: '''⭐ Bonjour Léa, voici ton programme personnalisé SANTEO Connect !
 
 TU ES AU BON ENDROIT :
 À 16 ans, une scoliose légère de 12° est tout à fait gérable avec les bons exercices. Tu as pris la bonne décision de commencer tôt — c'est quand on est jeune qu'on obtient les meilleurs résultats !

@@ -34,8 +34,8 @@ class _ParlerKineScreenState extends State<ParlerKineScreen>
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (context, provider, _) {
-        final prenom =
-            provider.userProfile?.prenom ?? provider.userName ?? 'Vous';
+        final rawKine = provider.userProfile?.prenom ?? provider.userName ?? 'Vous';
+            final prenom = rawKine.isNotEmpty ? rawKine[0].toUpperCase() + rawKine.substring(1) : 'Vous';
         return Scaffold(
           backgroundColor: AppTheme.surface,
           body: SafeArea(
@@ -201,7 +201,7 @@ class _KinesListTab extends StatelessWidget {
       specialite: 'Hernie discale, Rééducation respiratoire',
       localisation: 'Koné, Nouvelle-Calédonie',
       disponible: true,
-      experience: '10 ans',
+      experience: '+20 ans',
       avatarColor: Color(0xFF42A5F5),
       langues: ['Français', 'Kanak'],
       tarif: '3 800 XPF / consultation',
@@ -801,7 +801,7 @@ class _DemandeConsultationTabState extends State<_DemandeConsultationTab> {
                     const Icon(Icons.person, color: AppTheme.primary, size: 18),
                     const SizedBox(width: 10),
                     Text(
-                      '${profile.prenom} • ${profile.age} ans • ${profile.localisation}',
+                      '${profile.prenom.isNotEmpty ? profile.prenom[0].toUpperCase() + profile.prenom.substring(1) : profile.prenom} • ${profile.age} ans • ${profile.localisation}',
                       style: GoogleFonts.roboto(
                           fontSize: 13, color: AppTheme.textPrimary),
                     ),

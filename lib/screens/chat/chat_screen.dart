@@ -77,7 +77,10 @@ class _ChatScreenState extends State<ChatScreen>
       setState(() {
         _aiService = ChatAIService(userProfile: provider.userProfile);
         // Remplacer le message de bienvenue avec le prénom si disponible
-        final prenom = provider.userProfile?.prenom ?? provider.userName ?? '';
+        final rawPrenom = provider.userProfile?.prenom ?? provider.userName ?? '';
+        final prenom = rawPrenom.isNotEmpty
+            ? rawPrenom[0].toUpperCase() + rawPrenom.substring(1)
+            : rawPrenom;
         final territoire = provider.userProfile?.localisation ?? 'le Pacifique';
         if (prenom.isNotEmpty) {
           _messages[0] = _ChatMessage(

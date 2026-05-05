@@ -15,7 +15,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailCtrl = TextEditingController();
+  final _prenomCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   bool _isLoading = false;
   bool _obscurePass = true;
@@ -23,22 +23,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailCtrl.dispose();
+    _prenomCtrl.dispose();
     _passwordCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _isLoading = true; _error = null; });
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
     await Future.delayed(const Duration(milliseconds: 800));
 
-    final name = _emailCtrl.text.split('@').first;
-    final uid = 'user_${DateTime.now().millisecondsSinceEpoch}';
+    final prenom = _prenomCtrl.text.trim();
+    final uid = 'user_${prenom.toLowerCase()}_${DateTime.now().millisecondsSinceEpoch}';
 
     if (mounted) {
-      await context.read<AppProvider>().login(uid, name, _emailCtrl.text.trim());
+      await context.read<AppProvider>().login(uid, prenom, '');
       if (mounted) {
         Navigator.pushAndRemoveUntil(
           context,
@@ -63,11 +66,12 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                Center(child: const SanteoLogo(size: 80)),
+                const Center(child: SanteoLogo(size: 80)),
                 const SizedBox(height: 32),
-                Text('Connexion', style: Theme.of(context).textTheme.displaySmall),
+                Text('Connexion',
+                    style: Theme.of(context).textTheme.displaySmall),
                 const SizedBox(height: 6),
-                Text('Bienvenue ! Connectez-vous à votre compte.',
+                Text('Bienvenue ! Entrez votre prénom pour accéder à votre espace.',
                     style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 28),
 
@@ -77,34 +81,42 @@ class _LoginScreenState extends State<LoginScreen> {
                     decoration: BoxDecoration(
                       color: AppTheme.error.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppTheme.error.withValues(alpha: 0.3)),
+                      border: Border.all(
+                          color: AppTheme.error.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline, color: AppTheme.error, size: 18),
+                        const Icon(Icons.error_outline,
+                            color: AppTheme.error, size: 18),
                         const SizedBox(width: 8),
-                        Expanded(child: Text(_error!, style: GoogleFonts.roboto(color: AppTheme.error, fontSize: 13))),
+                        Expanded(
+                          child: Text(_error!,
+                              style: GoogleFonts.roboto(
+                                  color: AppTheme.error, fontSize: 13)),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                 ],
 
+                // ── Prénom ────────────────────────────────────────
                 TextFormField(
-                  controller: _emailCtrl,
-                  keyboardType: TextInputType.emailAddress,
+                  controller: _prenomCtrl,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
-                    labelText: 'Adresse email',
-                    prefixIcon: Icon(Icons.email_outlined),
+                    labelText: 'Prénom',
+                    hintText: 'Ex : Marie, Jean…',
+                    prefixIcon: Icon(Icons.person_outline),
                   ),
                   validator: (v) {
-                    if (v == null || v.isEmpty) return 'Email requis';
-                    if (!v.contains('@')) return 'Email invalide';
+                    if (v == null || v.trim().isEmpty) return 'Prénom requis';
                     return null;
                   },
                 ),
                 const SizedBox(height: 16),
 
+                // ── Mot de passe ──────────────────────────────────
                 TextFormField(
                   controller: _passwordCtrl,
                   obscureText: _obscurePass,
@@ -112,8 +124,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     labelText: 'Mot de passe',
                     prefixIcon: const Icon(Icons.lock_outlined),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePass ? Icons.visibility_off : Icons.visibility),
-                      onPressed: () => setState(() => _obscurePass = !_obscurePass),
+                      icon: Icon(_obscurePass
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () =>
+                          setState(() => _obscurePass = !_obscurePass),
                     ),
                   ),
                   validator: (v) {
@@ -133,10 +148,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Pas encore de compte ? ",
-                        style: GoogleFonts.roboto(color: AppTheme.textSecondary, fontSize: 14)),
+                    Text('Pas encore de compte ? ',
+                        style: GoogleFonts.roboto(
+                            color: AppTheme.textSecondary, fontSize: 14)),
                     TextButton(
-                      onPressed: () => Navigator.pushReplacementNamed(context, '/register'),
+                      onPressed: () =>
+                          Navigator.pushReplacementNamed(context, '/register'),
                       child: const Text("S'inscrire"),
                     ),
                   ],
@@ -144,6 +161,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 16),
                 const Divider(),
                 const SizedBox(height: 12),
+
+                // ── Mode démo — intact ────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
@@ -153,10 +172,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.w600, fontSize: 14),
                     ),
-                    onPressed: () => Navigator.pushNamed(context, '/demo-login'),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/demo-login'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.primary,
-                      side: const BorderSide(color: AppTheme.primary, width: 1.5),
+                      side:
+                          const BorderSide(color: AppTheme.primary, width: 1.5),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14)),
@@ -172,21 +193,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-
                 const SizedBox(height: 16),
+
                 Row(children: [
                   Expanded(child: Divider(color: AppTheme.divider)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('ou', style: GoogleFonts.roboto(color: AppTheme.textLight, fontSize: 13)),
+                    child: Text('ou',
+                        style: GoogleFonts.roboto(
+                            color: AppTheme.textLight, fontSize: 13)),
                   ),
                   Expanded(child: Divider(color: AppTheme.divider)),
                 ]),
                 const SizedBox(height: 16),
 
-                // ── DEMO BUTTON ──
                 InkWell(
                   onTap: () => Navigator.pushNamed(context, '/demo-login'),
+                  borderRadius: BorderRadius.circular(14),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 14),
@@ -198,7 +221,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.play_circle_outline, color: AppTheme.primary, size: 20),
+                        const Icon(Icons.play_circle_outline,
+                            color: AppTheme.primary, size: 20),
                         const SizedBox(width: 10),
                         Text(
                           '👋 Explorer en mode démo',
@@ -212,6 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),

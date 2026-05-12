@@ -164,14 +164,33 @@ class ChatAIService {
   // RÉPONSES
   // ============================================================
 
+  bool get _isPacifique {
+    final t = _territoire.toLowerCase();
+    return t.contains('calédonie') || t.contains('polynésie') || t.contains('wallis')
+        || t.contains('vanuatu') || t.contains('fidji') || t.contains('samoa')
+        || t.contains('tonga') || t.contains('kiribati') || t.contains('îles cook')
+        || t.contains('pacifique') || t.contains('insulaire');
+  }
+
+  bool get _isFrance {
+    final t = _territoire.toLowerCase();
+    return t == 'france' || t.contains('france métro') || t.contains('réunion')
+        || t.contains('martinique') || t.contains('guadeloupe') || t.contains('guyane')
+        || t.contains('mayotte') || t.contains('belgique') || t.contains('suisse')
+        || t.contains('luxembourg') || t.contains('espagne') || t.contains('italie')
+        || t.contains('portugal') || t.contains('allemagne') || t.contains('royaume');
+  }
+
+  String get _contextEmoji => _isPacifique ? '🌊' : (_isFrance ? '🗼' : '🌍');
+
   String _greet() {
     final hour = DateTime.now().hour;
     String moment = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
-    return '$moment $_prenom ! 😊\n\nJe suis votre assistant santé SANTEO. Je peux vous aider sur :\n\n💪 Les exercices et comment les faire\n🤕 Vos douleurs et comment les gérer\n🌊 Des conseils adaptés à $_territoire\n📈 Votre progression et motivation\n\nQue souhaitez-vous savoir ?';
+    return '$moment $_prenom ! 😊\n\nJe suis votre assistant santé SANTEO. Je peux vous aider sur :\n\n💪 Les exercices et comment les faire\n🤕 Vos douleurs et comment les gérer\n$_contextEmoji Des conseils adaptés à $_territoire\n📈 Votre progression et motivation\n\nQue souhaitez-vous savoir ?';
   }
 
   String _whoAmI() {
-    return 'Je suis l\'assistant IA de SANTEO Connect 🤖\n\nJe fonctionne **entièrement sur votre appareil**, sans connexion internet. Mes réponses sont basées sur des connaissances en kinésithérapie et santé fonctionnelle, adaptées au contexte des territoires insulaires du Pacifique.\n\n⚠️ Je ne remplace pas un médecin ou un kinésithérapeute. En cas de douleur importante, consultez un professionnel.\n\nComment puis-je vous aider aujourd\'hui ?';
+    return 'Je suis l\'assistant IA de SANTEO Connect 🤖\n\nJe fonctionne **entièrement sur votre appareil**, sans connexion internet. Mes réponses sont basées sur des connaissances en kinésithérapie et santé fonctionnelle, adaptées à votre territoire.\n\n⚠️ Je ne remplace pas un médecin ou un kinésithérapeute. En cas de douleur importante, consultez un professionnel.\n\nComment puis-je vous aider aujourd\'hui ?';
   }
 
   String _explainChatVache() {
@@ -207,7 +226,7 @@ class ChatAIService {
   }
 
   String _explainDos() {
-    return '🦴 Soulager et Renforcer le Dos\n\nLe dos est la zone la plus touchée dans les territoires insulaires (travail physique, position assise prolongée).\n\n**Les 3 exercices indispensables pour le dos :**\n\n1️⃣ **Chat-Vache** (10 répétitions)\nDéverrouille la colonne vertébrale\n\n2️⃣ **Gainage abdominal** (20-30 secondes)\nRenforce le "corset naturel" qui protège le dos\n\n3️⃣ **Étirement genoux-poitrine** :\nAllongé sur le dos, ramenez les deux genoux sur la poitrine, maintenez 30 secondes\n\n**Conseils de vie :**\n✅ Évitez de rester assis plus de 45 minutes d\'affilée\n✅ Levez-vous en roulant sur le côté, pas en vous redressant brusquement\n✅ En portant des charges, pliez les genoux, pas le dos\n\n⚠️ **Consultez un professionnel si :**\nDouleur qui irradie dans la jambe, fourmillements, perte de force.';
+    return '🍋 Soulager et Renforcer le Dos\n\nLe dos est la zone la plus touchée (travail physique, position assise prolongée).\n\n**Les 3 exercices indispensables pour le dos :**\n\n1️⃣ **Chat-Vache** (10 répétitions)\nDéverrouille la colonne vertébrale\n\n2️⃣ **Gainage abdominal** (20-30 secondes)\nRenforce le "corset naturel" qui protège le dos\n\n3️⃣ **Étirement genoux-poitrine** :\nAllongé sur le dos, ramenez les deux genoux sur la poitrine, maintenez 30 secondes\n\n**Conseils de vie :**\n✅ Évitez de rester assis plus de 45 minutes d\'affilée\n✅ Levez-vous en roulant sur le côté, pas en vous redressant brusquement\n✅ En portant des charges, pliez les genoux, pas le dos\n\n⚠️ **Consultez un professionnel si :**\nDouleur qui irradie dans la jambe, fourmillements, perte de force.';
   }
 
   String _explainNuque() {
@@ -268,15 +287,21 @@ class ChatAIService {
   }
 
   String _motivation() {
-    return '💙 Vous avez besoin de motivation — c\'est normal !\n\nTout le monde traverse des moments de découragement. Voici ce qui aide vraiment :\n\n**Petits pas = Grands résultats**\n\"Je vais faire 5 minutes\" — commencez petit, une fois lancé, vous continuerez souvent plus longtemps !\n\n**Rappel de votre "pourquoi" :**\n${_objectif.isNotEmpty ? 'Votre objectif était : "$_objectif". Pourquoi c\'était important pour vous ?' : 'Rappellez-vous pourquoi vous avez commencé. Cette raison est toujours là.'}\n\n**Ce qui fonctionne :**\n✅ Heure fixe chaque jour (comme une réunion)\n✅ Préparez votre tenue la veille\n✅ Trouvez un(e) ami(e) pour vous motiver mutuellement\n✅ Célébrez chaque petite victoire\n✅ Notez comment vous vous sentez APRÈS la séance\n\n🌊 **Sagesse du Pacifique :** \"Fa\'a Samoa\" — faire les choses à son propre rythme. Votre rythme est le bon rythme.\n\n💪 Vous avez déjà fait le plus difficile : vous êtes là !';
+    final sagesse = _isPacifique
+        ? '🌊 **Sagesse :** "Fa\'a Samoa" — faire les choses à son propre rythme. Votre rythme est le bon rythme.'
+        : '💡 **Philosophie :** Chaque petit pas compte. Un escalier se monte une marche à la fois.';
+    final objetifText = _objectif.isNotEmpty
+        ? 'Votre objectif était : "$_objectif". Pourquoi c\'était important pour vous ?'
+        : 'Rappellez-vous pourquoi vous avez commencé. Cette raison est toujours là.';
+    return '💙 Vous avez besoin de motivation — c\'est normal !\n\nTout le monde traverse des moments de découragement. Voici ce qui aide vraiment :\n\n**Petits pas = Grands résultats**\n"Je vais faire 5 minutes" — commencez petit, une fois lancé, vous continuerez souvent plus longtemps !\n\n**Rappel de votre "pourquoi" :**\n$objetifText\n\n**Ce qui fonctionne :**\n✅ Heure fixe chaque jour (comme une réunion)\n✅ Préparez votre tenue la veille\n✅ Trouvez un(e) ami(e) pour vous motiver mutuellement\n✅ Célébrez chaque petite victoire\n✅ Notez comment vous vous sentez APRÈS la séance\n\n$sagesse\n\n💪 Vous avez déjà fait le plus difficile : vous êtes là !';
   }
 
   String _aboutSleep() {
-    return '😴 Sommeil et Récupération\n\nLe sommeil est aussi important que l\'exercice pour votre santé !\n\n**Le sommeil aide à :**\n• Réparer les muscles après l\'effort\n• Consolider les nouvelles habitudes\n• Réguler les hormones (dont celles du stress)\n• Réduire la douleur\n\n**Pour mieux dormir :**\n🌙 Même heure de coucher tous les soirs\n📵 Pas d\'écran 30 min avant de dormir\n🌡️ Chambre fraîche (difficile sous les tropiques — un ventilateur aide)\n🧘 5 minutes de respiration avant de dormir\n\n**Exercice et sommeil :**\n✅ Exercice le matin ou l\'après-midi = meilleur sommeil\n⚠️ Exercice intense après 20h = peut perturber le sommeil\n\n**Si vous avez mal dormi :**\nFaites une séance plus légère (étirements, respiration) plutôt que de vous forcer sur des exercices intenses.';
+    return '😴 Sommeil et Récupération\n\nLe sommeil est aussi important que l\'exercice pour votre santé !\n\n**Le sommeil aide à :**\n• Réparer les muscles après l\'effort\n• Consolider les nouvelles habitudes\n• Réguler les hormones (dont celles du stress)\n• Réduire la douleur\n\n**Pour mieux dormir :**\n🌙 Même heure de coucher tous les soirs\n📵 Pas d\'écran 30 min avant de dormir\n🌡️ Chambre fraîche (ouvrez les fenêtres la nuit, ventilateur si nécessaire)\n🧘 5 minutes de respiration avant de dormir\n\n**Exercice et sommeil :**\n✅ Exercice le matin ou l\'après-midi = meilleur sommeil\n⚠️ Exercice intense après 20h = peut perturber le sommeil\n\n**Si vous avez mal dormi :**\nFaites une séance plus légère (étirements, respiration) plutôt que de vous forcer sur des exercices intenses.';
   }
 
   String _aboutWeight() {
-    return '⚖️ Exercice et Gestion du Poids\n\n**Ce que l\'exercice fait vraiment :**\n\n✅ Améliore le métabolisme\n✅ Renforce les muscles (les muscles brûlent plus de calories au repos)\n✅ Régule l\'appétit et les envies sucrées\n✅ Améliore l\'humeur (moins de manger émotionnel)\n\n**La réalité :**\nL\'alimentation représente 70% de la gestion du poids. L\'exercice seul ne suffit pas, mais il est indispensable.\n\n**Ce qui fonctionne vraiment :**\n🥗 Manger plus de légumes et fruits tropicaux locaux\n🚶 Marche active quotidienne (30 min)\n💧 Boire de l\'eau plutôt que des sodas\n😴 Bien dormir (le manque de sommeil fait grossir)\n🍽️ Manger lentement, écouter sa faim\n\n⚠️ **Je ne peux pas vous prescrire de régime** — consultez un médecin ou nutritionniste pour un suivi personnalisé.\n\nQue souhaitez-vous travailler en priorité ?';
+    return '⚖️ Exercice et Gestion du Poids\n\n**Ce que l\'exercice fait vraiment :**\n\n✅ Améliore le métabolisme\n✅ Renforce les muscles (les muscles brûlent plus de calories au repos)\n✅ Régule l\'appétit et les envies sucrées\n✅ Améliore l\'humeur (moins de manger émotionnel)\n\n**La réalité :**\nL\'alimentation représente 70% de la gestion du poids. L\'exercice seul ne suffit pas, mais il est indispensable.\n\n**Ce qui fonctionne vraiment :**\n🥗 Manger plus de légumes et fruits de saison\n🚶 Marche active quotidienne (30 min)\n💧 Boire de l\'eau plutôt que des sodas\n😴 Bien dormir (le manque de sommeil fait grossir)\n🍽️ Manger lentement, écouter sa faim\n\n⚠️ **Je ne peux pas vous prescrire de régime** — consultez un médecin ou nutritionniste pour un suivi personnalisé.\n\nQue souhaitez-vous travailler en priorité ?';
   }
 
   String _aboutNewCaledonia() {

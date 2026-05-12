@@ -1,7 +1,7 @@
 import 'dart:math';
 
 /// Service centralisé de messages motivationnels et félicitations
-/// Adapté au contexte culturel Pacifique
+/// Adapté à tous les territoires (France, DOM-TOM, Pacifique...)
 class MotivationService {
   static final _random = Random();
 
@@ -56,7 +56,7 @@ class MotivationService {
     final name = prenom.isNotEmpty ? prenom : 'vous';
     final msgs = [
       '🎉 $name, votre programme personnalisé est prêt ! Il a été 100% personnalisé selon votre profil unique.',
-      '✨ Bilan généré pour vous, $name ! Chaque recommandation a été adaptée au contexte insulaire du Pacifique.',
+      '✨ Bilan généré pour vous, $name ! Chaque recommandation a été personnalisée pour votre profil.',
       '🌟 Votre bilan personnalisé est arrivé, $name ! Découvrez vos recommandations exclusives.',
     ];
     return msgs[_random.nextInt(msgs.length)];
@@ -77,7 +77,7 @@ class MotivationService {
       return '⭐ $exerciseName terminé ! 5 séances complétées — vous faites partie de nos utilisateurs les plus assidus !';
     }
     if (totalSessions % 10 == 0) {
-      return '🏆 Incroyable ! $totalSessions séances au total ! Vous êtes un champion de la santé Pacifique !';
+      return '🏆 Incroyable ! $totalSessions séances au total ! Vous êtes un véritable champion de la santé !';
     }
     final msgs = [
       '💪 $exerciseName terminé ! Bravo, chaque séance renforce votre corps et votre bien-être !',
@@ -95,10 +95,10 @@ class MotivationService {
       case 3: return '🔥 3 séances ! Vous commencez à créer une habitude. Continuez !';
       case 5: return '⭐ 5 séances ! Vous faites partie des plus réguliers. Bravo !';
       case 7: return '🎯 7 séances ! Une semaine de défi relevé. Vous êtes fantastique !';
-      case 10: return '🏅 10 séances ! Médaille de bronze du champion de la santé Pacifique !';
+      case 10: return '🏅 10 séances ! Vous atteignez le niveau champion de la santé. Bravo !';
       case 20: return '🥈 20 séances ! Médaille d\'argent — vous êtes une vraie source d\'inspiration !';
       case 30: return '🥇 30 séances ! Médaille d\'or ! Vous êtes un véritable athlète de la santé !';
-      case 50: return '🏆 50 séances ! Légende de la santé Pacifique ! Vous êtes exceptionnel(le) !';
+      case 50: return '🏆 50 séances ! Légende de la santé ! Vous êtes exceptionnel(le) !';
       default: return '';
     }
   }
@@ -157,7 +157,7 @@ class MotivationService {
       return '⭐ 5 séances ! Vous faites partie des utilisateurs les plus réguliers !';
     }
     if (sessions >= 10) {
-      return '🏆 $sessions séances réalisées ! Vous êtes un champion de la santé Pacifique !';
+      return '🏆 $sessions séances réalisées ! Vous êtes un véritable champion de la santé !';
     }
     if (adherence >= 80) {
       return '🌟 ${adherence.toStringAsFixed(0)}% d\'adhérence cette semaine — Performance exceptionnelle, $prenom !';
@@ -172,17 +172,37 @@ class MotivationService {
   }
 
   // ══════════════════════════════════════════════════════
-  //  MESSAGES PACIFIQUE (culturellement adaptés)
+  //  MESSAGES D'ENCOURAGEMENT (adaptés à tous les territoires)
   // ══════════════════════════════════════════════════════
 
+  static List<String> universalEncouragement() {
+    return [
+      '🌟 Prendre soin de sa santé, c\'est prendre soin de sa famille.',
+      '💙 Votre force intérieure est immense. Continuez !',
+      '🌿 Chaque séance est un investissement pour votre futur.',
+      '🌸 Votre engagement pour la santé inspire votre entourage.',
+      '💪 Ia orana ! Maeva ! Chaque effort vous rapproche de vos objectifs.',
+    ];
+  }
+
+  /// Messages Pacifique (gardés pour compatibilité)
   static List<String> pacificEncouragement() {
     return [
       '🌺 Ia orana ! Prendre soin de sa santé, c\'est prendre soin de sa famille.',
-      '🌊 Comme l\'océan Pacifique, votre force est immense. Continuez !',
+      '🌊 Comme l\'océan, votre force est immense. Continuez !',
       '🌴 Dans nos îles, la santé est un trésor collectif. Vous montrez l\'exemple !',
-      '🐚 Chaque séance est un pas vers une vie plus épanouie dans notre beau Pacifique.',
+      '🐚 Chaque séance est un pas vers une vie plus épanouie.',
       '🌺 Maeva ! Votre engagement pour la santé inspire votre entourage.',
     ];
+  }
+
+  static String randomEncouragementMsg({String territoire = ''}) {
+    final isPacifique = territoire.toLowerCase().contains('calédonie') ||
+        territoire.toLowerCase().contains('polynésie') ||
+        territoire.toLowerCase().contains('wallis') ||
+        territoire.toLowerCase().contains('pacifique');
+    final msgs = isPacifique ? pacificEncouragement() : universalEncouragement();
+    return msgs[_random.nextInt(msgs.length)];
   }
 
   static String randomPacificMsg() {

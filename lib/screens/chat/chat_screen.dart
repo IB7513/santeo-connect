@@ -60,7 +60,7 @@ class _ChatScreenState extends State<ChatScreen>
     // Afficher le message de bienvenue immédiatement
     _messages.add(_ChatMessage(
       text: '🌺 Ia orana !\n\n'
-          'Je suis **SANTEO IA**, votre assistant santé personnalisé pour le Pacifique.\n\n'
+          'Je suis **SANTEO IA**, votre assistant santé personnalisé.\n\n'
           'Je peux vous aider sur :\n'
           '• 🏋️ Exercices & mouvements\n'
           '• 🩺 Conseils santé & douleurs\n'
@@ -81,7 +81,7 @@ class _ChatScreenState extends State<ChatScreen>
         final prenom = rawPrenom.isNotEmpty
             ? rawPrenom[0].toUpperCase() + rawPrenom.substring(1)
             : rawPrenom;
-        final territoire = provider.userProfile?.localisation ?? 'le Pacifique';
+        final territoire = provider.userProfile?.localisation ?? 'votre territoire';
         if (prenom.isNotEmpty) {
           _messages[0] = _ChatMessage(
             text: '🌺 Ia orana, **$prenom** !\n\n'
@@ -256,7 +256,7 @@ class _ChatHeader extends StatelessWidget {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      'En ligne · Assistant santé Pacifique',
+                      'En ligne · Assistant santé SANTEO',
                       style: GoogleFonts.roboto(
                         color: Colors.white.withValues(alpha: 0.85),
                         fontSize: 11,

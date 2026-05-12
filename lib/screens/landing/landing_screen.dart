@@ -163,7 +163,7 @@ class LandingScreen extends StatelessWidget {
                             color: AppTheme.divider,
                           ),
                           _StatChip(
-                            value: '5 min',
+                            value: '2 min',
                             label: 'Pour démarrer\nvotre programme',
                           ),
                           Container(

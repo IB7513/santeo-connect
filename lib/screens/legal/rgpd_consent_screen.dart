@@ -687,7 +687,7 @@ DPO : dpo@santeoconnect.nc
 2. DONNÉES COLLECTÉES
 
 2.1 Données de profil bien-être (obligatoires)
-• Prénom, âge, localisation (territoire du Pacifique)
+• Prénom, âge, localisation (territoire / région)
 • Zone de bien-être (dos, hanches, épaules, etc.)
 • Niveau d'activité et objectifs bien-être
 • Historique des séances et exercices réalisés
@@ -760,7 +760,7 @@ CONDITIONS GÉNÉRALES D'UTILISATION — SANTEO Connect
 Dernière mise à jour : Juin 2025
 
 1. OBJET
-SANTEO Connect est une application de bien-être et de prévention destinée aux habitants des territoires du Pacifique (Nouvelle-Calédonie, Polynésie française, Wallis-et-Futuna et îles environnantes).
+SANTEO Connect est une application de bien-être et de prévention destinée à tous les utilisateurs (France, DOM-TOM, Nouvelle-Calédonie, Polynésie française, Wallis-et-Futuna et autres territoires).
 
 2. ACCEPTATION DES CGU
 L'utilisation de SANTEO Connect implique l'acceptation pleine et entière des présentes CGU. Si vous n'acceptez pas ces conditions, vous ne pouvez pas utiliser l'application.
@@ -818,6 +818,6 @@ Les présentes CGU sont soumises au droit français. Tout litige relève de la c
 
 11. CONTACT
 contact@santeoconnect.nc
-SANTEO Connect — Pacifique Sud
+SANTEO Connect
 ''';
 }

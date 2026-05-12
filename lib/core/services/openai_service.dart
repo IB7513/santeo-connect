@@ -28,11 +28,35 @@ class OpenAIService {
     required String frequenceSemaine,
     required List<String> preferencesExercices,
   }) async {
-    final systemPrompt = '''Tu es un kinésithérapeute expert spécialisé dans la santé fonctionnelle des territoires insulaires du Pacifique. Tu dois générer un bilan personnalisé en français adapté au contexte culturel et géographique. 
+    final bool isPacifique = localisation.toLowerCase().contains('calédonie') ||
+        localisation.toLowerCase().contains('polynésie') ||
+        localisation.toLowerCase().contains('wallis') ||
+        localisation.toLowerCase().contains('pacifique') ||
+        localisation.toLowerCase().contains('vanuatu') ||
+        localisation.toLowerCase().contains('fidji');
+
+    final contexteTerritoire = isPacifique
+        ? '''Contexte: L'utilisateur vit dans un territoire insulaire du Pacifique. Adapte recommandations selon:
+- Climat tropical (chaleur, humidité)
+- Accès limité infrastructures sportives
+- Culture insulaire Pacifique (rythme de vie, activités traditionnelles)
+- Contraintes déplacements entre îles
+- Pas de matériel fitness spécialisé disponible
+
+Suggère exercices faisables à domicile sans équipement, adaptés aux conditions climatiques.'''
+        : '''Contexte: L'utilisateur vit en $localisation. Adapte recommandations selon:
+- Accès possible à des salles de sport ou espaces extérieurs
+- Climat tempéré ou continental (précautions été / hiver)
+- Mode de vie occidental (travail assis, stress, sédentarité bureau)
+- Matériel de base possiblement disponible (tapis, bandes élastiques)
+
+Suggère exercices faisables à domicile ou en extérieur, adaptés au mode de vie français.''';
+
+    final systemPrompt = '''Tu es un kinésithérapeute expert spécialisé dans la santé fonctionnelle. Tu dois générer un bilan personnalisé en français adapté au contexte culturel et géographique de l'utilisateur. 
 Format: 
 1. Analyse profil fonctionnel (2-3 phrases)
 2. Recommandations personnalisées (3-4 points)
-3. Programme exercices suggéré (5-7 exercices adaptés au contexte insulaire)
+3. Programme exercices suggéré (5-7 exercices adaptés au contexte local)
 
 Ton professionnel, rassurant, culturellement sensible. IMPORTANT: Préciser "Approche de prévention fonctionnelle complémentaire aux parcours de soins."''';
 
@@ -47,14 +71,7 @@ Traitements: $traitements.
 Préférences: $dureeSeance min, ${frequenceSemaine}x/semaine, Types exercices: ${preferencesExercices.join(', ')}.
 Contexte territorial: $localisation.
 
-Contexte: L'utilisateur vit en territoire du Pacifique. Adapte recommandations selon:
-- Climat tropical (chaleur, humidité)
-- Accès limité infrastructures sportives
-- Culture insulaire Pacifique (rythme de vie, activités traditionnelles)
-- Contraintes déplacements entre îles
-- Pas de matériel fitness spécialisé disponible
-
-Suggère exercices faisables à domicile sans équipement, adaptés aux conditions climatiques.''';
+$contexteTerritoire''';
 
     return await _callOpenAI(systemPrompt, userPrompt);
   }
@@ -70,7 +87,11 @@ Suggère exercices faisables à domicile sans équipement, adaptés aux conditio
     required List<String> preferences,
     required List<String> problemes,
   }) async {
-    final systemPrompt = '''Génère un programme d'exercices de 7 jours adapté aux contraintes des territoires insulaires (pas de matériel spécialisé, exercices faisables chez soi, chaleur/humidité Pacifique). 
+    final bool isPacifique2 = localisation.toLowerCase().contains('calédonie') ||
+        localisation.toLowerCase().contains('polynésie') ||
+        localisation.toLowerCase().contains('wallis') ||
+        localisation.toLowerCase().contains('pacifique');
+    final systemPrompt = '''Génère un programme d'exercices de 7 jours adapté au territoire: $localisation. ${isPacifique2 ? 'Contexte insulaire (pas de matériel spécialisé, exercices faisables chez soi, chaleur/humidité).' : 'Exercices réalisables à domicile ou en extérieur, sans matériel spécifique.'} 
 Liste 5-7 exercices avec: nom, description courte, durée en minutes (chiffre seul), niveau difficulté (facile/moyen/difficile), zone ciblée, type (renforcement/etirement/mobilite/cardio).
 Format JSON uniquement, sans markdown, sans explication. Structure: {"exercises": [{"name": "...", "description": "...", "duration": 10, "difficulty": "facile", "targetZone": "...", "type": "etirement"}]}''';
 
@@ -78,7 +99,7 @@ Format JSON uniquement, sans markdown, sans explication. Structure: {"exercises"
 Durée préférée: $dureeSeance.
 Préférences: ${preferences.join(', ')}.
 Problèmes de santé: ${problemes.join(', ')}.
-Génère un programme adapté sans matériel, en climat tropical.''';
+Génère un programme adapté sans matériel, tenant compte du contexte local.''';
 
     return await _callOpenAI(systemPrompt, userPrompt, maxTokens: 1500);
   }

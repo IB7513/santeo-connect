@@ -1038,7 +1038,7 @@ class _DemandeConsultationTabState extends State<_DemandeConsultationTab> {
             ),
             const SizedBox(height: 12),
             Text(
-              'Un kiné de notre réseau Pacifique vous répondra dans les 24 heures.\n\nVous recevrez une notification dès qu\'il est disponible.',
+              'Un kiné de notre réseau vous répondra dans les 24 heures.\n\nVous recevrez une notification dès qu\'il est disponible.',
               textAlign: TextAlign.center,
               style: GoogleFonts.roboto(
                   fontSize: 14,

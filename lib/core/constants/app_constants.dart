@@ -20,16 +20,44 @@ class AppConstants {
 
   // Territories
   static const List<String> territories = [
+    // ── France ────────────────────────────────────────────
+    'France',
+    'France métropolitaine',
+    // ── DOM-TOM ───────────────────────────────────────────
+    'Réunion',
+    'Martinique',
+    'Guadeloupe',
+    'Guyane',
+    'Mayotte',
+    // ── Pacifique français ────────────────────────────────
     'Nouvelle-Calédonie',
     'Polynésie française',
     'Wallis-et-Futuna',
+    // ── Europe ────────────────────────────────────────────
+    'Belgique',
+    'Suisse',
+    'Luxembourg',
+    'Espagne',
+    'Italie',
+    'Portugal',
+    'Allemagne',
+    'Royaume-Uni',
+    // ── Afrique du Nord & Subsaharienne ───────────────────
+    'Canada',
+    'Maroc',
+    'Tunisie',
+    'Algérie',
+    'Sénégal',
+    'Côte d\'Ivoire',
+    // ── Pacifique (autres) ────────────────────────────────
     'Vanuatu',
     'Fidji',
     'Samoa',
     'Tonga',
     'Îles Cook',
     'Kiribati',
-    'Autre territoire insulaire',
+    // ── Autre ────────────────────────────────────────────
+    'Autre pays',
   ];
 
   // Health Goals

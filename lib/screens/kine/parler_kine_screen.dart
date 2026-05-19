@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/app_providers.dart';
 
@@ -171,8 +172,8 @@ class _KinesListTab extends StatelessWidget {
       experience: '8 ans',
       avatarColor: Color(0xFF26A69A),
       langues: ['Français'],
-      tarif: '4 000 XPF / consultation',
       note: 4.8,
+      calendlyUrl: null,
     ),
     _KineData(
       nom: 'Déborah',
@@ -182,8 +183,8 @@ class _KinesListTab extends StatelessWidget {
       experience: '12 ans',
       avatarColor: Color(0xFFEC407A),
       langues: ['Français', 'Tahitien'],
-      tarif: '3 500 XPF / consultation',
       note: 4.9,
+      calendlyUrl: null,
     ),
     _KineData(
       nom: 'Maeva',
@@ -193,8 +194,8 @@ class _KinesListTab extends StatelessWidget {
       experience: '6 ans',
       avatarColor: Color(0xFF7E57C2),
       langues: ['Français', 'Anglais', 'Tahitien'],
-      tarif: '3 200 XPF / consultation',
       note: 4.7,
+      calendlyUrl: null,
     ),
     _KineData(
       nom: 'Solenne',
@@ -204,8 +205,8 @@ class _KinesListTab extends StatelessWidget {
       experience: '+20 ans',
       avatarColor: Color(0xFF42A5F5),
       langues: ['Français', 'Kanak'],
-      tarif: '3 800 XPF / consultation',
       note: 5.0,
+      calendlyUrl: null,
     ),
   ];
 
@@ -505,8 +506,6 @@ class _KineProfileSheet extends StatelessWidget {
                 _sectionTitle('Informations'),
                 _infoRow(Icons.location_on, 'Localisation', kine.localisation),
                 _infoRow(Icons.work_outline, 'Expérience', kine.experience),
-                _infoRow(
-                    Icons.attach_money, 'Tarif', kine.tarif),
                 _infoRow(Icons.translate, 'Langues', kine.langues.join(', ')),
                 const SizedBox(height: 16),
                 _sectionTitle('Disponibilité'),
@@ -546,27 +545,31 @@ class _KineProfileSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 // Boutons d'action
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.video_call),
-                    label: const Text('Réserver une séance kiné'),
-                    onPressed: kine.disponible
-                        ? () {
-                            Navigator.pop(context);
-                            _showReservationDialog(context);
-                          }
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
+                // Bouton Calendly — visible uniquement si lien renseigné
+                if (kine.calendlyUrl != null && kine.calendlyUrl!.isNotEmpty) ...[  
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.calendar_month),
+                      label: const Text('Prendre rendez-vous'),
+                      onPressed: () async {
+                        final uri = Uri.parse(kine.calendlyUrl!);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
+                ],
                 SizedBox(
                   width: double.infinity,
                   height: 48,
@@ -1200,8 +1203,9 @@ class _KineData {
   final String experience;
   final Color avatarColor;
   final List<String> langues;
-  final String tarif;
   final double note;
+  /// Lien Calendly du kiné — null si non renseigné (bouton masqué)
+  final String? calendlyUrl;
 
   const _KineData({
     required this.nom,
@@ -1211,7 +1215,7 @@ class _KineData {
     required this.experience,
     required this.avatarColor,
     required this.langues,
-    required this.tarif,
     required this.note,
+    this.calendlyUrl,
   });
 }

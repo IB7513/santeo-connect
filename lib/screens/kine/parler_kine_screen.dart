@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/app_theme.dart';
 import '../../providers/app_providers.dart';
+import 'kine_planning_screen.dart';
+import 'rdv_booking_sheet.dart';
 
 // ═══════════════════════════════════════════════════
 //  ÉCRAN PARLER À UN KINÉ
@@ -22,7 +24,7 @@ class _ParlerKineScreenState extends State<ParlerKineScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -57,6 +59,7 @@ class _ParlerKineScreenState extends State<ParlerKineScreen>
                         fontSize: 12, fontWeight: FontWeight.w600),
                     tabs: const [
                       Tab(text: 'Nos Kinés'),
+                      Tab(text: 'Planning'),
                       Tab(text: 'Demande'),
                       Tab(text: 'Messages'),
                     ],
@@ -68,6 +71,7 @@ class _ParlerKineScreenState extends State<ParlerKineScreen>
                     controller: _tabController,
                     children: [
                       _KinesListTab(),
+                      _PlanningAdminTab(),
                       _DemandeConsultationTab(provider: provider),
                       _MessagesTab(provider: provider),
                     ],
@@ -545,14 +549,52 @@ class _KineProfileSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 // Boutons d'action
-                // Bouton Calendly — visible uniquement si lien renseigné
+                // ── Bouton RDV intégré ──────────────────────────────
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.event_available),
+                    label: const Text('Prendre rendez-vous'),
+                    onPressed: () {
+                      // Trouver les infos du kiné (email)
+                      final info = kineInfoList.firstWhere(
+                        (k) => k.nom == kine.nom,
+                        orElse: () => KineInfo(
+                          id: kine.nom.toLowerCase(),
+                          nom: kine.nom,
+                          email: '${kine.nom.toLowerCase()}@santeoconnect.com',
+                          avatarColor: kine.avatarColor,
+                        ),
+                      );
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (_) => RdvBookingSheet(
+                          kineId: info.id,
+                          kineName: kine.nom,
+                          kineEmail: info.email,
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Bouton Calendly (si renseigné, affiché en supplément)
                 if (kine.calendlyUrl != null && kine.calendlyUrl!.isNotEmpty) ...[  
                   SizedBox(
                     width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.calendar_month),
-                      label: const Text('Prendre rendez-vous'),
+                    height: 44,
+                    child: OutlinedButton.icon(
+                      icon: const Icon(Icons.open_in_new, size: 16),
+                      label: const Text('Ouvrir Calendly'),
                       onPressed: () async {
                         final uri = Uri.parse(kine.calendlyUrl!);
                         if (await canLaunchUrl(uri)) {
@@ -560,9 +602,9 @@ class _KineProfileSheet extends StatelessWidget {
                               mode: LaunchMode.externalApplication);
                         }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primary,
-                        foregroundColor: Colors.white,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppTheme.primary,
+                        side: const BorderSide(color: AppTheme.primary),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14)),
                       ),
@@ -633,32 +675,7 @@ class _KineProfileSheet extends StatelessWidget {
         ),
       );
 
-  void _showReservationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Réservation confirmée ✅',
-            style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
-        content: Text(
-          'Votre demande de séance avec ${kine.nom} a été envoyée.\n\nVous recevrez une confirmation sous 24h.',
-          style: GoogleFonts.roboto(height: 1.5),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-            ),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  // _showReservationDialog supprimé — remplacé par RdvBookingSheet
 
   void _showMessageDialog(BuildContext context, String kineName) {
     final ctrl = TextEditingController();
@@ -711,7 +728,138 @@ class _KineProfileSheet extends StatelessWidget {
 }
 
 // ═══════════════════════════════════════════════════
-//  ONGLET 2 — DEMANDE DE CONSULTATION
+//  ONGLET PLANNING — Vue admin SANTEO (lecture seule)
+// ═══════════════════════════════════════════════════
+class _PlanningAdminTab extends StatelessWidget {
+  const _PlanningAdminTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          // Carte d'info
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFE0F7FA), Color(0xFFB2EBF2)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_view_week,
+                    color: Color(0xFF00838F), size: 28),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Planning des kinés',
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          color: const Color(0xFF00363A),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Consultez et gérez les créneaux\nde toute l\'équipe SANTEO.',
+                        style: GoogleFonts.roboto(
+                          fontSize: 12,
+                          color: const Color(0xFF006064),
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
+          // Bouton vue admin
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: ElevatedButton.icon(
+              icon: const Icon(Icons.admin_panel_settings),
+              label: const Text('Vue admin — Tous les plannings'),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const KinePlanningScreen(isAdmin: true),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0097A7),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Accès rapide par kiné
+          Text(
+            'Accès rapide par kiné',
+            style: GoogleFonts.montserrat(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...kineInfoList.map(
+            (kine) => Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              child: ListTile(
+                tileColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                leading: CircleAvatar(
+                  backgroundColor: kine.avatarColor,
+                  child: Text(
+                    kine.nom[0],
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w700),
+                  ),
+                ),
+                title: Text(
+                  kine.nom,
+                  style: GoogleFonts.roboto(fontWeight: FontWeight.w600),
+                ),
+                subtitle: Text(
+                  'Voir planning',
+                  style: GoogleFonts.roboto(
+                      fontSize: 12, color: AppTheme.textSecondary),
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios,
+                    size: 14, color: AppTheme.textSecondary),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => KinePlanningScreen(
+                      kineId: kine.id,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  ONGLET 3 — DEMANDE DE CONSULTATION
 // ═══════════════════════════════════════════════════
 class _DemandeConsultationTab extends StatefulWidget {
   final AppProvider provider;
@@ -830,7 +978,7 @@ class _DemandeConsultationTabState extends State<_DemandeConsultationTab> {
             // Zone douloureuse
             _sectionTitle('Zone douloureuse principale'),
             DropdownButtonFormField<String>(
-              value: _zoneDouleureuse,
+              initialValue: _zoneDouleureuse,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12)),

@@ -629,6 +629,7 @@ class _BookingsTab extends StatelessWidget {
           itemBuilder: (context, i) => _BookingTile(
             booking: bookings[i],
             showKineName: isAdmin,
+            hidePatientMail: isAdmin, // Admin ne voit pas les emails patients
           ),
         );
       },
@@ -643,8 +644,15 @@ class _BookingsTab extends StatelessWidget {
 class _BookingTile extends StatelessWidget {
   final KineBooking booking;
   final bool showKineName;
+  /// hidePatientMail : true en vue admin SANTEO
+  /// (supervision sans accès aux données personnelles)
+  final bool hidePatientMail;
 
-  const _BookingTile({required this.booking, this.showKineName = false});
+  const _BookingTile({
+    required this.booking,
+    this.showKineName = false,
+    this.hidePatientMail = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -706,7 +714,9 @@ class _BookingTile extends StatelessWidget {
             const SizedBox(height: 10),
             // Patient info
             _infoRow(Icons.person_outline, booking.patientNom),
-            _infoRow(Icons.email_outlined, booking.patientMail),
+            // Email patient : visible par le kiné, masqué pour l'admin
+            if (!hidePatientMail)
+              _infoRow(Icons.email_outlined, booking.patientMail),
             if (showKineName)
               _infoRow(Icons.medical_services_outlined,
                   'Kiné : ${booking.kineName}'),

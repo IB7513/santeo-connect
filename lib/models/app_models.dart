@@ -136,7 +136,8 @@ class UserProfile {
   final String prenom;
   final String age;
   final String genre;
-  final String localisation;
+  final String localisation;  // territoire / région (dropdown)
+  final String ville;          // ville libre saisie par l'utilisateur
   final String objectifSante;
   final bool douleursActuelles;
   final List<String> zonesDouleur;
@@ -156,6 +157,7 @@ class UserProfile {
     required this.age,
     required this.genre,
     required this.localisation,
+    this.ville = '',
     required this.objectifSante,
     required this.douleursActuelles,
     required this.zonesDouleur,
@@ -177,6 +179,7 @@ class UserProfile {
       age: map['age']?.toString() ?? '',
       genre: map['genre']?.toString() ?? '',
       localisation: map['localisation']?.toString() ?? '',
+      ville: map['ville']?.toString() ?? '',
       objectifSante: map['objectifSante']?.toString() ?? '',
       douleursActuelles: map['douleursActuelles'] == true,
       zonesDouleur: List<String>.from(map['zonesDouleur'] as List? ?? []),
@@ -198,6 +201,7 @@ class UserProfile {
     'age': age,
     'genre': genre,
     'localisation': localisation,
+    'ville': ville,
     'objectifSante': objectifSante,
     'douleursActuelles': douleursActuelles,
     'zonesDouleur': zonesDouleur,

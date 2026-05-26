@@ -295,6 +295,21 @@ class RdvService {
     }
 
     // Envoi réel via EmailJS REST API
+    // Template EmailJS recommandé :
+    // Objet  : "Nouvelle réservation SANTEO — {{patient_nom}}"
+    // Corps  : utiliser les variables ci-dessous dans votre template EmailJS
+    //
+    //   Bonjour {{kine_nom}},
+    //   Un patient a réservé un créneau via SANTEO Connect.
+    //
+    //   👤 Patient : {{patient_nom}}
+    //   📧 Email   : {{patient_mail}}
+    //   📅 Date    : {{date_rdv}}
+    //   💬 Motif   : {{motif}}
+    //
+    //   Connectez-vous à SANTEO Connect pour confirmer ou modifier ce RDV.
+    //   ─ L'équipe SANTEO
+
     try {
       final response = await http
           .post(
@@ -305,12 +320,14 @@ class RdvService {
               'template_id': _emailjsTemplateId,
               'user_id': _emailjsPublicKey,
               'template_params': {
-                'to_email': kineEmail,
+                'to_email': kineEmail,          // destinataire = kiné
+                'to_name': kineNom,             // nom du kiné
                 'kine_nom': kineNom,
                 'patient_nom': patientNom,
                 'patient_mail': patientMail,
                 'date_rdv': _formatDate(date),
                 'motif': motif,
+                'reply_to': patientMail,        // répondre directement au patient
               },
             }),
           )

@@ -28,25 +28,25 @@ const List<KineInfo> kineInfoList = [
   KineInfo(
     id: 'axel',
     nom: 'Axel',
-    email: 'axel@santeoconnect.com',   // ← remplacer par l'email réel
+    email: 'axel@santeo-connect.com',
     avatarColor: Color(0xFF26A69A),
   ),
   KineInfo(
     id: 'deborah',
     nom: 'Déborah',
-    email: 'deborah@santeoconnect.com', // ← remplacer par l'email réel
+    email: 'deborah@santeoconnect.com', // ← à renseigner quand disponible
     avatarColor: Color(0xFFEC407A),
   ),
   KineInfo(
     id: 'maeva',
     nom: 'Maeva',
-    email: 'maeva@santeoconnect.com',   // ← remplacer par l'email réel
+    email: 'maeva@santeoconnect.com',   // ← à renseigner quand disponible
     avatarColor: Color(0xFF7E57C2),
   ),
   KineInfo(
     id: 'solenne',
     nom: 'Solenne',
-    email: 'solenne@santeoconnect.com', // ← remplacer par l'email réel
+    email: 'solenne@santeo-connect.com',
     avatarColor: Color(0xFF42A5F5),
   ),
 ];

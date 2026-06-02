@@ -136,11 +136,9 @@ class RdvService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // ══ Configuration EmailJS ════════════════════════════════════════════════
-  // Créez un compte sur https://www.emailjs.com (gratuit, 200 emails/mois)
-  // Puis remplacez ces 3 valeurs par les vôtres :
-  static const _emailjsServiceId  = 'YOUR_SERVICE_ID';   // ← à remplacer
-  static const _emailjsTemplateId = 'YOUR_TEMPLATE_ID';  // ← à remplacer
-  static const _emailjsPublicKey  = 'YOUR_PUBLIC_KEY';   // ← à remplacer
+  static const _emailjsServiceId  = 'service_k2izqyi';
+  static const _emailjsTemplateId = 'mezfzp9';
+  static const _emailjsPublicKey  = 'GIVe6CBVir_GaDqQL';
   // ════════════════════════════════════════════════════════════════════════
 
   // ── CRÉNEAUX ──────────────────────────────────────────────────────────

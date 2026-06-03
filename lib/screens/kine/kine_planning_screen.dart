@@ -34,13 +34,13 @@ const List<KineInfo> kineInfoList = [
   KineInfo(
     id: 'deborah',
     nom: 'Déborah',
-    email: 'deborah@santeoconnect.com', // ← à renseigner quand disponible
+    email: 'deborah@santeo-connect.com',
     avatarColor: Color(0xFFEC407A),
   ),
   KineInfo(
     id: 'maeva',
     nom: 'Maeva',
-    email: 'maeva@santeoconnect.com',   // ← à renseigner quand disponible
+    email: 'maeva@santeo-connect.com',
     avatarColor: Color(0xFF7E57C2),
   ),
   KineInfo(

@@ -555,7 +555,7 @@ class _KineProfileSheet extends StatelessWidget {
                         orElse: () => KineInfo(
                           id: kine.nom.toLowerCase(),
                           nom: kine.nom,
-                          email: '${kine.nom.toLowerCase()}@santeoconnect.com',
+                          email: '${kine.nom.toLowerCase()}@santeo-connect.com',
                           avatarColor: kine.avatarColor,
                         ),
                       );

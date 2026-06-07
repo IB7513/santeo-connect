@@ -31,15 +31,7 @@ class SanteoLogo extends StatelessWidget {
               letterSpacing: 1.2,
             ),
           ),
-          Text(
-            'EVERYWHERE',
-            style: GoogleFonts.montserrat(
-              fontSize: size * 0.13,
-              fontWeight: FontWeight.w500,
-              color: AppTheme.textSecondary,
-              letterSpacing: 3,
-            ),
-          ),
+
         ],
       ],
     );

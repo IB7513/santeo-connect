@@ -26,31 +26,37 @@ class LandingScreen extends StatelessWidget {
                   ),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 40),
+                  padding: const EdgeInsets.fromLTRB(24, 44, 24, 40),
                   child: Column(
                     children: [
-                      // Logo SANTEO officiel — transparent, direct sur le dégradé
-                      Image.asset(
-                        'assets/logo/santeo_logo.png',
-                        width: 200,
-                        height: 200,
+                      // Logo SANTEO — cercle blanc + couleurs originales sur fond teal
+                      Image.memory(
+                        SanteoLogoData.bytes,
+                        width: 220,
+                        height: 220,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => Image.memory(
-                          SanteoLogoData.bytes,
-                          width: 200,
-                          height: 200,
-                          fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: 28),
+                      Text(
+                        'Votre kiné en poche,',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 26,
+                          color: Colors.white,
+                          height: 1.3,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.3,
                         ),
                       ),
-                      const SizedBox(height: 20),
                       Text(
-                        'Votre kiné en poche,\nvotre santé en main.',
+                        'votre santé en main.',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.roboto(
-                          fontSize: 18,
-                          color: Colors.white,
-                          height: 1.5,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 26,
+                          color: Colors.white.withValues(alpha: 0.9),
+                          height: 1.3,
                           fontWeight: FontWeight.w300,
+                          letterSpacing: -0.3,
                         ),
                       ),
                       const SizedBox(height: 28),

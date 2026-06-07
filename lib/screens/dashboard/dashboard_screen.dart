@@ -1329,7 +1329,7 @@ class _QuickActionsRow extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.medical_services,
+                    child: const Icon(Icons.people_alt_outlined,
                         color: Colors.white, size: 22),
                   ),
                   const SizedBox(height: 12),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_theme.dart';
+import '../widgets/premium_gate.dart';
 import 'dashboard/dashboard_screen.dart';
 import 'exercises/exercises_screen.dart';
 import 'progress/progress_screen.dart';
@@ -21,8 +22,18 @@ class _HomeNavigatorState extends State<HomeNavigator> {
   final List<Widget> _screens = const [
     DashboardScreen(),
     ExercisesScreen(),
-    AcademieScreen(),
-    ParlerKineScreen(),
+    PremiumGate(
+      featureName: 'Académie SANI',
+      featureDescription: 'Accédez aux 6 pathologies, conseils personnalisés et à l\'IA SANI avec l\'abonnement Premium.',
+      featureIcon: Icons.school_outlined,
+      child: AcademieScreen(),
+    ),
+    PremiumGate(
+      featureName: 'Parler à un kiné',
+      featureDescription: 'Consultez Axel, Déborah, Maeva ou Solenne en téléconsultation avec l\'abonnement Premium.',
+      featureIcon: Icons.people_alt_outlined,
+      child: ParlerKineScreen(),
+    ),
     ChatScreen(),
     ProgressScreen(),
     ProfileScreen(),

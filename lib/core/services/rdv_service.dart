@@ -139,6 +139,8 @@ class RdvService {
   static const _emailjsServiceId  = 'service_k2izqyi';
   static const _emailjsTemplateId = 'mezfzp9';
   static const _emailjsPublicKey  = 'GIVe6CBVir_GaDqQL';
+  // Copie systématique de chaque RDV à la coordinatrice SANTEO
+  static const _copyEmail         = 'imen@santeo-connect.com';
   // ════════════════════════════════════════════════════════════════════════
 
   // ── CRÉNEAUX ──────────────────────────────────────────────────────────
@@ -229,15 +231,27 @@ class RdvService {
           ).toFirestore(),
         );
 
-    // 3. Envoyer email au kiné
-    await _sendBookingEmail(
-      kineNom: slot.kineName,
-      kineEmail: kineEmail,
-      patientNom: patientNom,
-      patientMail: patientMail,
-      date: slot.date,
-      motif: motif,
-    );
+    // 3. Envoyer email au kiné + copie coordinatrice SANTEO
+    await Future.wait([
+      _sendBookingEmail(
+        toEmail: kineEmail,
+        toName: slot.kineName,
+        kineNom: slot.kineName,
+        patientNom: patientNom,
+        patientMail: patientMail,
+        date: slot.date,
+        motif: motif,
+      ),
+      _sendBookingEmail(
+        toEmail: _copyEmail,
+        toName: 'Imen — SANTEO',
+        kineNom: slot.kineName,
+        patientNom: patientNom,
+        patientMail: patientMail,
+        date: slot.date,
+        motif: motif,
+      ),
+    ]);
 
     return ref.id;
   }
@@ -271,8 +285,9 @@ class RdvService {
   // ── EMAIL EmailJS ──────────────────────────────────────────────────────
 
   Future<void> _sendBookingEmail({
+    required String toEmail,
+    required String toName,
     required String kineNom,
-    required String kineEmail,
     required String patientNom,
     required String patientMail,
     required DateTime date,
@@ -283,7 +298,8 @@ class RdvService {
       if (kDebugMode) {
         debugPrint(
           '📧 [EmailJS — mode démo] Nouvelle réservation\n'
-          '   Pour    : $kineNom ($kineEmail)\n'
+          '   Pour    : $toName ($toEmail)\n'
+          '   Kiné    : $kineNom\n'
           '   Patient : $patientNom ($patientMail)\n'
           '   Date    : ${_formatDate(date)}\n'
           '   Motif   : $motif',
@@ -293,20 +309,15 @@ class RdvService {
     }
 
     // Envoi réel via EmailJS REST API
-    // Template EmailJS recommandé :
-    // Objet  : "Nouvelle réservation SANTEO — {{patient_nom}}"
-    // Corps  : utiliser les variables ci-dessous dans votre template EmailJS
-    //
-    //   Bonjour {{kine_nom}},
-    //   Un patient a réservé un créneau via SANTEO Connect.
-    //
-    //   👤 Patient : {{patient_nom}}
-    //   📧 Email   : {{patient_mail}}
-    //   📅 Date    : {{date_rdv}}
-    //   💬 Motif   : {{motif}}
-    //
-    //   Connectez-vous à SANTEO Connect pour confirmer ou modifier ce RDV.
-    //   ─ L'équipe SANTEO
+    // Variables disponibles dans le template EmailJS :
+    //   {{to_email}}     — destinataire (kiné ou coordinatrice)
+    //   {{to_name}}      — nom destinataire
+    //   {{kine_nom}}     — nom du kiné concerné
+    //   {{patient_nom}}  — nom du patient
+    //   {{patient_mail}} — email du patient
+    //   {{date_rdv}}     — date formatée en français
+    //   {{motif}}        — motif de la séance
+    //   {{reply_to}}     — email du patient (pour répondre directement)
 
     try {
       final response = await http
@@ -318,26 +329,26 @@ class RdvService {
               'template_id': _emailjsTemplateId,
               'user_id': _emailjsPublicKey,
               'template_params': {
-                'to_email': kineEmail,          // destinataire = kiné
-                'to_name': kineNom,             // nom du kiné
-                'kine_nom': kineNom,
-                'patient_nom': patientNom,
+                'to_email':     toEmail,       // destinataire dynamique
+                'to_name':      toName,        // nom destinataire
+                'kine_nom':     kineNom,       // kiné concerné
+                'patient_nom':  patientNom,
                 'patient_mail': patientMail,
-                'date_rdv': _formatDate(date),
-                'motif': motif,
-                'reply_to': patientMail,        // répondre directement au patient
+                'date_rdv':     _formatDate(date),
+                'motif':        motif,
+                'reply_to':     patientMail,   // répondre directement au patient
               },
             }),
           )
           .timeout(const Duration(seconds: 10));
 
       if (kDebugMode) {
-        debugPrint('📧 EmailJS réponse : ${response.statusCode}');
+        debugPrint('📧 EmailJS → $toEmail : ${response.statusCode}');
       }
     } catch (e) {
       // Email non critique — on n'interrompt pas la réservation
       if (kDebugMode) {
-        debugPrint('⚠️ EmailJS erreur : $e');
+        debugPrint('⚠️ EmailJS erreur ($toEmail) : $e');
       }
     }
   }

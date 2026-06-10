@@ -8,6 +8,7 @@ import 'screens/auth/register_screen.dart';
 import 'screens/auth/demo_login_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home_navigator.dart';
+import 'screens/legal/rgpd_consent_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/storage_service.dart';
 
@@ -64,7 +65,33 @@ class _SplashRouterState extends State<_SplashRouter> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _route());
   }
 
-  void _route() {
+  Future<void> _route() async {
+    // ── 1. Vérification RGPD : priorité absolue ───────────────
+    final hasConsented = await RgpdConsentScreen.hasConsented();
+    if (!mounted) return;
+
+    if (!hasConsented) {
+      // Afficher l'écran RGPD en remplacement du splash
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => RgpdConsentScreen(
+            onAccepted: () {
+              // Après consentement → reprendre le routage normal
+              if (mounted) _routeAfterConsent();
+            },
+          ),
+        ),
+      );
+      return;
+    }
+
+    // ── 2. Consentement déjà donné → routage normal ───────────
+    _routeAfterConsent();
+  }
+
+  void _routeAfterConsent() {
+    if (!mounted) return;
     final provider = context.read<AppProvider>();
     if (provider.isLoggedIn) {
       if (provider.isOnboardingComplete) {

@@ -8,6 +8,7 @@ import '../../widgets/common/common_widgets.dart';
 import '../../widgets/premium_gate.dart';
 import '../landing/landing_screen.dart';
 import '../../core/services/storage_service.dart';
+import '../legal/rgpd_consent_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -288,7 +289,20 @@ class ProfileScreen extends StatelessWidget {
                           _ActionItem(
                             icon: Icons.privacy_tip_outlined,
                             label: 'Politique de confidentialité',
-                            onTap: () => _showPrivacyPolicy(context),
+                            onTap: () => _showLegalDoc(context, 'privacy'),
+                          ),
+                          const Divider(height: 1),
+                          _ActionItem(
+                            icon: Icons.gavel_outlined,
+                            label: 'Conditions générales d\'utilisation',
+                            onTap: () => _showLegalDoc(context, 'cgu'),
+                          ),
+                          const Divider(height: 1),
+                          _ActionItem(
+                            icon: Icons.tune_outlined,
+                            label: 'Gérer mes consentements',
+                            color: AppTheme.primary,
+                            onTap: () => _showConsentSettings(context),
                           ),
                           const Divider(height: 1),
                           _ActionItem(
@@ -405,35 +419,100 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showPrivacyPolicy(BuildContext context) {
-    showDialog(
+  void _showLegalDoc(BuildContext context, String type) {
+    final isPrivacy = type == 'privacy';
+    showModalBottomSheet(
       context: context,
-      builder: (_) => AlertDialog(
-        title: Text('Politique de confidentialité',
-            style:
-                GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
-        content: SingleChildScrollView(
-          child: Text(
-            'SANTEO Connect respecte votre vie privée.\n\n'
-            '🔒 Données collectées\n'
-            'Profil santé, historique séances, bilan IA\n\n'
-            '📱 Stockage\n'
-            'Uniquement local sur votre appareil. Rien n\'est envoyé sur internet.\n\n'
-            '🤖 IA Embarquée\n'
-            'Votre bilan est généré localement. Vos données de santé ne quittent jamais votre téléphone.\n\n'
-            '⚖️ Vos droits (RGPD)\n'
-            'Accès, rectification, suppression de vos données à tout moment.\n\n'
-            '📧 Contact DPO\n'
-            'dpo@santeoconnect.nc',
-            style: GoogleFonts.roboto(fontSize: 13, height: 1.6),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        maxChildSize: 0.95,
+        minChildSize: 0.5,
+        builder: (_, scroll) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              // Poignée
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 8, 0),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        isPrivacy
+                            ? Icons.privacy_tip_outlined
+                            : Icons.gavel_outlined,
+                        color: AppTheme.primary,
+                        size: 18,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        isPrivacy
+                            ? 'Politique de confidentialité'
+                            : 'Conditions Générales d\'Utilisation',
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scroll,
+                  padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+                  child: Text(
+                    isPrivacy
+                        ? PrivacyPolicyContent.text
+                        : CguContent.text,
+                    style: GoogleFonts.roboto(
+                      fontSize: 13,
+                      height: 1.65,
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Fermer')),
-        ],
       ),
+    );
+  }
+
+  void _showConsentSettings(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _ConsentSettingsSheet(),
     );
   }
 
@@ -606,6 +685,317 @@ class _ActionItem extends StatelessWidget {
                 color: AppTheme.textLight, size: 18),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  FEUILLE GESTION CONSENTEMENTS (accessible depuis profil)
+// ═══════════════════════════════════════════════════
+class _ConsentSettingsSheet extends StatefulWidget {
+  @override
+  State<_ConsentSettingsSheet> createState() => _ConsentSettingsSheetState();
+}
+
+class _ConsentSettingsSheetState extends State<_ConsentSettingsSheet> {
+  bool _analytics = false;
+  bool _personalization = true;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentConsents();
+  }
+
+  Future<void> _loadCurrentConsents() async {
+    final prefs = await RgpdConsentScreen.getPrefs();
+    if (mounted) {
+      setState(() {
+        _analytics = prefs['analytics'] as bool;
+        _personalization = prefs['personalization'] as bool;
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _saveAndClose() async {
+    await RgpdConsentScreen.saveConsent(
+      analytics: _analytics,
+      personalization: _personalization,
+    );
+    if (mounted) {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Préférences de confidentialité mises à jour',
+            style: GoogleFonts.roboto(fontSize: 13),
+          ),
+          backgroundColor: AppTheme.success,
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DraggableScrollableSheet(
+      initialChildSize: 0.75,
+      maxChildSize: 0.9,
+      minChildSize: 0.5,
+      builder: (_, scroll) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            // Poignée
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Titre
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.tune_outlined,
+                        color: AppTheme.primary, size: 18),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Gérer mes consentements',
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            // Contenu
+            if (_loading)
+              const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scroll,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Info obligatoire
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: AppTheme.primary.withValues(alpha: 0.2)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_outline,
+                                color: AppTheme.primary, size: 18),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'Le traitement fonctionnel est obligatoire pour utiliser SANTEO Connect.',
+                                style: GoogleFonts.roboto(
+                                  fontSize: 12,
+                                  color: AppTheme.primaryDark,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Consentement fonctionnel (verrouillé ON)
+                      _buildConsentRow(
+                        icon: Icons.lock_outline,
+                        iconColor: AppTheme.primary,
+                        title: 'Fonctionnement de l\'app',
+                        subtitle: 'Profil bien-être, programme, séances.',
+                        badge: 'Obligatoire',
+                        badgeColor: AppTheme.primary,
+                        value: true,
+                        onChanged: null, // verrouillé
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Personnalisation
+                      _buildConsentRow(
+                        icon: Icons.person_outline,
+                        iconColor: const Color(0xFF7E57C2),
+                        title: 'Personnalisation avancée',
+                        subtitle:
+                            'Adapter les exercices à votre profil et progrès.',
+                        badge: 'Recommandé',
+                        badgeColor: const Color(0xFF7E57C2),
+                        value: _personalization,
+                        onChanged: (v) =>
+                            setState(() => _personalization = v),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Analytics
+                      _buildConsentRow(
+                        icon: Icons.bar_chart_outlined,
+                        iconColor: const Color(0xFF42A5F5),
+                        title: 'Amélioration du service',
+                        subtitle:
+                            'Données anonymisées. Aucune donnée personnelle.',
+                        badge: 'Optionnel',
+                        badgeColor: const Color(0xFF42A5F5),
+                        value: _analytics,
+                        onChanged: (v) => setState(() => _analytics = v),
+                      ),
+
+                      const SizedBox(height: 28),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _saveAndClose,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primary,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            'Enregistrer mes préférences',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConsentRow({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required String subtitle,
+    required String badge,
+    required Color badgeColor,
+    required bool value,
+    required ValueChanged<bool>? onChanged,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: value ? iconColor.withValues(alpha: 0.35) : const Color(0xFFE0E0E0),
+          width: value ? 1.5 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SwitchListTile(
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+        secondary: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: iconColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: iconColor, size: 20),
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.textPrimary,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: badgeColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                badge,
+                style: GoogleFonts.roboto(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w700,
+                  color: badgeColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 3),
+          child: Text(
+            subtitle,
+            style: GoogleFonts.roboto(
+              fontSize: 11,
+              color: AppTheme.textSecondary,
+              height: 1.4,
+            ),
+          ),
+        ),
+        value: value,
+        onChanged: onChanged,
+        activeThumbColor: iconColor,
       ),
     );
   }

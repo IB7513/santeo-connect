@@ -42,10 +42,11 @@ class DefaultFirebaseOptions {
     storageBucket: 'santeo-connect.firebasestorage.app',
   );
 
-  // ── Configuration iOS (placeholder — non utilisé pour l'instant) ──────────
+  // ── Configuration iOS ─────────────────────────────────────────────────────
+  // GoogleService-Info.plist — SANTEO CONNECT iOS
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCKQOWYKC0cOZX-NzwN29oLKWCdG4Fx8pI',
-    appId: '1:449105964214:ios:placeholder',
+    apiKey: 'AIzaSyAQqh_sxOX06nrREkGJHWyKYmdsdW9ohgE',
+    appId: '1:449105964214:ios:f1db981600fb4c7e59ca17',
     messagingSenderId: '449105964214',
     projectId: 'santeo-connect',
     storageBucket: 'santeo-connect.firebasestorage.app',

@@ -77,16 +77,16 @@ const List<_Pathologie> _pathologies = [
     description: 'La sciatique est une douleur qui suit le trajet du nerf sciatique, du bas du dos jusqu\'au pied. Elle est souvent causée par une hernie discale.',
     symptomes: ['Douleur en éclair de la fesse au pied', 'Engourdissement dans la jambe', 'Fourmillements au pied', 'Faiblesse musculaire du membre'],
     conseils: ['Évitez les positions prolongées', 'Pratiquez la marche douce', 'Consultez si la douleur dure plus de 6 semaines', 'Évitez de soulever des charges lourdes'],
-    avatarMessage: 'Bonjour ! La sciatique peut être très douloureuse mais dans 80% des cas elle passe avec un traitement adapté. Les bons exercices peuvent soulager rapidement. Je vais vous montrer lesquels éviter et lesquels pratiquer ! ⚡',
+    avatarMessage: 'Bonjour ! La sciatique peut être très douloureuse mais dans 80% des cas elle s\'améliore avec un programme adapté. Les bons exercices peuvent soulager rapidement. Je vais vous montrer lesquels éviter et lesquels pratiquer ! ⚡',
   ),
   _Pathologie(
     id: 'hypertension',
     titre: 'Hypertension',
     icone: '❤️',
     couleur: Color(0xFFEC407A),
-    description: 'L\'hypertension artérielle est très fréquente en Polynésie et en Nouvelle-Calédonie. L\'activité physique régulière est l\'un des meilleurs traitements naturels.',
+    description: 'L\'hypertension artérielle est très fréquente en Polynésie et en Nouvelle-Calédonie. L\'activité physique régulière est l\'un des meilleurs moyens naturels de prendre soin de soi.',
     symptomes: ['Souvent silencieuse', 'Maux de tête', 'Vertiges', 'Bourdonnements d\'oreilles'],
-    conseils: ['Faites 30 min de marche par jour', 'Réduisez le sel dans votre alimentation', 'Évitez le stress', 'Prenez votre traitement régulièrement'],
+    conseils: ['Faites 30 min de marche par jour', 'Réduisez le sel dans votre alimentation', 'Évitez le stress', 'Suivez les recommandations de votre professionnel de santé'],
     avatarMessage: 'Bonjour ! L\'hypertension touche 1 adulte sur 3 au Pacifique. L\'exercice physique peut réduire votre tension de 5 à 8 mmHg — autant qu\'un médicament ! Je vais vous expliquer les exercices les plus adaptés. ❤️',
   ),
 ];
@@ -683,7 +683,7 @@ class _PathologieDetail extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Ces informations sont éducatives. Consultez toujours un professionnel de santé pour un diagnostic et traitement adaptés.',
+                              'Ces informations sont éducatives et de bien-être. Consultez toujours un professionnel de santé pour un accompagnement personnalisé.',
                               style: GoogleFonts.roboto(
                                 fontSize: 12,
                                 color: const Color(0xFFE65100),

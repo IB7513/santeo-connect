@@ -146,7 +146,7 @@ class DisclaimerBanner extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'SANTEO Connect propose une approche de prévention fonctionnelle complémentaire aux parcours de soins. Cette plateforme ne remplace pas un diagnostic médical. En cas de douleur persistante, consultez un professionnel de santé.',
+              'SANTEO Connect propose une approche de bien-être et de prévention. Cette plateforme ne remplace pas l\'avis d\'un professionnel de santé. En cas de douleur persistante, consultez un professionnel de santé.',
               style: GoogleFonts.roboto(
                 fontSize: 11,
                 color: const Color(0xFF795548),

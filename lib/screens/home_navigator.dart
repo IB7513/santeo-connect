@@ -30,7 +30,7 @@ class _HomeNavigatorState extends State<HomeNavigator> {
     ),
     PremiumGate(
       featureName: 'Parler à un kiné',
-      featureDescription: 'Consultez Axel, Déborah, Maeva ou Solenne en téléconsultation avec l\'abonnement Premium.',
+      featureDescription: 'Échangez avec Axel, Déborah, Maeva ou Solenne — nos kinés bien-être certifiés du Pacifique.',
       featureIcon: Icons.people_alt_outlined,
       child: ParlerKineScreen(),
     ),

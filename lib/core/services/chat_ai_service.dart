@@ -231,7 +231,7 @@ class ChatAIService {
   }
 
   String _urgenceDouleur() {
-    return '🚨 Douleur intense — Action immédiate !\n\n**Arrêtez tous les exercices maintenant.**\n\n✅ Ce que vous pouvez faire :\n• Reposez-vous dans une position confortable\n• Appliquez de la glace 15 minutes (jamais directement sur la peau)\n• Respirez calmement\n\n🏥 **Consultez un professionnel de santé dès que possible :**\nMédecin ou kinésithérapeute de votre territoire.\n\n⚠️ SANTEO Connect est un outil de prévention. Une douleur intense nécessite une consultation médicale. Cette application ne remplace pas un diagnostic professionnel.';
+    return '🚨 Douleur intense — Action immédiate !\n\n**Arrêtez tous les exercices maintenant.**\n\n✅ Ce que vous pouvez faire :\n• Reposez-vous dans une position confortable\n• Appliquez de la glace 15 minutes (jamais directement sur la peau)\n• Respirez calmement\n\n🏥 **Consultez un professionnel de santé dès que possible :**\nKiné ou professionnel de santé de votre territoire.\n\n⚠️ SANTEO Connect est un outil de bien-être et de prévention. En cas de douleur intense, consultez un professionnel de santé.';
   }
 
   String _aboutProgram() {

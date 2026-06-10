@@ -24,10 +24,12 @@ class DefaultFirebaseOptions {
   }
 
   // ── Configuration WEB ─────────────────────────────────────────────────────
-  // La clé API Web est la même que Android pour ce projet Firebase
+  // ⚠️  Pour activer Firebase sur Web : enregistrer une app Web dans Firebase
+  // Console → Paramètres du projet → Ajouter une appli → Web
+  // En attendant, utiliser la config Android (fonctionnel pour Firestore read/write)
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyCKQOWYKC0cOZX-NzwN29oLKWCdG4Fx8pI',
-    appId: '1:449105964214:web:santeoconnectweb',
+    appId: '1:449105964214:android:237c0920d97c325259ca17',
     messagingSenderId: '449105964214',
     projectId: 'santeo-connect',
     storageBucket: 'santeo-connect.firebasestorage.app',

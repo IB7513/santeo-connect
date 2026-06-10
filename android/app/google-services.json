@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "449105964214",
+    "project_id": "santeo-connect",
+    "storage_bucket": "santeo-connect.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449105964214:android:237c0920d97c325259ca17",
+        "android_client_info": {
+          "package_name": "com.santeoconnect.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKQOWYKC0cOZX-NzwN29oLKWCdG4Fx8pI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

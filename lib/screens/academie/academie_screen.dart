@@ -34,10 +34,10 @@ const List<_Pathologie> _pathologies = [
     titre: 'Lombalgie',
     icone: '🦴',
     couleur: Color(0xFF26C6DA),
-    description: 'La lombalgie est une douleur dans le bas du dos, très fréquente dans les îles du Pacifique. Elle touche 8 personnes sur 10 au cours de leur vie.',
+    description: 'La lombalgie est une douleur dans le bas du dos. Elle touche 8 personnes sur 10 au cours de leur vie.',
     symptomes: ['Douleur dans le bas du dos', 'Raideur le matin', 'Douleur irradiant dans les fesses', 'Difficulté à se pencher en avant'],
     conseils: ['Restez actif, évitez le repos strict', 'Pratiquez les exercices de mobilité', 'Dormez sur un matelas ferme', 'Évitez de porter des charges lourdes'],
-    avatarMessage: 'Bonjour ! Je suis SANI, votre assistant santé. La lombalgie est la 1ère cause de consultation en Nouvelle-Calédonie. Bonne nouvelle : dans 90% des cas, elle guérit avec des exercices adaptés. Je vais vous expliquer tout ce qu\'il faut savoir ! 💙',
+    avatarMessage: 'Bonjour ! Je suis SANI, votre assistant santé. La lombalgie est la 1ère cause de consultation kiné. Bonne nouvelle : dans 90% des cas, elle guérit avec des exercices adaptés. Je vais vous expliquer tout ce qu\'il faut savoir ! 💙',
   ),
   _Pathologie(
     id: 'cervicalgie',
@@ -47,7 +47,7 @@ const List<_Pathologie> _pathologies = [
     description: 'La cervicalgie est une douleur au niveau du cou. Elle est souvent liée aux postures prolongées, au travail sur écran ou au stress.',
     symptomes: ['Douleur dans le cou', 'Raideur cervicale', 'Maux de tête', 'Douleur irradiant dans le bras'],
     conseils: ['Faites des pauses régulières devant l\'écran', 'Pratiquez les étirements cervicaux', 'Ajustez votre poste de travail', 'Gérez le stress avec la relaxation'],
-    avatarMessage: 'Bonjour ! Avec les smartphones et les écrans, la cervicalgie touche de plus en plus de personnes au Pacifique. Les exercices doux et les bonnes postures font toute la différence. Je vais vous guider pas à pas ! 🌺',
+    avatarMessage: 'Bonjour ! Avec les smartphones et les écrans, la cervicalgie touche de plus en plus de personnes. Les exercices doux et les bonnes postures font toute la différence. Je vais vous guider pas à pas ! 🌟',
   ),
   _Pathologie(
     id: 'arthrose',
@@ -67,7 +67,7 @@ const List<_Pathologie> _pathologies = [
     description: 'La tendinite est une inflammation d\'un tendon, souvent causée par une surcharge ou un geste répété. Elle touche fréquemment l\'épaule, le coude et le talon.',
     symptomes: ['Douleur à la mobilisation', 'Gonflement local', 'Chaleur au toucher', 'Douleur nocturne'],
     conseils: ['Reposez le tendon en phase aiguë', 'Appliquez du froid 15min/jour', 'Reprenez progressivement l\'activité', 'Renforcez les muscles autour du tendon'],
-    avatarMessage: 'Kia ora ! La tendinite est fréquente chez les travailleurs manuels et les sportifs du Pacifique. La clé est de doser votre activité et de renforcer progressivement. Je vous explique comment récupérer efficacement ! 💪',
+    avatarMessage: 'Kia ora ! La tendinite est fréquente chez les travailleurs manuels et les sportifs. La clé est de doser votre activité et de renforcer progressivement. Je vous explique comment récupérer efficacement ! 💪',
   ),
   _Pathologie(
     id: 'sciatique',
@@ -84,10 +84,10 @@ const List<_Pathologie> _pathologies = [
     titre: 'Hypertension',
     icone: '❤️',
     couleur: Color(0xFFEC407A),
-    description: 'L\'hypertension artérielle est très fréquente en Polynésie et en Nouvelle-Calédonie. L\'activité physique régulière est l\'un des meilleurs moyens naturels de prendre soin de soi.',
+    description: 'L\'hypertension artérielle est une pathologie cardiovasculaire fréquente. L\'activité physique régulière est l\'un des meilleurs moyens naturels de prendre soin de soi.',
     symptomes: ['Souvent silencieuse', 'Maux de tête', 'Vertiges', 'Bourdonnements d\'oreilles'],
     conseils: ['Faites 30 min de marche par jour', 'Réduisez le sel dans votre alimentation', 'Évitez le stress', 'Suivez les recommandations de votre professionnel de santé'],
-    avatarMessage: 'Bonjour ! L\'hypertension touche 1 adulte sur 3 au Pacifique. L\'exercice physique peut réduire votre tension de 5 à 8 mmHg — autant qu\'un médicament ! Je vais vous expliquer les exercices les plus adaptés. ❤️',
+    avatarMessage: 'Bonjour ! L\'hypertension touche 1 adulte sur 3. L\'exercice physique peut réduire votre tension de 5 à 8 mmHg — autant qu\'un médicament ! Je vais vous expliquer les exercices les plus adaptés. ❤️',
   ),
 ];
 

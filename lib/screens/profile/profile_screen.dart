@@ -241,9 +241,9 @@ class ProfileScreen extends StatelessWidget {
                           _AiFeatureRow(
                             icon: Icons.location_on,
                             color: AppTheme.secondary,
-                            title: 'Adapté au Pacifique',
+                            title: 'Adapté à votre territoire',
                             subtitle:
-                                'Recommandations selon votre territoire, le climat tropical et vos contraintes locales.',
+                                'Recommandations personnalisées selon votre territoire et vos contraintes locales.',
                           ),
                           _AiFeatureRow(
                             icon: Icons.person,

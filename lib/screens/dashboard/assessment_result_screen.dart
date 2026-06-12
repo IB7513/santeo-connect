@@ -118,7 +118,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '100% local · Adapté au Pacifique',
+                                  '100% local · Adapté à votre territoire',
                                   style: GoogleFonts.roboto(
                                       color: Colors.white70, fontSize: 12),
                                 ),
@@ -238,7 +238,7 @@ class _LoadingAssessment extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            'Notre IA analyse votre profil et adapte les recommandations au contexte insulaire du Pacifique.\nAucune connexion internet requise.',
+            'Notre IA analyse votre profil et adapte les recommandations à votre contexte.\nAucune connexion internet requise.',
             textAlign: TextAlign.center,
             style: GoogleFonts.roboto(
                 fontSize: 13,
@@ -249,7 +249,7 @@ class _LoadingAssessment extends StatelessWidget {
           const CircularProgressIndicator(color: AppTheme.primary),
           const SizedBox(height: 24),
           _LoadingStep('Analyse du profil fonctionnel...', true),
-          _LoadingStep('Adaptation au contexte Pacifique...', true),
+          _LoadingStep('Adaptation à votre contexte local...', true),
           _LoadingStep('Génération des recommandations...', false),
           _LoadingStep('Création du programme personnalisé...', false),
         ],

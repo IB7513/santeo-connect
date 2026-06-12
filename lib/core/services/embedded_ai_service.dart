@@ -226,7 +226,7 @@ class EmbeddedAIService {
       case 'wallis':
         return '🌴 Contexte Wallis-et-Futuna : La vie quotidienne (jardinage, pêche, marché) intègre naturellement de l\'activité physique bénéfique. Valorisez ces mouvements traditionnels comme partie de votre programme.';
       default:
-        return '🌏 Contexte insulaire Pacifique : Votre environnement naturel est votre meilleure ressource. Plage, nature, activités traditionnelles — intégrez ces éléments dans votre routine pour un programme durable et culturellement ancré.';
+        return '🌍 Contexte général : Votre environnement local est votre meilleure ressource. Espaces naturels, activités de plein air, activités traditionnelles — intégrez ces éléments dans votre routine pour un programme durable et ancré localement.';
     }
   }
 

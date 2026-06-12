@@ -120,7 +120,7 @@ class _HeroHeader extends StatelessWidget {
         : 'Vous';
     final territory = provider.userProfile?.localisation ??
         provider.userTerritory ??
-        'Pacifique';
+        'Mon territoire';
     final hour = DateTime.now().hour;
     final greeting = hour < 12
         ? '☀️ Bonjour'
@@ -547,7 +547,7 @@ class _AIAssessmentCard extends StatelessWidget {
                             ),
                             Text(
                               hasAssessment
-                                  ? '✅ Personnalisé • Adapté au Pacifique'
+                                  ? '✅ Personnalisé • Adapté à votre profil'
                                   : 'Générez votre bilan personnalisé',
                               style: GoogleFonts.roboto(
                                   color: Colors.white70,

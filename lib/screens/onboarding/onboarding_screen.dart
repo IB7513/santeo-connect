@@ -162,7 +162,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'prenom': _prenomCtrl.text.isNotEmpty ? _prenomCtrl.text : userName,
       'age': _age ?? '',
       'genre': '',
-      'localisation': _territoire ?? 'Pacifique',
+      'localisation': _territoire ?? 'France métropolitaine',
       'objectifSante': _objectif ?? '',
       'douleursActuelles': _douleursOuiNon,
       'zonesDouleur': _zonesDouleur,
@@ -229,7 +229,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Votre bilan kiné est complet !\nL\'intelligence artificielle de SANTEO Connect va maintenant générer votre programme personnalisé, adapté à votre contexte de vie dans le Pacifique.',
+                'Votre bilan kiné est complet !\nL\'intelligence artificielle de SANTEO Connect va maintenant générer votre programme personnalisé, adapté à votre profil et votre contexte de vie.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.roboto(
                     color: Colors.white.withValues(alpha: 0.9),
@@ -579,7 +579,7 @@ class _KineStep1Profil extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Ce bilan est réalisé sur le modèle d\'une consultation kiné initiale. Vos réponses permettent de générer un programme de rééducation adapté à votre profil Pacifique.',
+                    'Ce bilan est réalisé sur le modèle d\'une consultation kiné initiale. Vos réponses permettent de générer un programme de rééducation entièrement adapté à votre profil.',
                     style: GoogleFonts.roboto(
                         fontSize: 12,
                         color: AppTheme.textSecondary,
@@ -975,7 +975,7 @@ class _KineStep3Programme extends StatelessWidget {
                               fontSize: 14)),
                       const SizedBox(height: 4),
                       Text(
-                          'Notre IA kiné va analyser votre bilan et générer un programme de rééducation adapté au Pacifique.',
+                          'Notre IA kiné va analyser votre bilan et générer un programme de rééducation personnalisé, adapté à votre profil et votre territoire.',
                           style: GoogleFonts.roboto(
                               color: Colors.white70,
                               fontSize: 12,

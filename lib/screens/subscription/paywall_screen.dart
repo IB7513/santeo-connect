@@ -189,7 +189,7 @@ class _PaywallScreenState extends State<PaywallScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('49,90',
+                Text('19,90',
                     style: GoogleFonts.montserrat(
                       fontSize: 52, color: Colors.white,
                       fontWeight: FontWeight.w800, height: 1,
@@ -290,7 +290,7 @@ class _PaywallScreenState extends State<PaywallScreen>
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  _promoSuccess ? '2 mois offerts activés !' : 'Code promo',
+                  _promoSuccess ? 'Prise en charge entreprise activée !' : 'Code entreprise',
                   style: GoogleFonts.montserrat(
                     fontSize: 14,
                     color: _promoSuccess ? _teal : Colors.white,
@@ -301,7 +301,7 @@ class _PaywallScreenState extends State<PaywallScreen>
             ),
             if (!_promoSuccess) ...[
               const SizedBox(height: 12),
-              Text('Entrez votre code pour bénéficier de 2 mois gratuits',
+              Text('Votre entreprise prend en charge votre abonnement — entrez votre code',
                   style: GoogleFonts.montserrat(
                     fontSize: 12, color: Colors.white.withValues(alpha: 0.54),
                   )),
@@ -419,8 +419,8 @@ class _PaywallScreenState extends State<PaywallScreen>
                       const SizedBox(width: 10),
                       Text(
                         hasPromo
-                            ? 'Commencer — 2 mois offerts'
-                            : 'S\'abonner — 49,90 €/mois',
+                            ? 'Activer — pris en charge par mon entreprise'
+                            : 'S\'abonner — 19,90 €/mois',
                         style: GoogleFonts.montserrat(
                           fontSize: 16, fontWeight: FontWeight.w800,
                         ),
@@ -433,7 +433,7 @@ class _PaywallScreenState extends State<PaywallScreen>
           const SizedBox(height: 8),
           Center(
             child: Text(
-              'Puis 49,90 €/mois après les 2 mois offerts',
+              'Abonnement pris en charge par votre entreprise',
               style: GoogleFonts.montserrat(
                 fontSize: 11, color: Colors.white.withValues(alpha: 0.38),
               ),
@@ -530,7 +530,7 @@ class _PaywallScreenState extends State<PaywallScreen>
             const SizedBox(height: 12),
             Text(
               _promoSuccess
-                  ? 'Vos 2 mois offerts sont activés.\nProfitez de toutes les fonctionnalités !'
+                  ? 'Abonnement activé via votre entreprise.\nProfitez de toutes les fonctionnalités !'
                   : 'Votre abonnement est actif.\nProfitez de toutes les fonctionnalités !',
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(

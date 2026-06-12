@@ -3,14 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'providers/app_providers.dart';
-import 'core/services/subscription_service.dart';
 import 'screens/landing/landing_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/demo_login_screen.dart';
 import 'screens/onboarding/onboarding_screen.dart';
 import 'screens/home_navigator.dart';
-import 'screens/legal/rgpd_consent_screen.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/storage_service.dart';
 
@@ -30,14 +28,10 @@ void main() async {
 
   await StorageService.init();
 
-  final subService = SubscriptionService();
-  await subService.initialize();
-
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppProvider()..initialize()),
-        ChangeNotifierProvider.value(value: subService),
       ],
       child: const SanteoApp(),
     ),
@@ -80,27 +74,8 @@ class _SplashRouterState extends State<_SplashRouter> {
   }
 
   Future<void> _route() async {
-    // ── 1. Vérification RGPD : priorité absolue ───────────────
-    final hasConsented = await RgpdConsentScreen.hasConsented();
-    if (!mounted) return;
-
-    if (!hasConsented) {
-      // Afficher l'écran RGPD en remplacement du splash
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => RgpdConsentScreen(
-            onAccepted: () {
-              // Après consentement → reprendre le routage normal
-              if (mounted) _routeAfterConsent();
-            },
-          ),
-        ),
-      );
-      return;
-    }
-
-    // ── 2. Consentement déjà donné → routage normal ───────────
+    // RGPD intégré dans le flow d'inscription — pas au lancement
+    // On route directement selon l'état de connexion
     _routeAfterConsent();
   }
 

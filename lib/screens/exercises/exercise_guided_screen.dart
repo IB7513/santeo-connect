@@ -4,12 +4,9 @@
 // Portrait : vidéo 16:9 + contrôles en bas
 // Paysage  : vidéo plein écran automatique (SystemChrome)
 
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:ui_web' as ui_web;
-// ignore: avoid_web_libraries_in_flutter
-import 'package:web/web.dart' as web;
-
 import 'dart:async';
+import '../../core/services/tts_service.dart';
+import '../../core/services/video_web_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -134,7 +131,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
 
   // ── TTS Web (Speech Synthesis API) ────────────────────────────────────────
   bool _ttsEnabled = true;
-  bool _ttsSupported = false;
 
   // ── Vidéo WebView ──────────────────────────────────────────────────────────
   late final String _videoViewId;
@@ -143,8 +139,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
   // ── Orientation ────────────────────────────────────────────────────────────
   bool _isLandscape = false;
 
-  // ── Message TTS affiché ────────────────────────────────────────────────────
-  String _currentVoiceText = '';
 
   @override
   void initState() {
@@ -178,7 +172,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     _registerVideoPlayer();
 
     // ── Vérifier support TTS ─────────────────────────────────────────────────
-    _checkTtsSupport();
 
     // ── Démarrer l'intro après un court délai ─────────────────────────────────
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -204,66 +197,71 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
   // ═════════════════════════════════════════════════════════════════
 
   void _registerVideoPlayer() {
-    _videoViewId = 'guided-video-${_exercise.id}-${DateTime.now().millisecondsSinceEpoch}';
+    // ViewId STABLE basé sur l'exercice uniquement — pas de timestamp
+    // Un timestamp génèrerait un nouveau ID à chaque rebuild sans l'enregistrer
+    _videoViewId = 'guided-video-${_exercise.id}';
     if (!_registeredVideoIds.contains(_videoViewId)) {
       _registeredVideoIds.add(_videoViewId);
-      ui_web.platformViewRegistry.registerViewFactory(_videoViewId, (int viewId) {
-        final iframe = web.document.createElement('iframe') as web.HTMLIFrameElement;
-        iframe.src = _exercise.videoUrl;
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('allowfullscreen', 'true');
-        iframe.setAttribute('allow', 'autoplay; fullscreen');
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.style.border = 'none';
-        iframe.style.backgroundColor = '#000000';
-        return iframe; // ignore: unnecessary_null_comparison
-      });
+      VideoWebService.registerPlayer(_videoViewId, _exercise.videoUrl);
     }
   }
 
   Widget _buildVideoPlayer() {
+    if (_exercise.videoUrl.isEmpty) {
+      return _videoPlaceholder('Vidéo non disponible', Icons.videocam_off_rounded);
+    }
+    if (!kIsWeb) {
+      // Android : ouvrir la vidéo Drive dans un WebView via url_launcher ou placeholder
+      return _videoPlaceholder('Vidéo disponible\nsur l\'application web', Icons.play_circle_outline);
+    }
+    // Web : HtmlElementView avec le viewId stable
     return HtmlElementView(viewType: _videoViewId);
+  }
+
+  Widget _videoPlaceholder(String message, IconData icon) {
+    return Container(
+      color: const Color(0xFF0D2137),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white38, size: 48),
+            const SizedBox(height: 12),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white38,
+                fontSize: 14,
+                fontFamily: 'Roboto',
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // ═════════════════════════════════════════════════════════════════
   //  TTS — Speech Synthesis API Web
   // ═════════════════════════════════════════════════════════════════
 
-  void _checkTtsSupport() {
-    if (kIsWeb) {
-      try {
-        // Vérifie que speechSynthesis est disponible
-        _ttsSupported = true; // disponible sur tous les navigateurs modernes
-      } catch (_) {
-        _ttsSupported = false;
-      }
-    }
-  }
-
-  void _ttsSpeak(String text) {
-    if (!_ttsEnabled || !_ttsSupported || text.isEmpty) return;
-    try {
-      final synth = web.window.speechSynthesis;
-      synth.cancel(); // Annuler ce qui joue
-      final utterance = web.SpeechSynthesisUtterance(text);
-      utterance.lang = 'fr-FR';
-      utterance.rate = 0.9;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      synth.speak(utterance);
-      if (mounted) setState(() => _currentVoiceText = text);
-    } catch (e) {
-      if (kDebugMode) debugPrint('TTS error: $e');
+  void _ttsSpeak(String text, {bool isFin = false}) {
+    if (text.isEmpty) return;
+    // Rebuild pour afficher la transcription
+    if (mounted) setState(() {});
+    if (!_ttsEnabled) return;
+    if (isFin) {
+      TtsService.speakFin(_exercise.titre);
+    } else {
+      TtsService.speakIntro(_exercise.titre);
     }
   }
 
   void _ttsStop() {
-    if (!kIsWeb || !_ttsSupported) return;
-    try {
-      web.window.speechSynthesis.cancel();
-    } catch (_) {}
-    if (mounted) setState(() => _currentVoiceText = '');
+    if (mounted) setState(() {});
+    TtsService.stop();
   }
 
   // ═════════════════════════════════════════════════════════════════
@@ -277,25 +275,23 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       _currentCote = 0;
       _isRunning = false;
     });
-    // TTS intro après 800ms (laisser l'écran se charger)
-    Future.delayed(const Duration(milliseconds: 800), () {
-      if (mounted) _ttsSpeak(_exercise.voixIntro);
-    });
+    // NE PAS appeler TTS ici — le navigateur bloque speechSynthesis
+    // sans geste utilisateur. Le bouton "Écouter" en phase intro déclenche la voix.
+    // Les sous-titres sont affichés via _buildVoiceDisplay() sans TTS.
   }
 
   void _startSerie() {
     _timer?.cancel();
     _ttsStop();
 
+    // Voix "pendant" — appelée immédiatement (la méthode est toujours
+    // appelée depuis un onTap ou depuis _onReposEnd qui lui-même vient d'un tap)
+    _ttsSpeak(_exercise.voixPendant);
+
     setState(() {
       _phase = _Phase.serie;
       _isRunning = true;
       _isPaused = false;
-    });
-
-    // TTS voix pendant la série
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) _ttsSpeak(_exercise.voixPendant);
     });
 
     // Si chrono : démarrer le compte à rebours
@@ -372,14 +368,12 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
 
   void _startFin() {
     _timer?.cancel();
+    // Voix fin — appelée directement (chaîne issue d'un tap utilisateur)
+    _ttsSpeak(_exercise.voixFin, isFin: true);
     setState(() {
       _phase = _Phase.fin;
       _isRunning = false;
       _sessionCompleted = true;
-    });
-
-    Future.delayed(const Duration(milliseconds: 400), () {
-      if (mounted) _ttsSpeak(_exercise.voixFin);
     });
 
     // Marquer comme complété dans SharedPreferences
@@ -453,6 +447,11 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Sur Web desktop, la fenêtre est large mais on force le layout portrait
+    // pour que les boutons soient cliquables (la vidéo plein écran bloque les taps en paysage)
+    if (kIsWeb) {
+      return _buildPortraitLayout(context);
+    }
     return OrientationBuilder(
       builder: (context, orientation) {
         final isLandscape = orientation == Orientation.landscape;
@@ -548,6 +547,41 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
             ),
           ),
 
+          // ── Transcription voix — overlay haut centré ─────────────────
+          if (_phaseVoiceText.isNotEmpty)
+            Positioned(
+              top: 56,
+              left: 24,
+              right: 24,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.record_voice_over_rounded,
+                        color: Colors.white70, size: 14),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        _phaseVoiceText,
+                        style: GoogleFonts.roboto(
+                          fontSize: 11,
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontStyle: FontStyle.italic,
+                          height: 1.3,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
           // ── Overlay bas : chrono + contrôles ─────────────────────────
           Positioned(
             bottom: 0,
@@ -570,10 +604,11 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
                 children: [
                   if (_phase == _Phase.intro) ...[
                     _LandscapeButton(
-                      label: 'Démarrer',
+                      label: '🎙️ Démarrer',
                       icon: Icons.play_arrow_rounded,
                       color: AppTheme.primary,
                       onTap: () {
+                        TtsService.speakIntro(_exercise.titre);
                         setState(() => _repsDone = 0);
                         _startSerie();
                       },
@@ -650,20 +685,23 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
             // ── Vidéo 16:9 ────────────────────────────────────────────
             _buildVideoSection(),
 
-            // ── Contenu scrollable ─────────────────────────────────────
+            // ── Transcription voix — FIXE, toujours visible ───────────
+            _buildVoiceDisplay(),
+
+            // ── Contenu scrollable (phase, séries, chrono) ────────────
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                 child: FadeTransition(
                   opacity: _fadeAnim,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // ── Phase banner ─────────────────────────────────
                       _buildPhaseBanner(),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // ── Indicateur séries ─────────────────────────────
                       if (_phase != _Phase.intro && _phase != _Phase.fin)
@@ -673,20 +711,18 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
                       if (_phase == _Phase.serie || _phase == _Phase.repos)
                         _buildChronoOrReps(),
 
-                      // ── Voix TTS display ──────────────────────────────
-                      if (_currentVoiceText.isNotEmpty)
-                        _buildVoiceDisplay(),
-
-                      // ── Boutons d'action ──────────────────────────────
-                      const SizedBox(height: 20),
-                      _buildActionButtons(context),
-
                       // ── Conseil rotation ──────────────────────────────
                       _buildRotationHint(),
                     ],
                   ),
                 ),
               ),
+            ),
+
+            // ── Boutons d'action — FIXES en bas, toujours visibles ─────
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: _buildActionButtons(context),
             ),
           ],
         ),
@@ -792,34 +828,57 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
             child: _buildVideoPlayer(),
           ),
 
-          // Pastille "Tournez pour agrandir"
+          // Bouton plein écran
           Positioned(
             bottom: 8,
             right: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.55),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.screen_rotation,
-                      color: Colors.white70, size: 12),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Tournez pour agrandir',
-                    style: GoogleFonts.roboto(
-                        color: Colors.white70, fontSize: 10),
-                  ),
-                ],
+            child: GestureDetector(
+              onTap: _requestFullscreen,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.65),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.fullscreen,
+                        color: Colors.white, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Plein écran',
+                      style: GoogleFonts.roboto(
+                          color: Colors.white, fontSize: 11,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  void _requestFullscreen() {
+    if (!kIsWeb) return;
+    try {
+      // Injecter un script qui met le premier iframe en plein écran
+      TtsService.runJs('''
+        (function() {
+          var iframe = document.querySelector('iframe');
+          if (!iframe) return;
+          var el = iframe.contentDocument
+            ? iframe.contentDocument.querySelector('iframe')
+            : null;
+          var target = el || iframe;
+          if (target.requestFullscreen) target.requestFullscreen();
+          else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen();
+        })();
+      ''');
+    } catch (_) {}
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -1058,41 +1117,134 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
   //  VOIX TTS DISPLAY
   // ─────────────────────────────────────────────────────────────────
 
+  // ─────────────────────────────────────────────────────────────────
+  //  VOIX TTS DISPLAY — texte toujours visible selon la phase
+  // ─────────────────────────────────────────────────────────────────
+
+  // Retourne le texte d'instruction de la phase courante
+  String get _phaseVoiceText {
+    switch (_phase) {
+      case _Phase.intro:
+        return _exercise.voixIntro;
+      case _Phase.serie:
+        if (_currentCote == 1) return 'Autre côté. ${_exercise.voixPendant}';
+        return _exercise.voixPendant;
+      case _Phase.repos:
+        return _exercise.voixRepos.isNotEmpty
+            ? _exercise.voixRepos
+            : 'Soufflez. Récupérez quelques secondes.';
+      case _Phase.fin:
+        return _exercise.voixFin;
+    }
+  }
+
   Widget _buildVoiceDisplay() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12),
-      child: AnimatedOpacity(
-        opacity: _currentVoiceText.isNotEmpty ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 300),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: AppTheme.primary.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppTheme.primary.withValues(alpha: 0.2),
+    final text = _phaseVoiceText;
+    // Couleur selon la phase
+    final Color phaseColor;
+    final String phaseLabel;
+    switch (_phase) {
+      case _Phase.intro:
+        phaseColor = AppTheme.primary;
+        phaseLabel = 'Instructions';
+        break;
+      case _Phase.serie:
+        phaseColor = AppTheme.secondary;
+        phaseLabel = 'En cours';
+        break;
+      case _Phase.repos:
+        phaseColor = const Color(0xFF7E57C2);
+        phaseLabel = 'Repos';
+        break;
+      case _Phase.fin:
+        phaseColor = AppTheme.success;
+        phaseLabel = 'Terminé !';
+        break;
+    }
+
+    if (text.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        color: phaseColor.withValues(alpha: 0.08),
+        child: Row(children: [
+          Icon(Icons.record_voice_over_rounded,
+              color: phaseColor.withValues(alpha: 0.5), size: 14),
+          const SizedBox(width: 8),
+          Text('Voix guidée activée',
+              style: GoogleFonts.roboto(
+                  fontSize: 12,
+                  color: AppTheme.textLight,
+                  fontStyle: FontStyle.italic)),
+        ]),
+      );
+    }
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(12, 10, 10, 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0D1F2D), // fond sombre très opaque — visible partout
+        border: Border(
+          left: BorderSide(color: phaseColor, width: 5),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Badge phase
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+            margin: const EdgeInsets.only(right: 10),
+            decoration: BoxDecoration(
+              color: phaseColor,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(phaseLabel,
+                style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: Colors.white,
+                    letterSpacing: 0.3)),
+          ),
+          // Texte sous-titres — blanc sur fond sombre, grande taille
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.roboto(
+                fontSize: 14.5,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+                height: 1.45,
+              ),
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.record_voice_over_rounded,
-                  color: AppTheme.primary, size: 16),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  _currentVoiceText,
-                  style: GoogleFonts.roboto(
-                    fontSize: 12,
-                    color: AppTheme.primaryDark,
-                    fontStyle: FontStyle.italic,
-                    height: 1.4,
-                  ),
-                ),
+          // Bouton 🔊
+          GestureDetector(
+            onTap: () {
+              if (_phase == _Phase.intro || _phase == _Phase.fin) {
+                _phase == _Phase.fin
+                    ? TtsService.speakFin(_exercise.titre)
+                    : TtsService.speakIntro(_exercise.titre);
+              } else {
+                TtsService.speakIntro(_exercise.titre);
+              }
+            },
+            child: Container(
+              margin: const EdgeInsets.only(left: 8),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: phaseColor,
+                borderRadius: BorderRadius.circular(9),
               ),
-            ],
+              child: const Icon(Icons.volume_up_rounded,
+                  color: Colors.white, size: 20),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -1107,9 +1259,21 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
         return Column(
           children: [
             _ActionButton(
-              label: 'Commencer',
+              label: '🎙️  Écouter & Commencer',
               icon: Icons.play_arrow_rounded,
               color: AppTheme.primary,
+              onTap: () {
+                TtsService.speakIntro(_exercise.titre);
+                setState(() => _repsDone = 0);
+                _startSerie();
+              },
+            ),
+            const SizedBox(height: 10),
+            _ActionButton(
+              label: 'Passer directement à l\'exercice',
+              icon: Icons.skip_next_rounded,
+              color: AppTheme.textLight,
+              outlined: true,
               onTap: () {
                 setState(() => _repsDone = 0);
                 _startSerie();
@@ -1175,7 +1339,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
                   _sessionCompleted = false;
                   _repsDone = 0;
                   _countdown = 0;
-                  _currentVoiceText = '';
                 });
                 _startIntro();
               },
@@ -1260,7 +1423,7 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final Color color;
   final bool outlined;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _ActionButton({
     required this.label,

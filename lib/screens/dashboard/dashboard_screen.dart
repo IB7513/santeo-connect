@@ -5,14 +5,11 @@ import 'package:percent_indicator/percent_indicator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/assets/logo_data.dart';
 import '../../core/services/motivation_service.dart';
-import '../../core/services/subscription_service.dart';
 import '../../providers/app_providers.dart';
 import '../../models/app_models.dart';
-import '../../widgets/premium_gate.dart';
 import '../dashboard/assessment_result_screen.dart';
 import '../exercises/seance_personnalisee_screen.dart';
 import '../kine/parler_kine_screen.dart';
-import '../subscription/paywall_screen.dart';
 import '../exercises/exercise_guided_screen.dart';
 import '../../core/services/daily_plan_service.dart';
 
@@ -70,12 +67,10 @@ class _DashboardScreenState extends State<DashboardScreen>
                           // Bannière félicitations dynamique
                           _CongratsBanner(provider: provider),
                           const SizedBox(height: 16),
-                          // Bannière Premium (masquée si déjà abonné)
-                          const PremiumBanner(),
                           // KPIs
                           _KpiRow(provider: provider),
                           const SizedBox(height: 16),
-                          // Bilan IA
+                          // Programme personnalisé
                           _AIAssessmentCard(provider: provider),
                           const SizedBox(height: 16),
                           // Actions rapides : Séance + Kiné
@@ -118,8 +113,11 @@ class _HeroHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final prenom =
+    final rawPrenom =
         provider.userProfile?.prenom ?? provider.userName ?? 'Vous';
+    final prenom = rawPrenom.isNotEmpty
+        ? rawPrenom[0].toUpperCase() + rawPrenom.substring(1)
+        : 'Vous';
     final territory = provider.userProfile?.localisation ??
         provider.userTerritory ??
         'Pacifique';
@@ -303,7 +301,10 @@ class _CongratsBanner extends StatelessWidget {
     final sessions = provider.totalSessionCount;
     final adherence = provider.weeklyAdherence;
     final hasAssessment = provider.aiAssessment != null;
-    final prenom = provider.userProfile?.prenom ?? provider.userName ?? 'vous';
+    final raw2 = provider.userProfile?.prenom ?? provider.userName ?? 'vous';
+    final prenom = raw2.isNotEmpty
+        ? raw2[0].toUpperCase() + raw2.substring(1)
+        : 'Vous';
     return MotivationService.dashboardGreeting(
         prenom, sessions, adherence, hasAssessment);
   }
@@ -537,7 +538,7 @@ class _AIAssessmentCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Mon Bilan IA Santé',
+                              'Mon Programme Personnalisé',
                               style: GoogleFonts.montserrat(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w700,
@@ -600,7 +601,7 @@ class _AIAssessmentCard extends StatelessWidget {
                               color: AppTheme.primary, size: 16),
                           const SizedBox(width: 8),
                           Text(
-                            'Générer mon bilan IA gratuit',
+                            'Générer mon programme personnalisé',
                             style: GoogleFonts.montserrat(
                               color: AppTheme.primary,
                               fontWeight: FontWeight.w600,
@@ -1436,7 +1437,7 @@ class _EmptyProgramCard extends StatelessWidget {
                   color: AppTheme.textSecondary)),
           const SizedBox(height: 4),
           Text(
-            'Générez votre bilan IA pour obtenir\nun programme personnalisé.',
+            'Générez votre programme personnalisé\npour démarrer votre parcours.',
             textAlign: TextAlign.center,
             style: GoogleFonts.roboto(
                 fontSize: 12, color: AppTheme.textLight),
@@ -1567,19 +1568,14 @@ class _QuickActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPremium = context.watch<SubscriptionService>().isPremium;
     return Row(
       children: [
         // Bouton Ma séance du jour
         Expanded(
           child: InkWell(
             onTap: () {
-              if (isPremium) {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => const SeancePersonnaliseeScreen()));
-              } else {
-                PaywallScreen.show(context);
-              }
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => const SeancePersonnaliseeScreen()));
             },
             child: Container(
               padding: const EdgeInsets.all(16),
@@ -1601,26 +1597,14 @@ class _QuickActionsRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(9),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.fitness_center,
-                            color: Colors.white, size: 22),
-                      ),
-                      if (!isPremium)
-                        Positioned(top: -4, right: -4,
-                          child: Container(
-                            width: 16, height: 16,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFFB300), shape: BoxShape.circle),
-                            child: const Icon(Icons.lock, color: Colors.white, size: 9))),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.fitness_center,
+                        color: Colors.white, size: 22),
                   ),
                   const SizedBox(height: 12),
                   Text('Ma séance\ndu jour',
@@ -1628,8 +1612,7 @@ class _QuickActionsRow extends StatelessWidget {
                         color: Colors.white, fontWeight: FontWeight.w700,
                         fontSize: 14, height: 1.3)),
                   const SizedBox(height: 4),
-                  Text(
-                    isPremium ? '10 exos • personnalisés' : 'Premium requis',
+                  Text('10 exos • personnalisés',
                     style: GoogleFonts.roboto(
                       color: Colors.white.withValues(alpha: 0.8), fontSize: 10)),
                 ],
@@ -1642,12 +1625,8 @@ class _QuickActionsRow extends StatelessWidget {
         Expanded(
           child: InkWell(
             onTap: () {
-              if (isPremium) {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (_) => const ParlerKineScreen()));
-              } else {
-                PaywallScreen.show(context);
-              }
+              Navigator.push(context, MaterialPageRoute(
+                builder: (_) => const ParlerKineScreen()));
             },
             child: Container(
               padding: const EdgeInsets.all(16),
@@ -1669,26 +1648,14 @@ class _QuickActionsRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(9),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.people_alt_outlined,
-                            color: Colors.white, size: 22),
-                      ),
-                      if (!isPremium)
-                        Positioned(top: -4, right: -4,
-                          child: Container(
-                            width: 16, height: 16,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFFFFB300), shape: BoxShape.circle),
-                            child: const Icon(Icons.lock, color: Colors.white, size: 9))),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(9),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.people_alt_outlined,
+                        color: Colors.white, size: 22),
                   ),
                   const SizedBox(height: 12),
                   Text('Parler à\nun kiné',
@@ -1696,8 +1663,7 @@ class _QuickActionsRow extends StatelessWidget {
                         color: Colors.white, fontWeight: FontWeight.w700,
                         fontSize: 14, height: 1.3)),
                   const SizedBox(height: 4),
-                  Text(
-                    isPremium ? '3 kinés disponibles' : 'Premium requis',
+                  Text('3 kinés disponibles',
                     style: GoogleFonts.roboto(
                       color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 10,
@@ -1749,7 +1715,7 @@ class _QuickActionsSection extends StatelessWidget {
             Expanded(
               child: _ActionBtn(
                 icon: Icons.psychology,
-                label: 'Bilan IA',
+                label: 'Mon Programme',
                 color: AppTheme.primary,
                 onTap: () => Navigator.push(
                   context,

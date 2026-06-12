@@ -5,10 +5,10 @@ import '../../core/theme/app_theme.dart';
 import '../../core/assets/logo_data.dart';
 import '../../providers/app_providers.dart';
 import '../../widgets/common/common_widgets.dart';
-import '../../widgets/premium_gate.dart';
 import '../landing/landing_screen.dart';
 import '../../core/services/storage_service.dart';
 import '../legal/rgpd_consent_screen.dart';
+import '../dashboard/company_dashboard_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -18,8 +18,10 @@ class ProfileScreen extends StatelessWidget {
     return Consumer<AppProvider>(
       builder: (context, provider, _) {
         final profile = provider.userProfile;
-        final prenom =
-            profile?.prenom ?? provider.userName ?? 'Utilisateur';
+        final rawPrenom = profile?.prenom ?? provider.userName ?? 'Utilisateur';
+        final prenom = rawPrenom.isNotEmpty
+            ? rawPrenom[0].toUpperCase() + rawPrenom.substring(1)
+            : 'Utilisateur';
         final email = provider.userEmail ?? '';
 
         return Scaffold(
@@ -141,9 +143,6 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-                  // ── Statut abonnement ───────────────────────────
-                  const SubscriptionStatusCard(),
-                  const SizedBox(height: 4),
 
                   // ── Infos de santé ──────────────────────────────
                   if (profile != null) ...[
@@ -265,6 +264,18 @@ class ProfileScreen extends StatelessWidget {
                     child: SanteoCard(
                       child: Column(
                         children: [
+                          _ActionItem(
+                            icon: Icons.business_center_outlined,
+                            label: 'Dashboard Entreprise',
+                            color: AppTheme.primaryDark,
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const CompanyDashboardScreen(),
+                              ),
+                            ),
+                          ),
+                          const Divider(height: 1),
                           _ActionItem(
                             icon: Icons.edit_outlined,
                             label: 'Modifier mon prénom',
@@ -407,7 +418,7 @@ class ProfileScreen extends StatelessWidget {
             style:
                 GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
         content: Text(
-          'Vos données sont stockées uniquement sur votre appareil.\n\nElles comprennent : votre profil santé, l\'historique de vos séances et votre bilan IA.\n\nDans une future version, un export PDF sera disponible directement.',
+          'Vos données sont stockées uniquement sur votre appareil.\n\nElles comprennent : votre profil santé, l\'historique de vos séances et votre programme personnalisé.\n\nDans une future version, un export PDF sera disponible directement.',
           style: GoogleFonts.roboto(fontSize: 14, height: 1.5),
         ),
         actions: [

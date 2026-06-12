@@ -296,7 +296,7 @@ class ChatAIService {
   }
 
   String _aboutBilan() {
-    return '📋 Votre Bilan IA Personnalisé\n\nVotre bilan est généré localement sur votre appareil, basé sur vos réponses d\'évaluation.\n\n**Il comprend :**\n✅ Analyse de votre profil fonctionnel\n✅ Recommandations personnalisées\n✅ Programme d\'exercices suggéré\n✅ Conseils adaptés à votre territoire\n\n**Pour voir votre bilan :**\nAllez dans l\'onglet **Accueil** → carte "Mon Bilan IA"\n\n**Pour refaire votre bilan :**\nAllez dans **Profil** → "Refaire mon évaluation"\n\n**Important :**\nPlus vos réponses d\'évaluation sont précises, plus votre bilan sera pertinent. N\'hésitez pas à le refaire si votre situation a changé.';
+    return '📋 Votre Programme Personnalisé\n\nVotre bilan est généré localement sur votre appareil, basé sur vos réponses d\'évaluation.\n\n**Il comprend :**\n✅ Analyse de votre profil fonctionnel\n✅ Recommandations personnalisées\n✅ Programme d\'exercices suggéré\n✅ Conseils adaptés à votre territoire\n\n**Pour voir votre bilan :**\nAllez dans l\'onglet **Accueil** → carte "Mon Programme Personnalisé"\n\n**Pour refaire votre bilan :**\nAllez dans **Profil** → "Refaire mon évaluation"\n\n**Important :**\nPlus vos réponses d\'évaluation sont précises, plus votre bilan sera pertinent. N\'hésitez pas à le refaire si votre situation a changé.';
   }
 
   String _aboutProgress() {

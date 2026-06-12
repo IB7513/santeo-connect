@@ -21,25 +21,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pageController = PageController();
   int _currentPage = 0;
 
-  // Step 1 - Profil
+  // Étape 1 — Profil
   final _prenomCtrl = TextEditingController();
   String? _age;
-  String? _genre;
-  final _villeCtrl = TextEditingController();
-  String? _objectif;
+  String? _territoire;
 
-  // Step 2 - État Fonctionnel
+  // Étape 2 — Bilan corporel kiné
   bool _douleursOuiNon = false;
   final List<String> _zonesDouleur = [];
   double _niveauMobilite = 3;
   String? _niveauActivite;
-
-  // Step 3 - Antécédents
   final List<String> _problemesSante = [];
-  final _chirurgiesCtrl = TextEditingController();
-  final _traitementsCtrl = TextEditingController();
 
-  // Step 4 - Préférences
+  // Étape 3 — Programme
+  String? _objectif;
   String? _dureeSeance;
   String? _frequenceSemaine;
   final List<String> _preferencesExercices = [];
@@ -47,7 +42,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
-    // Pré-remplir le prénom depuis l'inscription pour éviter de le demander 2 fois
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<AppProvider>();
       final name = provider.userName ?? '';
@@ -61,15 +55,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void dispose() {
     _pageController.dispose();
     _prenomCtrl.dispose();
-    _villeCtrl.dispose();
-    _chirurgiesCtrl.dispose();
-    _traitementsCtrl.dispose();
     super.dispose();
   }
 
   void _nextPage() {
-    if (_currentPage < 3) {
-      // 🎉 Félicitations à chaque étape
+    if (_currentPage < 2) {
       _showStepCongrats(_currentPage);
       _pageController.nextPage(
         duration: const Duration(milliseconds: 400),
@@ -87,7 +77,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         : (provider.userName ?? '');
     final message = MotivationService.stepCompleted(completedStep, prenom);
 
-    // Couleurs et icônes par étape
     final stepColors = [
       const Color(0xFF26C6DA),
       const Color(0xFF7E57C2),
@@ -96,7 +85,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final stepIcons = [
       Icons.person_outline,
       Icons.health_and_safety,
-      Icons.medical_information,
+      Icons.tune,
     ];
     final color = completedStep < stepColors.length
         ? stepColors[completedStep]
@@ -149,8 +138,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           backgroundColor: color,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 3),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           margin: const EdgeInsets.all(16),
         ),
       );
@@ -172,16 +161,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     provider.updateOnboardingData({
       'prenom': _prenomCtrl.text.isNotEmpty ? _prenomCtrl.text : userName,
       'age': _age ?? '',
-      'genre': _genre ?? '',
-      'localisation': _villeCtrl.text.isNotEmpty ? _villeCtrl.text : 'Pacifique',
+      'genre': '',
+      'localisation': _territoire ?? 'Pacifique',
       'objectifSante': _objectif ?? '',
       'douleursActuelles': _douleursOuiNon,
       'zonesDouleur': _zonesDouleur,
       'niveauMobilite': _niveauMobilite.round(),
       'niveauActivite': _niveauActivite ?? '',
       'problemesSante': _problemesSante,
-      'chirurgies': _chirurgiesCtrl.text,
-      'traitements': _traitementsCtrl.text,
+      'chirurgies': '',
+      'traitements': '',
       'dureeSeance': _dureeSeance ?? '20 minutes',
       'frequenceSemaine': _frequenceSemaine ?? '3 jours/semaine',
       'preferencesExercices': _preferencesExercices,
@@ -190,7 +179,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await provider.completeOnboarding();
 
     if (mounted) {
-      // 🎉 Dialog de célébration avant navigation
       await _showCelebrationDialog();
     }
   }
@@ -205,7 +193,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
@@ -240,7 +229,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Votre profil est 100% complet !\nL\'intelligence artificielle de SANTEO Connect va maintenant générer votre bilan personnalisé, adapté à votre contexte de vie dans le Pacifique.',
+                'Votre bilan kiné est complet !\nL\'intelligence artificielle de SANTEO Connect va maintenant générer votre programme personnalisé, adapté à votre contexte de vie dans le Pacifique.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.roboto(
                     color: Colors.white.withValues(alpha: 0.9),
@@ -258,20 +247,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     height: 1.4),
               ),
               const SizedBox(height: 24),
-              // Étapes complétées
+              // 3 cercles (au lieu de 4)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (i) => Container(
-                  width: 28,
-                  height: 28,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.check,
-                      color: Color(0xFF26C6DA), size: 16),
-                )),
+                children: List.generate(
+                    3,
+                    (i) => Container(
+                          width: 28,
+                          height: 28,
+                          margin:
+                              const EdgeInsets.symmetric(horizontal: 4),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.check,
+                              color: Color(0xFF26C6DA), size: 16),
+                        )),
               ),
               const SizedBox(height: 20),
               SizedBox(
@@ -286,7 +278,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   icon: const Icon(Icons.psychology),
                   label: Text(
-                    'Voir mon bilan IA',
+                    'Voir mon programme',
                     style: GoogleFonts.montserrat(
                         fontWeight: FontWeight.w700, fontSize: 15),
                   ),
@@ -316,7 +308,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
+            // ── Header ──────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
@@ -332,7 +324,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'Étape ${_currentPage + 1} sur 4',
+                          'Étape ${_currentPage + 1} sur 3',
                           style: GoogleFonts.roboto(
                             fontSize: 12,
                             color: AppTheme.textSecondary,
@@ -340,7 +332,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                         const SizedBox(height: 6),
                         LinearProgressIndicator(
-                          value: (_currentPage + 1) / 4,
+                          value: (_currentPage + 1) / 3,
                           backgroundColor: AppTheme.divider,
                           valueColor: const AlwaysStoppedAnimation<Color>(
                               AppTheme.primary),
@@ -362,28 +354,30 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Pages
+            // ── Pages ────────────────────────────────────────────
             Expanded(
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 onPageChanged: (i) => setState(() => _currentPage = i),
                 children: [
-                  _Step1Profil(
+                  // ── ÉTAPE 1 : Votre profil ───────────────────
+                  _KineStep1Profil(
                     prenomCtrl: _prenomCtrl,
                     age: _age,
-                    genre: _genre,
-                    villeCtrl: _villeCtrl,
-                    objectif: _objectif,
+                    territoire: _territoire,
                     onAgeChanged: (v) => setState(() => _age = v),
-                    onGenreChanged: (v) => setState(() => _genre = v),
-                    onObjectifChanged: (v) => setState(() => _objectif = v),
+                    onTerritoireChanged: (v) =>
+                        setState(() => _territoire = v),
                   ),
-                  _Step2Fonctionnel(
+
+                  // ── ÉTAPE 2 : Bilan corporel kiné ────────────
+                  _KineStep2Bilan(
                     douleursOuiNon: _douleursOuiNon,
                     zonesDouleur: _zonesDouleur,
                     niveauMobilite: _niveauMobilite,
                     niveauActivite: _niveauActivite,
+                    problemesSante: _problemesSante,
                     onDouleursChanged: (v) =>
                         setState(() => _douleursOuiNon = v),
                     onZoneToggle: (z, checked) {
@@ -399,11 +393,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         setState(() => _niveauMobilite = v),
                     onActiviteChanged: (v) =>
                         setState(() => _niveauActivite = v),
-                  ),
-                  _Step3Antecedents(
-                    problemesSante: _problemesSante,
-                    chirurgiesCtrl: _chirurgiesCtrl,
-                    traitementsCtrl: _traitementsCtrl,
                     onProblemeToggle: (p, checked) {
                       setState(() {
                         if (checked) {
@@ -414,10 +403,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       });
                     },
                   ),
-                  _Step4Preferences(
+
+                  // ── ÉTAPE 3 : Votre programme ────────────────
+                  _KineStep3Programme(
+                    objectif: _objectif,
                     dureeSeance: _dureeSeance,
                     frequenceSemaine: _frequenceSemaine,
                     preferencesExercices: _preferencesExercices,
+                    onObjectifChanged: (v) => setState(() => _objectif = v),
                     onDureeChanged: (v) => setState(() => _dureeSeance = v),
                     onFrequenceChanged: (v) =>
                         setState(() => _frequenceSemaine = v),
@@ -435,14 +428,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // Bottom CTA
+            // ── Bottom CTA ───────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               child: Column(
                 children: [
                   SmoothPageIndicator(
                     controller: _pageController,
-                    count: 4,
+                    count: 3,
                     effect: WormEffect(
                       dotColor: AppTheme.divider,
                       activeDotColor: AppTheme.primary,
@@ -452,10 +445,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   const SizedBox(height: 16),
                   PrimaryButton(
-                    label: _currentPage < 3
+                    label: _currentPage < 2
                         ? 'Suivant'
-                        : 'Générer mon bilan personnalisé avec IA',
-                    icon: _currentPage < 3
+                        : 'Générer mon programme personnalisé',
+                    icon: _currentPage < 2
                         ? Icons.arrow_forward
                         : Icons.psychology,
                     onPressed: _nextPage,
@@ -470,28 +463,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-// ============================================================
-// STEP 1: Profil
-// ============================================================
-class _Step1Profil extends StatelessWidget {
+// ================================================================
+// ÉTAPE 1 : Votre profil
+// ================================================================
+class _KineStep1Profil extends StatelessWidget {
   final TextEditingController prenomCtrl;
   final String? age;
-  final String? genre;
-  final TextEditingController villeCtrl;
-  final String? objectif;
+  final String? territoire;
   final ValueChanged<String?> onAgeChanged;
-  final ValueChanged<String?> onGenreChanged;
-  final ValueChanged<String?> onObjectifChanged;
+  final ValueChanged<String?> onTerritoireChanged;
 
-  const _Step1Profil({
+  const _KineStep1Profil({
     required this.prenomCtrl,
     required this.age,
-    required this.genre,
-    required this.villeCtrl,
-    required this.objectif,
+    required this.territoire,
     required this.onAgeChanged,
-    required this.onGenreChanged,
-    required this.onObjectifChanged,
+    required this.onTerritoireChanged,
   });
 
   @override
@@ -501,34 +488,47 @@ class _Step1Profil extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _StepHeader(
+          const _StepHeader(
             icon: Icons.person,
             title: 'Votre profil',
-            subtitle: 'Dites-nous qui vous êtes pour personnaliser votre expérience.',
+            subtitle:
+                'Quelques informations pour personnaliser votre prise en charge.',
           ),
-          const SizedBox(height: 20),
-          // Le prénom est déjà saisi à l'inscription — on l'affiche en lecture seule
+          const SizedBox(height: 24),
+
+          // Prénom — pré-rempli depuis l'inscription
           if (prenomCtrl.text.isNotEmpty)
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFF26C6DA).withValues(alpha: 0.08),
+                color:
+                    const Color(0xFF26C6DA).withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFF26C6DA).withValues(alpha: 0.4)),
+                border: Border.all(
+                    color: const Color(0xFF26C6DA)
+                        .withValues(alpha: 0.4)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.person_outline, color: Color(0xFF26C6DA), size: 20),
+                  const Icon(Icons.person_outline,
+                      color: Color(0xFF26C6DA), size: 20),
                   const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Prénom', style: TextStyle(fontSize: 11, color: Colors.grey[600])),
-                      Text(prenomCtrl.text, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      Text('Prénom',
+                          style: TextStyle(
+                              fontSize: 11, color: Colors.grey[600])),
+                      Text(prenomCtrl.text,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
                     ],
                   ),
                   const Spacer(),
-                  const Icon(Icons.check_circle, color: Color(0xFF26C6DA), size: 18),
+                  const Icon(Icons.check_circle,
+                      color: Color(0xFF26C6DA), size: 18),
                 ],
               ),
             )
@@ -542,6 +542,7 @@ class _Step1Profil extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 14),
+
           _SanteoDropdown(
             label: 'Tranche d\'âge',
             value: age,
@@ -550,29 +551,43 @@ class _Step1Profil extends StatelessWidget {
             onChanged: onAgeChanged,
           ),
           const SizedBox(height: 14),
+
           _SanteoDropdown(
-            label: 'Genre',
-            value: genre,
-            items: const ['Femme', 'Homme', 'Autre'],
-            icon: Icons.wc,
-            onChanged: onGenreChanged,
+            label: 'Territoire / Région',
+            value: territoire,
+            items: AppConstants.territories,
+            icon: Icons.location_on_outlined,
+            onChanged: onTerritoireChanged,
           ),
-          const SizedBox(height: 14),
-          TextField(
-            controller: villeCtrl,
-            decoration: const InputDecoration(
-              labelText: 'Ville / Territoire',
-              prefixIcon: Icon(Icons.location_on_outlined),
-              hintText: 'Ex: Nouméa, Nouvelle-Calédonie',
+          const SizedBox(height: 24),
+
+          // Encart informatif style kiné
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF26C6DA).withValues(alpha: 0.06),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                  color:
+                      const Color(0xFF26C6DA).withValues(alpha: 0.25)),
             ),
-          ),
-          const SizedBox(height: 14),
-          _SanteoDropdown(
-            label: 'Objectif santé',
-            value: objectif,
-            items: AppConstants.healthGoals,
-            icon: Icons.flag_outlined,
-            onChanged: onObjectifChanged,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.info_outline,
+                    color: Color(0xFF26C6DA), size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Ce bilan est réalisé sur le modèle d\'une consultation kiné initiale. Vos réponses permettent de générer un programme de rééducation adapté à votre profil Pacifique.',
+                    style: GoogleFonts.roboto(
+                        fontSize: 12,
+                        color: AppTheme.textSecondary,
+                        height: 1.5),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -580,28 +595,32 @@ class _Step1Profil extends StatelessWidget {
   }
 }
 
-// ============================================================
-// STEP 2: État Fonctionnel
-// ============================================================
-class _Step2Fonctionnel extends StatelessWidget {
+// ================================================================
+// ÉTAPE 2 : Bilan corporel kiné (fusion fonctionnel + antécédents)
+// ================================================================
+class _KineStep2Bilan extends StatelessWidget {
   final bool douleursOuiNon;
   final List<String> zonesDouleur;
   final double niveauMobilite;
   final String? niveauActivite;
+  final List<String> problemesSante;
   final ValueChanged<bool> onDouleursChanged;
   final Function(String, bool) onZoneToggle;
   final ValueChanged<double> onMobiliteChanged;
   final ValueChanged<String?> onActiviteChanged;
+  final Function(String, bool) onProblemeToggle;
 
-  const _Step2Fonctionnel({
+  const _KineStep2Bilan({
     required this.douleursOuiNon,
     required this.zonesDouleur,
     required this.niveauMobilite,
     required this.niveauActivite,
+    required this.problemesSante,
     required this.onDouleursChanged,
     required this.onZoneToggle,
     required this.onMobiliteChanged,
     required this.onActiviteChanged,
+    required this.onProblemeToggle,
   });
 
   @override
@@ -611,14 +630,17 @@ class _Step2Fonctionnel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _StepHeader(
+          const _StepHeader(
             icon: Icons.health_and_safety,
-            title: 'État fonctionnel',
-            subtitle: 'Évaluez votre condition physique actuelle.',
+            title: 'Bilan corporel',
+            subtitle:
+                'Évaluation fonctionnelle style kiné — douleurs, mobilité et antécédents.',
           ),
           const SizedBox(height: 20),
 
-          // Douleurs toggle
+          // ── Douleurs ────────────────────────────────────────
+          _SectionLabel(label: 'DOULEURS ACTUELLES'),
+          const SizedBox(height: 8),
           SanteoCard(
             child: Row(
               children: [
@@ -626,34 +648,38 @@ class _Step2Fonctionnel extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Douleurs actuelles ?',
+                      Text('Ressentez-vous des douleurs ?',
                           style: GoogleFonts.montserrat(
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
                               color: AppTheme.textPrimary)),
-                      Text('Ressentez-vous des douleurs en ce moment ?',
+                      Text(
+                          douleursOuiNon
+                              ? 'Sélectionnez les zones concernées'
+                              : 'Aucune douleur signalée',
                           style: GoogleFonts.roboto(
-                              fontSize: 12, color: AppTheme.textSecondary)),
+                              fontSize: 12,
+                              color: AppTheme.textSecondary)),
                     ],
                   ),
                 ),
                 Switch(
                   value: douleursOuiNon,
                   onChanged: onDouleursChanged,
-                  activeColor: AppTheme.primary, activeThumbColor: AppTheme.primary,
+                  activeThumbColor: AppTheme.primary,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 14),
 
           if (douleursOuiNon) ...[
+            const SizedBox(height: 12),
             Text('Zones douloureuses',
                 style: GoogleFonts.montserrat(
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: AppTheme.textPrimary)),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -663,21 +689,28 @@ class _Step2Fonctionnel extends StatelessWidget {
                   label: Text(zone,
                       style: GoogleFonts.roboto(
                           fontSize: 12,
-                          color: isSelected ? Colors.white : AppTheme.textPrimary)),
+                          color: isSelected
+                              ? Colors.white
+                              : AppTheme.textPrimary)),
                   selected: isSelected,
                   onSelected: (checked) => onZoneToggle(zone, checked),
                   selectedColor: AppTheme.primary,
                   backgroundColor: AppTheme.surface,
                   checkmarkColor: Colors.white,
                   side: BorderSide(
-                      color: isSelected ? AppTheme.primary : AppTheme.divider),
+                      color: isSelected
+                          ? AppTheme.primary
+                          : AppTheme.divider),
                 );
               }).toList(),
             ),
-            const SizedBox(height: 14),
           ],
 
-          // Mobilité slider
+          const SizedBox(height: 16),
+
+          // ── Mobilité ─────────────────────────────────────────
+          _SectionLabel(label: 'ÉVALUATION FONCTIONNELLE'),
+          const SizedBox(height: 8),
           SanteoCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -685,7 +718,7 @@ class _Step2Fonctionnel extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Niveau de mobilité',
+                    Text('Mobilité globale',
                         style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
@@ -698,18 +731,21 @@ class _Step2Fonctionnel extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        '${niveauMobilite.round()}/5',
+                        _mobiliteLabel(niveauMobilite.round()),
                         style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.w700,
                             color: AppTheme.primary,
-                            fontSize: 14),
+                            fontSize: 13),
                       ),
                     ),
                   ],
                 ),
-                Text('Comment évaluez-vous votre mobilité globale ?',
+                const SizedBox(height: 4),
+                Text(
+                    'Évaluez votre capacité à effectuer vos gestes quotidiens.',
                     style: GoogleFonts.roboto(
-                        fontSize: 12, color: AppTheme.textSecondary)),
+                        fontSize: 12,
+                        color: AppTheme.textSecondary)),
                 Slider(
                   value: niveauMobilite,
                   min: 1,
@@ -723,16 +759,18 @@ class _Step2Fonctionnel extends StatelessWidget {
                   children: [
                     Text('Très limitée',
                         style: GoogleFonts.roboto(
-                            fontSize: 11, color: AppTheme.textLight)),
+                            fontSize: 11,
+                            color: AppTheme.textLight)),
                     Text('Excellente',
                         style: GoogleFonts.roboto(
-                            fontSize: 11, color: AppTheme.textLight)),
+                            fontSize: 11,
+                            color: AppTheme.textLight)),
                   ],
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
 
           _SanteoDropdown(
             label: 'Niveau d\'activité physique',
@@ -741,47 +779,15 @@ class _Step2Fonctionnel extends StatelessWidget {
             icon: Icons.directions_run,
             onChanged: onActiviteChanged,
           ),
-        ],
-      ),
-    );
-  }
-}
+          const SizedBox(height: 16),
 
-// ============================================================
-// STEP 3: Antécédents
-// ============================================================
-class _Step3Antecedents extends StatelessWidget {
-  final List<String> problemesSante;
-  final TextEditingController chirurgiesCtrl;
-  final TextEditingController traitementsCtrl;
-  final Function(String, bool) onProblemeToggle;
-
-  const _Step3Antecedents({
-    required this.problemesSante,
-    required this.chirurgiesCtrl,
-    required this.traitementsCtrl,
-    required this.onProblemeToggle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _StepHeader(
-            icon: Icons.medical_information,
-            title: 'Antécédents médicaux',
-            subtitle: 'Ces informations permettent d\'adapter votre programme en toute sécurité.',
-          ),
-          const SizedBox(height: 20),
-
+          // ── Antécédents (condensés) ───────────────────────────
+          _SectionLabel(label: 'ANTÉCÉDENTS MÉDICAUX'),
+          const SizedBox(height: 8),
           Text('Problèmes de santé (sélectionnez tout ce qui s\'applique)',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary)),
+              style: GoogleFonts.roboto(
+                  fontSize: 13,
+                  color: AppTheme.textSecondary)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -792,62 +798,64 @@ class _Step3Antecedents extends StatelessWidget {
                 label: Text(p,
                     style: GoogleFonts.roboto(
                         fontSize: 12,
-                        color: isSelected ? Colors.white : AppTheme.textPrimary)),
+                        color: isSelected
+                            ? Colors.white
+                            : AppTheme.textPrimary)),
                 selected: isSelected,
                 onSelected: (checked) => onProblemeToggle(p, checked),
-                selectedColor: AppTheme.secondary,
+                selectedColor: const Color(0xFF7E57C2),
                 backgroundColor: AppTheme.surface,
                 checkmarkColor: Colors.white,
                 side: BorderSide(
-                    color: isSelected ? AppTheme.secondary : AppTheme.divider),
+                    color: isSelected
+                        ? const Color(0xFF7E57C2)
+                        : AppTheme.divider),
               );
             }).toList(),
           ),
-          const SizedBox(height: 16),
-
-          TextField(
-            controller: chirurgiesCtrl,
-            maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'Chirurgies passées (optionnel)',
-              prefixIcon: Icon(Icons.content_cut_outlined),
-              hintText: 'Ex: Appendicite 2018, Ligaments croisés 2022...',
-            ),
-          ),
-          const SizedBox(height: 14),
-
-          TextField(
-            controller: traitementsCtrl,
-            maxLines: 2,
-            decoration: const InputDecoration(
-              labelText: 'Traitements en cours (optionnel)',
-              prefixIcon: Icon(Icons.medication_outlined),
-              hintText: 'Ex: Anti-inflammatoires, kiné hebdomadaire...',
-            ),
-          ),
-          const SizedBox(height: 14),
-
+          const SizedBox(height: 8),
         ],
       ),
     );
   }
+
+  String _mobiliteLabel(int val) {
+    switch (val) {
+      case 1:
+        return 'Très limitée';
+      case 2:
+        return 'Limitée';
+      case 3:
+        return 'Moyenne';
+      case 4:
+        return 'Bonne';
+      case 5:
+        return 'Excellente';
+      default:
+        return '$val/5';
+    }
+  }
 }
 
-// ============================================================
-// STEP 4: Préférences
-// ============================================================
-class _Step4Preferences extends StatelessWidget {
+// ================================================================
+// ÉTAPE 3 : Votre programme
+// ================================================================
+class _KineStep3Programme extends StatelessWidget {
+  final String? objectif;
   final String? dureeSeance;
   final String? frequenceSemaine;
   final List<String> preferencesExercices;
+  final ValueChanged<String?> onObjectifChanged;
   final ValueChanged<String?> onDureeChanged;
   final ValueChanged<String?> onFrequenceChanged;
   final Function(String, bool) onPrefToggle;
 
-  const _Step4Preferences({
+  const _KineStep3Programme({
+    required this.objectif,
     required this.dureeSeance,
     required this.frequenceSemaine,
     required this.preferencesExercices,
+    required this.onObjectifChanged,
     required this.onDureeChanged,
     required this.onFrequenceChanged,
     required this.onPrefToggle,
@@ -860,13 +868,27 @@ class _Step4Preferences extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _StepHeader(
+          const _StepHeader(
             icon: Icons.tune,
-            title: 'Vos préférences',
-            subtitle: 'Personnalisez votre programme selon votre emploi du temps.',
+            title: 'Votre programme',
+            subtitle:
+                'Définissez votre objectif et organisez vos séances selon votre rythme de vie.',
           ),
           const SizedBox(height: 20),
 
+          _SectionLabel(label: 'OBJECTIF THÉRAPEUTIQUE'),
+          const SizedBox(height: 8),
+          _SanteoDropdown(
+            label: 'Objectif principal',
+            value: objectif,
+            items: AppConstants.healthGoals,
+            icon: Icons.flag_outlined,
+            onChanged: onObjectifChanged,
+          ),
+          const SizedBox(height: 16),
+
+          _SectionLabel(label: 'ORGANISATION DES SÉANCES'),
+          const SizedBox(height: 8),
           _SanteoDropdown(
             label: 'Durée des séances',
             value: dureeSeance,
@@ -885,11 +907,12 @@ class _Step4Preferences extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          Text('Types d\'exercices préférés',
-              style: GoogleFonts.montserrat(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary)),
+          _SectionLabel(label: 'TYPES D\'EXERCICES'),
+          const SizedBox(height: 8),
+          Text('Vos préférences (optionnel)',
+              style: GoogleFonts.roboto(
+                  fontSize: 13,
+                  color: AppTheme.textSecondary)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
@@ -900,21 +923,24 @@ class _Step4Preferences extends StatelessWidget {
                 label: Text(p,
                     style: GoogleFonts.roboto(
                         fontSize: 12,
-                        color: isSelected ? Colors.white : AppTheme.textPrimary)),
+                        color: isSelected
+                            ? Colors.white
+                            : AppTheme.textPrimary)),
                 selected: isSelected,
                 onSelected: (checked) => onPrefToggle(p, checked),
                 selectedColor: AppTheme.primary,
                 backgroundColor: AppTheme.surface,
                 checkmarkColor: Colors.white,
                 side: BorderSide(
-                    color: isSelected ? AppTheme.primary : AppTheme.divider),
+                    color: isSelected
+                        ? AppTheme.primary
+                        : AppTheme.divider),
               );
             }).toList(),
           ),
-
           const SizedBox(height: 20),
 
-          // AI Info Card
+          // Encart IA final
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -942,14 +968,14 @@ class _Step4Preferences extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Bilan IA Personnalisé',
+                      Text('Bilan Personnalisé SANTEO',
                           style: GoogleFonts.montserrat(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
                               fontSize: 14)),
                       const SizedBox(height: 4),
                       Text(
-                          'Notre IA va analyser votre profil et générer un bilan personnalisé adapté au contexte Pacifique.',
+                          'Notre IA kiné va analyser votre bilan et générer un programme de rééducation adapté au Pacifique.',
                           style: GoogleFonts.roboto(
                               color: Colors.white70,
                               fontSize: 12,
@@ -960,15 +986,16 @@ class _Step4Preferences extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 8),
         ],
       ),
     );
   }
 }
 
-// ============================================================
+// ================================================================
 // SHARED HELPERS
-// ============================================================
+// ================================================================
 class _StepHeader extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -985,13 +1012,13 @@ class _StepHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 48,
-          height: 48,
+          width: 52,
+          height: 52,
           decoration: BoxDecoration(
             gradient: AppTheme.primaryGradient,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(icon, color: Colors.white, size: 24),
+          child: Icon(icon, color: Colors.white, size: 26),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -1005,10 +1032,41 @@ class _StepHeader extends StatelessWidget {
                       color: AppTheme.textPrimary)),
               Text(subtitle,
                   style: GoogleFonts.roboto(
-                      fontSize: 13,
+                      fontSize: 12,
                       color: AppTheme.textSecondary,
-                      height: 1.3)),
+                      height: 1.4)),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  final String label;
+  const _SectionLabel({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 3,
+          height: 14,
+          decoration: BoxDecoration(
+            color: AppTheme.primary,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            color: AppTheme.primary,
+            letterSpacing: 0.8,
           ),
         ),
       ],

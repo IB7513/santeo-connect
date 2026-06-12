@@ -110,7 +110,7 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Mon Bilan IA Personnalisé',
+                                  'Mon Programme Personnalisé',
                                   style: GoogleFonts.montserrat(
                                     color: Colors.white,
                                     fontSize: 18,
@@ -384,7 +384,9 @@ class _AssessmentContent extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          profile.prenom,
+                          profile.prenom.isNotEmpty
+                              ? profile.prenom[0].toUpperCase() + profile.prenom.substring(1)
+                              : profile.prenom,
                           style: GoogleFonts.montserrat(
                               color: Colors.white,
                               fontSize: 16,

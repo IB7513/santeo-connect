@@ -5,7 +5,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../models/exercise.dart';
+import '../../models/app_models.dart';
+import '../../core/constants/app_constants.dart';
 
 class DailyExerciseService {
   static final DailyExerciseService _instance = DailyExerciseService._internal();
@@ -17,7 +18,7 @@ class DailyExerciseService {
   // ── Clés SharedPreferences ────────────────────────────────────────────────
   static const _keyDailyExerciseId   = 'daily_exercise_id';
   static const _keyDailyExerciseDate = 'daily_exercise_date';
-  static const _keyRecentExercises   = 'recent_exercise_ids'; // JSON list
+  static const _keyRecentExercises   = 'recent_exercise_ids';
   static const _keyStreak            = 'daily_exercise_streak';
   static const _keyLastCompletedDate = 'daily_exercise_last_completed';
 
@@ -25,10 +26,10 @@ class DailyExerciseService {
   /// Retourne l'exercice du jour.
   /// - Même exercice toute la journée (stocké en SharedPreferences)
   /// - Anti-répétition sur les 7 derniers jours
-  /// - Filtre optionnel par profil utilisateur
+  /// - Filtre optionnel par zone cible (dos, epaules, etc.)
   Future<Exercise?> getDailyExercise({
-    String? userProfile,       // ex: 'sedentaire', 'senior', etc.
-    ExerciseDifficulty? difficulte,
+    String? userProfile,
+    String? difficulte,   // 'facile' | 'moyen' | 'difficile'
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -39,11 +40,16 @@ class DailyExerciseService {
       final storedId   = prefs.getString(_keyDailyExerciseId);
 
       if (storedDate == today && storedId != null && storedId.isNotEmpty) {
-        // Récupérer l'exercice depuis Firestore
-        final doc = await _db.collection('exercises').doc(storedId).get();
-        if (doc.exists && doc.data() != null) {
-          return Exercise.fromFirestore(doc.data()!, doc.id);
-        }
+        // Essayer d'abord dans Firestore
+        try {
+          final doc = await _db.collection('exercises').doc(storedId).get();
+          if (doc.exists && doc.data() != null) {
+            return Exercise.fromMap({...doc.data()!, 'id': doc.id});
+          }
+        } catch (_) {}
+        // Fallback : chercher dans seedExercises
+        final seed = AppConstants.seedExercises.where((e) => e.id == storedId).firstOrNull;
+        if (seed != null) return seed;
       }
 
       // ── 2. Sélectionner un nouvel exercice ────────────────────────────────
@@ -65,43 +71,55 @@ class DailyExerciseService {
   Future<Exercise?> _selectNewExercise(
     SharedPreferences prefs,
     String? userProfile,
-    ExerciseDifficulty? difficulte,
+    String? difficulte,
   ) async {
     // Récupérer les IDs récents (anti-répétition)
     final recentIds = _getRecentIds(prefs);
 
-    // Requête Firestore : exercices actifs uniquement
-    // On évite les requêtes composites pour ne pas nécessiter d'index
-    Query query = _db.collection('exercises').where('actif', isEqualTo: true);
+    List<Exercise> exercises = [];
 
-    final snapshot = await query.get();
-    if (snapshot.docs.isEmpty) return null;
+    // Essayer Firestore d'abord
+    try {
+      final snapshot = await _db
+          .collection('exercises')
+          .where('actif', isEqualTo: true)
+          .get();
 
-    // Convertir en objets Exercise
-    var exercises = snapshot.docs
-        .map((doc) => Exercise.fromFirestore(
-            doc.data() as Map<String, dynamic>, doc.id))
-        .toList();
+      if (snapshot.docs.isNotEmpty) {
+        exercises = snapshot.docs
+            .map((doc) => Exercise.fromMap({...doc.data(), 'id': doc.id}))
+            .toList();
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('Firestore indisponible, fallback seedExercises: $e');
+    }
 
-    // ── Filtre profil utilisateur (en mémoire) ────────────────────────────
-    if (userProfile != null && userProfile != 'tous') {
-      final target = _parseTarget(userProfile);
-      final filtered = exercises.where((e) =>
-        e.cibles.contains(ExerciseTarget.tous) ||
-        e.cibles.contains(target)
-      ).toList();
+    // Fallback : utiliser les seed exercises
+    if (exercises.isEmpty) {
+      exercises = List<Exercise>.from(AppConstants.seedExercises);
+    }
+
+    // ── Filtre zone / profil utilisateur (en mémoire) ─────────────────────
+    if (userProfile != null && userProfile != 'tous' && userProfile.isNotEmpty) {
+      final filtered = exercises
+          .where((e) => e.targetZone.toLowerCase().contains(userProfile.toLowerCase()))
+          .toList();
       if (filtered.isNotEmpty) exercises = filtered;
     }
 
     // ── Filtre difficulté (en mémoire) ────────────────────────────────────
-    if (difficulte != null) {
-      final filtered = exercises.where((e) => e.difficulte == difficulte).toList();
+    if (difficulte != null && difficulte.isNotEmpty) {
+      final filtered = exercises
+          .where((e) => e.difficulty == difficulte)
+          .toList();
       if (filtered.isNotEmpty) exercises = filtered;
     }
 
     // ── Anti-répétition : exclure les 7 derniers ──────────────────────────
     final withoutRecent = exercises.where((e) => !recentIds.contains(e.id)).toList();
     final pool = withoutRecent.isNotEmpty ? withoutRecent : exercises;
+
+    if (pool.isEmpty) return null;
 
     // ── Sélection déterministe basée sur la date (même exo toute la journée)
     final dayIndex = DateTime.now().difference(DateTime(2024, 1, 1)).inDays;
@@ -124,9 +142,9 @@ class DailyExerciseService {
         final last = DateTime.parse(lastCompleted);
         final diff = DateTime.now().difference(last).inDays;
         if (diff == 1) {
-          streak += 1; // Jour consécutif
+          streak += 1;
         } else if (diff > 1) {
-          streak = 1;  // Streak cassé
+          streak = 1;
         }
         // diff == 0 → déjà complété aujourd'hui, pas de changement
       }
@@ -134,8 +152,6 @@ class DailyExerciseService {
       await prefs.setInt(_keyStreak, streak);
       await prefs.setString(_keyLastCompletedDate, today);
 
-      // Sauvegarder dans Firestore (anonyme — pas de user_id)
-      // On sauvegarde juste des stats agrégées
       if (kDebugMode) debugPrint('Exercice $exerciseId complété ! Streak: $streak');
 
     } catch (e) {
@@ -155,10 +171,10 @@ class DailyExerciseService {
     return last == _todayString();
   }
 
-  // ── Récupérer tout le catalogue (pour admin / affichage liste) ────────────
+  // ── Récupérer tout le catalogue ────────────────────────────────────────
   Future<List<Exercise>> getCatalogue({
-    ExerciseCategory? categorie,
-    ExerciseDifficulty? difficulte,
+    String? categorie,    // 'renforcement' | 'mobilite' | 'etirement' | 'cardio'
+    String? difficulte,   // 'facile' | 'moyen' | 'difficile'
     bool activeOnly = true,
   }) async {
     try {
@@ -166,24 +182,30 @@ class DailyExerciseService {
       if (activeOnly) query = query.where('actif', isEqualTo: true);
 
       final snapshot = await query.get();
-      var exercises = snapshot.docs
-          .map((doc) => Exercise.fromFirestore(
-              doc.data() as Map<String, dynamic>, doc.id))
+      List<Exercise> exercises = snapshot.docs
+          .map((doc) => Exercise.fromMap({
+                ...doc.data() as Map<String, dynamic>,
+                'id': doc.id,
+              }))
           .toList();
 
-      if (categorie != null) {
-        exercises = exercises.where((e) => e.categorie == categorie).toList();
+      if (categorie != null && categorie.isNotEmpty) {
+        exercises = exercises.where((e) => e.type == categorie).toList();
       }
-      if (difficulte != null) {
-        exercises = exercises.where((e) => e.difficulte == difficulte).toList();
+      if (difficulte != null && difficulte.isNotEmpty) {
+        exercises = exercises.where((e) => e.difficulty == difficulte).toList();
       }
 
-      exercises.sort((a, b) => a.titre.compareTo(b.titre));
+      exercises.sort((a, b) => a.ordre.compareTo(b.ordre));
       return exercises;
 
     } catch (e) {
       if (kDebugMode) debugPrint('getCatalogue error: $e');
-      return [];
+      // Fallback sur seedExercises
+      var seeds = List<Exercise>.from(AppConstants.seedExercises);
+      if (categorie != null) seeds = seeds.where((e) => e.type == categorie).toList();
+      if (difficulte != null) seeds = seeds.where((e) => e.difficulty == difficulte).toList();
+      return seeds;
     }
   }
 
@@ -200,19 +222,7 @@ class DailyExerciseService {
   Future<void> _addToRecent(SharedPreferences prefs, String id) async {
     var recent = prefs.getStringList(_keyRecentExercises) ?? [];
     recent.insert(0, id);
-    if (recent.length > 7) recent = recent.sublist(0, 7); // Garder 7 derniers
+    if (recent.length > 7) recent = recent.sublist(0, 7);
     await prefs.setStringList(_keyRecentExercises, recent);
-  }
-
-  ExerciseTarget _parseTarget(String val) {
-    switch (val) {
-      case 'sedentaire':  return ExerciseTarget.sedentaire;
-      case 'actif':       return ExerciseTarget.actif;
-      case 'senior':      return ExerciseTarget.senior;
-      case 'grossesse':   return ExerciseTarget.grossesse;
-      case 'mal_de_dos':  return ExerciseTarget.malDeDos;
-      case 'stress':      return ExerciseTarget.stress;
-      default:            return ExerciseTarget.tous;
-    }
   }
 }

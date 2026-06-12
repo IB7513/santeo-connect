@@ -2,131 +2,319 @@
 <html lang="fr">
 <head>
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
-  <!-- ═══════════════════════════════════════════════
-       SEO & Description
-  ═══════════════════════════════════════════════ -->
   <meta name="description" content="SANTEO Connect — Votre assistant santé personnalisé, adapté au Pacifique. Exercices, bilan IA, suivi de progression.">
   <meta name="keywords" content="santé, Pacifique, physiothérapie, exercices, bien-être, Nouvelle-Calédonie, Polynésie">
   <meta name="author" content="SANTEO Connect">
-
-  <!-- ═══════════════════════════════════════════════
-       PWA — iOS Safari (Apple)
-  ═══════════════════════════════════════════════ -->
-  <!-- Activer le mode "app" sur iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <!-- Barre de statut : black-translucent = plein écran avec notch -->
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <!-- Nom affiché sous l'icône sur l'écran d'accueil iOS -->
   <meta name="apple-mobile-web-app-title" content="SANTEO">
-
-  <!-- Icônes Apple Touch (iPhone & iPad) -->
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png">
   <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
   <link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
-
-  <!-- ═══════════════════════════════════════════════
-       Splash Screens iOS (launch screens)
-       Couvre tous les modèles iPhone & iPad
-  ═══════════════════════════════════════════════ -->
-  <!-- iPhone 14 Pro Max -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
-        href="splash/apple-splash-1290-2796.png">
-  <!-- iPhone 14 Pro -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
-        href="splash/apple-splash-1179-2556.png">
-  <!-- iPhone 14 / 13 / 12 -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
-        href="splash/apple-splash-1170-2532.png">
-  <!-- iPhone X / XS / 11 Pro -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
-        href="splash/apple-splash-1125-2436.png">
-  <!-- iPhone 8 Plus -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
-        href="splash/apple-splash-1080-1920.png">
-  <!-- iPhone 8 / SE 2nd gen -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
-        href="splash/apple-splash-750-1334.png">
-  <!-- iPhone SE 1st gen -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
-        href="splash/apple-splash-640-1136.png">
-  <!-- iPad Pro 12.9" -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
-        href="splash/apple-splash-2048-2732.png">
-  <!-- iPad Pro 11" -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
-        href="splash/apple-splash-1668-2388.png">
-  <!-- iPad mini / Air -->
-  <link rel="apple-touch-startup-image"
-        media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)"
-        href="splash/apple-splash-1536-2048.png">
-
-  <!-- ═══════════════════════════════════════════════
-       PWA — Android / Desktop
-  ═══════════════════════════════════════════════ -->
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/apple-splash-1290-2796.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/apple-splash-1179-2556.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/apple-splash-1170-2532.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/apple-splash-1125-2436.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/apple-splash-1080-1920.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/apple-splash-750-1334.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/apple-splash-640-1136.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/apple-splash-2048-2732.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/apple-splash-1668-2388.png">
+  <link rel="apple-touch-startup-image" media="screen and (device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/apple-splash-1536-2048.png">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0097A7">
   <meta name="msapplication-TileColor" content="#26C6DA">
   <meta name="msapplication-TileImage" content="icons/Icon-192.png">
-
-  <!-- Open Graph (partage réseaux sociaux) -->
   <meta property="og:title" content="SANTEO Connect">
   <meta property="og:description" content="Votre assistant santé personnalisé — adapté au Pacifique">
   <meta property="og:image" content="icons/Icon-512.png">
   <meta property="og:type" content="website">
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
   <link rel="shortcut icon" href="favicon.png">
-
-  <!-- Manifest PWA -->
   <link rel="manifest" href="manifest.json">
-
   <title>SANTEO Connect</title>
-
-  <!-- ═══════════════════════════════════════════════
-       Style splash iOS inline (évite l'écran blanc)
-  ═══════════════════════════════════════════════ -->
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #26C6DA 0%, #0097A7 100%);
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
-    }
-    /* Empêche le rebond élastique iOS */
-    html {
-      height: -webkit-fill-available;
-      overflow: hidden;
-    }
-    /* Plein écran sous la notch iOS */
-    flt-glass-pane {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-    }
+    body { margin:0; padding:0; background:linear-gradient(135deg,#26C6DA 0%,#0097A7 100%); min-height:100vh; min-height:-webkit-fill-available; }
+    html { height:-webkit-fill-available; overflow:hidden; }
+    flt-glass-pane { position:fixed!important; top:0!important; left:0!important; right:0!important; bottom:0!important; }
   </style>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+//  SANTEO AUDIO — solution Flutter CanvasKit + Chrome autoplay policy
+//  Stratégie : overlay HTML natif au-dessus de Flutter (z-index > flt-glass-pane)
+//  Le premier clic sur cet overlay débloque l'AudioContext, puis disparaît.
+// ═══════════════════════════════════════════════════════════════════════
+(function () {
+  'use strict';
+
+  var _ctx = null;       // AudioContext — résiste mieux à l'autoplay policy
+  var _audio = null;     // HTMLAudioElement de secours
+  var _unlocked = false;
+  var _pendingSlug = null;
+  var _overlay = null;   // div HTML natif au-dessus de Flutter
+
+  // ── Créer l'AudioContext (Web Audio API) ─────────────────────────────
+  function _getCtx() {
+    if (!_ctx) {
+      try {
+        _ctx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch(e) { _ctx = null; }
+    }
+    return _ctx;
+  }
+
+  // ── HTMLAudioElement de secours ───────────────────────────────────────
+  function _getAudio() {
+    if (!_audio) {
+      _audio = new Audio();
+      _audio.onended = function() { console.log('[SANTEO] ✓ fin'); };
+      _audio.onerror  = function() { console.warn('[SANTEO] ❌ erreur audio'); };
+    }
+    return _audio;
+  }
+
+  // ── Jouer un slug MP3 (chemin relatif audio/slug.mp3) ────────────────
+  function _doPlayNow(slug) {
+    console.log('[SANTEO] ▶ play:', slug);
+    var a = _getAudio();
+    a.pause();
+    a.src = 'audio/' + slug + '.mp3';
+    a.currentTime = 0;
+    var p = a.play();
+    if (p) p.catch(function(e) {
+      console.warn('[SANTEO] play() rejeté:', e.message || e);
+    });
+  }
+
+  // ── Débloquer via AudioContext (résume le contexte suspendu) ─────────
+  function _unlockAudioContext() {
+    var ctx = _getCtx();
+    if (!ctx) return Promise.resolve();
+    if (ctx.state === 'running') return Promise.resolve();
+    return ctx.resume();
+  }
+
+  // ── Unlock complet déclenché par un vrai clic HTML natif ─────────────
+  function _doUnlock() {
+    if (_unlocked) return;
+    _unlockAudioContext().then(function() {
+      _unlocked = true;
+      console.log('[SANTEO] 🔓 audio débloqué !');
+      _hideOverlay();
+      if (_pendingSlug) {
+        var s = _pendingSlug;
+        _pendingSlug = null;
+        _doPlayNow(s);
+      }
+    });
+  }
+
+  // ── API publique ──────────────────────────────────────────────────────
+  window.__santeoAudioPlay = function(slug) {
+    if (!slug) return;
+    if (_unlocked) {
+      _doPlayNow(slug);
+    } else {
+      _pendingSlug = slug;
+      _showOverlay(slug);   // montrer le bandeau "Activer le son"
+      console.log('[SANTEO] ⏳ en attente clic utilisateur pour:', slug);
+    }
+  };
+
+  window.__santeoAudioStop = function() {
+    if (_audio) { _audio.pause(); _audio.currentTime = 0; }
+  };
+
+  // ── postMessage fallback ──────────────────────────────────────────────
+  window.addEventListener('message', function(e) {
+    if (e.data && e.data.santeoPlay) window.__santeoAudioPlay(e.data.santeoPlay);
+    if (e.data && e.data.santeoStop)  window.__santeoAudioStop();
+  });
+
+  // ─────────────────────────────────────────────────────────────────────
+  //  OVERLAY HTML NATIF — au-dessus de flt-glass-pane (z-index: 9999999)
+  //  Un vrai clic sur ce div = user gesture = débloque Chrome
+  // ─────────────────────────────────────────────────────────────────────
+  function _createOverlay() {
+    if (_overlay) return;
+    _overlay = document.createElement('div');
+    _overlay.id = 'santeo-unlock-overlay';
+    _overlay.style.cssText = [
+      'position:fixed',
+      'bottom:0','left:0','right:0',
+      'z-index:9999999',
+      'background:linear-gradient(135deg,#0097A7,#26C6DA)',
+      'color:white',
+      'display:none',
+      'align-items:center',
+      'justify-content:center',
+      'gap:12px',
+      'padding:14px 24px',
+      'cursor:pointer',
+      'font-family:sans-serif',
+      'font-size:16px',
+      'font-weight:600',
+      'box-shadow:0 -2px 16px rgba(0,0,0,0.25)',
+      'user-select:none',
+      '-webkit-tap-highlight-color:transparent'
+    ].join(';');
+    _overlay.innerHTML = '<span style="font-size:24px">🔊</span><span>Appuyer pour activer le son</span>';
+    _overlay.addEventListener('click', function(e) {
+      e.stopPropagation();
+      _doUnlock();
+    });
+    _overlay.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      _doUnlock();
+    });
+    document.body.appendChild(_overlay);
+  }
+
+  function _showOverlay(slug) {
+    _createOverlay();
+    _pendingSlug = slug;
+    _overlay.style.display = 'flex';
+    console.log('[SANTEO] 📢 overlay affiché');
+  }
+
+  function _hideOverlay() {
+    if (_overlay) {
+      _overlay.style.display = 'none';
+    }
+  }
+
+  // ── Pré-créer l'overlay au chargement ────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    _createOverlay();
+    console.log('[SANTEO] ✅ audio init OK — overlay prêt');
+  });
+
+  console.log('[SANTEO] script chargé');
+})();
+
+// ═══════════════════════════════════════════════════════════════════════
+//  SANTEO TTS Legacy — zones intercept (conservé pour compatibilité)
+//  Architecture :
+//  - Un div transparent z-index:99999 couvre toute la page
+//  - Il a pointer-events:none sauf dans les zones définies par Flutter
+//  - Quand Flutter dit "zone X est un bouton TTS", le div capte les clics
+//    dans cette zone → speak() garanti car clic HTML natif
+//  - Après speak(), le div laisse passer le clic à Flutter via
+//    pointer-events:none + re-dispatch sur flt-glass-pane
+// ═══════════════════════════════════════════════════════════════════════
+(function () {
+  'use strict';
+
+  var synth  = window.speechSynthesis;
+  var _voice = null;
+
+  // ── Voix fr-FR ────────────────────────────────────────────────────────
+  function _loadVoice() {
+    if (!synth) return;
+    var voices = synth.getVoices();
+    var best = null, frFR = null, anyFr = null;
+    for (var i = 0; i < voices.length; i++) {
+      var v = voices[i];
+      if (v.lang === 'fr-FR') {
+        if (v.localService && !best) best = v;
+        if (!frFR) frFR = v;
+      } else if (v.lang && v.lang.startsWith('fr') && !anyFr) {
+        anyFr = v;
+      }
+    }
+    _voice = best || frFR || anyFr || null;
+  }
+  if (synth) {
+    _loadVoice();
+    synth.onvoiceschanged = function () { _loadVoice(); };
+  }
+
+  // ── Parler ────────────────────────────────────────────────────────────
+  function _doSpeak(text) {
+    if (!text || !synth) return;
+    synth.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = 'fr-FR'; u.rate = 0.85; u.pitch = 1.0; u.volume = 1.0;
+    if (!_voice) _loadVoice();
+    if (_voice) u.voice = _voice;
+    synth.speak(u);
+    console.log('[SANTEO-TTS] speak:', text.substring(0, 60));
+  }
+
+  // ── Zones TTS actives ─────────────────────────────────────────────────
+  // Structure : { id: { text, rect: {x,y,w,h} } }
+  var _zones = {};
+
+  // ── Div ghost intercept ───────────────────────────────────────────────
+  // On écoute les pointerdown sur tout le document en capture.
+  // Si le point tombe dans une zone TTS active → speak() + laisser passer.
+  document.addEventListener('pointerdown', function (e) {
+    if (Object.keys(_zones).length === 0) return;
+    var x = e.clientX, y = e.clientY;
+    for (var id in _zones) {
+      var z = _zones[id];
+      var r = z.rect;
+      if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) {
+        _doSpeak(z.text);
+        console.log('[SANTEO-TTS] zone hit:', id);
+        // NE PAS preventDefault/stopPropagation → le clic continue vers Flutter
+        break;
+      }
+    }
+  }, { capture: true, passive: true }); // passive:true = ne bloque PAS Flutter
+
+  // ── API publique ──────────────────────────────────────────────────────
+
+  // Enregistrer une zone TTS (appelé depuis Flutter via runJs)
+  // id     : identifiant unique (ex: 'main-btn', 'vol-btn')
+  // text   : texte à prononcer
+  // x,y,w,h: position et taille de la zone en px (coordonnées écran)
+  window.__santeoRegisterZone = function (id, text, x, y, w, h) {
+    _zones[id] = { text: text, rect: { x: x, y: y, w: w, h: h } };
+    console.log('[SANTEO-TTS] zone registered:', id, x, y, w, h);
+  };
+
+  window.__santeoUnregisterZone = function (id) {
+    delete _zones[id];
+  };
+
+  window.__santeoUnregisterAll = function () {
+    _zones = {};
+  };
+
+  // API speak() classique (fallback)
+  window.__santeoSpeak = function (text) {
+    if (!text || !synth) return;
+    _doSpeak(text);
+  };
+
+  window.__santeoTtsStop = function () {
+    if (synth) synth.cancel();
+  };
+
+  window.__santeoTtsState = function () {
+    return {
+      synthAvailable: !!synth,
+      synthSpeaking:  synth ? synth.speaking : null,
+      voice:          _voice ? _voice.name + ' (' + _voice.lang + ')' : 'null',
+      zones:          Object.keys(_zones),
+    };
+  };
+
+  console.log('[SANTEO-TTS] zone intercept prêt — voix:', _voice ? _voice.name : 'en chargement...');
+})();
+</script>
+
+<script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

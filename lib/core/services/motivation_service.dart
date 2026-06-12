@@ -41,7 +41,7 @@ class MotivationService {
   static String onboardingComplete(String prenom) {
     final name = prenom.isNotEmpty ? prenom : 'vous';
     final msgs = [
-      '🎊 Félicitations, $name ! Votre profil complet est enregistré. Votre bilan IA personnalisé est en cours de génération...',
+      '🎊 Félicitations, $name ! Votre profil complet est enregistré. Votre programme personnalisé est en cours de génération...',
       '🌺 Ia orana, $name ! Profil terminé avec succès. L\'intelligence artificielle analyse maintenant votre profil pour vous.',
       '🏆 Bravo $name ! Vous avez complété toutes les étapes. Votre programme santé personnalisé arrive dans quelques secondes !',
     ];
@@ -49,13 +49,13 @@ class MotivationService {
   }
 
   // ══════════════════════════════════════════════════════
-  //  MESSAGES BILAN IA
+  //  MESSAGES PROGRAMME
   // ══════════════════════════════════════════════════════
 
   static String assessmentReady(String prenom) {
     final name = prenom.isNotEmpty ? prenom : 'vous';
     final msgs = [
-      '🎉 $name, votre bilan IA est prêt ! Il a été 100% personnalisé selon votre profil unique.',
+      '🎉 $name, votre programme personnalisé est prêt ! Il a été 100% personnalisé selon votre profil unique.',
       '✨ Bilan généré pour vous, $name ! Chaque recommandation a été adaptée au contexte insulaire du Pacifique.',
       '🌟 Votre bilan personnalisé est arrivé, $name ! Découvrez vos recommandations exclusives.',
     ];
@@ -145,7 +145,7 @@ class MotivationService {
 
   static String dashboardGreeting(String prenom, int sessions, double adherence, bool hasAssessment) {
     if (sessions == 0 && !hasAssessment) {
-      return '🌺 Bienvenue ! Générez votre bilan IA pour démarrer votre parcours santé personnalisé.';
+      return '🌺 Bienvenue ! Générez votre programme pour démarrer votre parcours santé personnalisé.';
     }
     if (sessions == 1) {
       return '🎉 Bravo pour votre première séance ! Vous avez franchi le pas le plus important !';
@@ -166,7 +166,7 @@ class MotivationService {
       return '💪 Belle régularité ! ${adherence.toStringAsFixed(0)}% d\'adhérence — Continuez, $prenom !';
     }
     if (!hasAssessment) {
-      return '✨ Profil créé ! Générez votre bilan IA pour un programme 100% personnalisé.';
+      return '✨ Profil créé ! Générez votre programme pour un parcours 100% personnalisé.';
     }
     return '💙 Bonne séance aujourd\'hui, $prenom ! Chaque effort compte.';
   }

@@ -190,6 +190,7 @@ class AppProvider extends ChangeNotifier {
       genre: _onboardingData['genre']?.toString() ?? '',
       localisation:
           _onboardingData['localisation']?.toString() ?? 'France',
+      ville: _onboardingData['ville']?.toString() ?? '',
       objectifSante: _onboardingData['objectifSante']?.toString() ?? '',
       douleursActuelles: _onboardingData['douleursActuelles'] == true,
       zonesDouleur:

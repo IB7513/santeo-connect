@@ -173,7 +173,6 @@ class _KinesListTab extends StatelessWidget {
       specialite: 'Kinésithérapeute • Dos, Lombaires, Sport',
       localisation: 'Nouméa, Nouvelle-Calédonie',
       disponible: true,
-      experience: '8 ans',
       avatarColor: Color(0xFF26A69A),
       langues: ['Français'],
       note: 4.8,
@@ -184,7 +183,6 @@ class _KinesListTab extends StatelessWidget {
       specialite: 'Rééducation post-op, Cervicalgie, Arthrose',
       localisation: 'Papeete, Polynésie française',
       disponible: true,
-      experience: '12 ans',
       avatarColor: Color(0xFFEC407A),
       langues: ['Français', 'Tahitien'],
       note: 4.9,
@@ -195,7 +193,6 @@ class _KinesListTab extends StatelessWidget {
       specialite: 'Bien-être, Sciatique, Tendinite',
       localisation: 'Bora Bora, Polynésie française',
       disponible: false,
-      experience: '6 ans',
       avatarColor: Color(0xFF7E57C2),
       langues: ['Français', 'Anglais', 'Tahitien'],
       note: 4.7,
@@ -206,7 +203,6 @@ class _KinesListTab extends StatelessWidget {
       specialite: 'Hernie discale, Rééducation respiratoire',
       localisation: 'Koné, Nouvelle-Calédonie',
       disponible: true,
-      experience: '+20 ans',
       avatarColor: Color(0xFF42A5F5),
       langues: ['Français', 'Kanak'],
       note: 5.0,
@@ -364,9 +360,6 @@ class _KineCard extends StatelessWidget {
                 _infoChip(Icons.star, '${kine.note}',
                     const Color(0xFFFFC107)),
                 const SizedBox(width: 8),
-                _infoChip(Icons.work_outline,
-                    kine.experience, AppTheme.primary),
-                const SizedBox(width: 8),
                 _infoChip(Icons.translate,
                     kine.langues.first, const Color(0xFF7E57C2)),
                 const Spacer(),
@@ -509,7 +502,6 @@ class _KineProfileSheet extends StatelessWidget {
                 // Infos
                 _sectionTitle('Informations'),
                 _infoRow(Icons.location_on, 'Localisation', kine.localisation),
-                _infoRow(Icons.work_outline, 'Expérience', kine.experience),
                 _infoRow(Icons.translate, 'Langues', kine.langues.join(', ')),
                 const SizedBox(height: 16),
                 _sectionTitle('Disponibilité'),
@@ -1348,7 +1340,6 @@ class _KineData {
   final String specialite;
   final String localisation;
   final bool disponible;
-  final String experience;
   final Color avatarColor;
   final List<String> langues;
   final double note;
@@ -1360,7 +1351,6 @@ class _KineData {
     required this.specialite,
     required this.localisation,
     required this.disponible,
-    required this.experience,
     required this.avatarColor,
     required this.langues,
     required this.note,

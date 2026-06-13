@@ -23,6 +23,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   // Étape 1 — Profil
   final _prenomCtrl = TextEditingController();
+  final _villeCtrl = TextEditingController(); // champ libre ville
   String? _age;
   String? _territoire;
 
@@ -55,6 +56,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void dispose() {
     _pageController.dispose();
     _prenomCtrl.dispose();
+    _villeCtrl.dispose();
     super.dispose();
   }
 
@@ -163,6 +165,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'age': _age ?? '',
       'genre': '',
       'localisation': _territoire ?? 'France métropolitaine',
+      'ville': _villeCtrl.text.trim(),
       'objectifSante': _objectif ?? '',
       'douleursActuelles': _douleursOuiNon,
       'zonesDouleur': _zonesDouleur,
@@ -364,6 +367,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   // ── ÉTAPE 1 : Votre profil ───────────────────
                   _KineStep1Profil(
                     prenomCtrl: _prenomCtrl,
+                    villeCtrl: _villeCtrl,
                     age: _age,
                     territoire: _territoire,
                     onAgeChanged: (v) => setState(() => _age = v),
@@ -468,6 +472,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 // ================================================================
 class _KineStep1Profil extends StatelessWidget {
   final TextEditingController prenomCtrl;
+  final TextEditingController villeCtrl;
   final String? age;
   final String? territoire;
   final ValueChanged<String?> onAgeChanged;
@@ -475,6 +480,7 @@ class _KineStep1Profil extends StatelessWidget {
 
   const _KineStep1Profil({
     required this.prenomCtrl,
+    required this.villeCtrl,
     required this.age,
     required this.territoire,
     required this.onAgeChanged,
@@ -558,6 +564,31 @@ class _KineStep1Profil extends StatelessWidget {
             items: AppConstants.territories,
             icon: Icons.location_on_outlined,
             onChanged: onTerritoireChanged,
+          ),
+          const SizedBox(height: 14),
+
+          // Champ libre — ville / commune
+          TextField(
+            controller: villeCtrl,
+            textCapitalization: TextCapitalization.words,
+            decoration: InputDecoration(
+              labelText: 'Votre ville / commune (optionnel)',
+              hintText: 'Ex : Paris, Lyon, Fort-de-France...',
+              prefixIcon: const Icon(Icons.location_city_outlined),
+              filled: true,
+              fillColor: const Color(0xFFF8F9FA),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                    color: Color(0xFF26C6DA), width: 1.5),
+              ),
+              labelStyle:
+                  TextStyle(fontSize: 13, color: Colors.grey[600]),
+            ),
           ),
           const SizedBox(height: 24),
 

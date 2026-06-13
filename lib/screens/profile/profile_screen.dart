@@ -101,7 +101,10 @@ class ProfileScreen extends StatelessWidget {
                                   color: AppTheme.primary, size: 16),
                               const SizedBox(width: 4),
                               Text(
-                                profile!.localisation,
+                                // Afficher "Ville, Territoire" si ville renseignée
+                                (profile!.ville.isNotEmpty)
+                                    ? '${profile.ville} • ${profile.localisation}'
+                                    : profile.localisation,
                                 style: GoogleFonts.roboto(
                                     fontSize: 13,
                                     color: AppTheme.primary),

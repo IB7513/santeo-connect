@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TTS Debug SANTEO</title></head>
+<body style="font-family:sans-serif;padding:20px;max-width:600px;margin:0 auto;">
+
+<h2 style="color:#0097A7;">🎙️ TTS Debug SANTEO</h2>
+
+<div id="status" style="background:#e3f2fd;border-radius:8px;padding:12px;margin:10px 0;font-size:14px;">
+  Statut : en attente...
+</div>
+
+<button id="b1" style="display:block;width:100%;padding:18px;margin:8px 0;font-size:17px;background:#0097A7;color:white;border:none;border-radius:10px;cursor:pointer;">
+  1️⃣ PARLER DIRECTEMENT
+</button>
+
+<button id="b2" style="display:block;width:100%;padding:18px;margin:8px 0;font-size:17px;background:#4CAF50;color:white;border:none;border-radius:10px;cursor:pointer;">
+  2️⃣ Lister les voix disponibles
+</button>
+
+<button id="b3" style="display:block;width:100%;padding:18px;margin:8px 0;font-size:17px;background:#FF9800;color:white;border:none;border-radius:10px;cursor:pointer;">
+  3️⃣ Test Audio de base (beep)
+</button>
+
+<pre id="log" style="background:#1a1a2e;color:#00ff88;padding:16px;border-radius:8px;font-size:13px;min-height:150px;overflow-y:auto;white-space:pre-wrap;"></pre>
+
+<script>
+var status = document.getElementById('status');
+var logEl = document.getElementById('log');
+
+function l(msg, color) {
+  var t = new Date().toLocaleTimeString('fr');
+  logEl.textContent += '['+t+'] '+msg+'\n';
+  logEl.scrollTop = logEl.scrollHeight;
+  if (color) status.style.background = color;
+  status.textContent = msg;
+  console.log(msg);
+}
+
+// Bouton 1 : parler directement
+document.getElementById('b1').addEventListener('click', function() {
+  l('Test 1 : speak() direct...', '#fff9c4');
+  
+  if (!window.speechSynthesis) {
+    l('❌ FATAL: window.speechSynthesis est undefined !', '#ffcdd2');
+    return;
+  }
+  l('✅ speechSynthesis disponible');
+  
+  var synth = window.speechSynthesis;
+  synth.cancel();
+  
+  var u = new SpeechSynthesisUtterance('Bonjour, je suis la voix guidée de SANTEO. Inspirez lentement.');
+  u.lang = 'fr-FR';
+  u.rate = 0.85;
+  u.pitch = 1.0;
+  u.volume = 1.0;
+  
+  var voices = synth.getVoices();
+  l('Voix chargées: ' + voices.length);
+  
+  var frVoice = null;
+  for (var i=0; i<voices.length; i++) {
+    if (voices[i].lang && voices[i].lang.startsWith('fr')) {
+      frVoice = voices[i];
+      break;
+    }
+  }
+  if (frVoice) {
+    u.voice = frVoice;
+    l('Voix fr: ' + frVoice.name + ' (' + frVoice.lang + ')');
+  } else {
+    l('⚠️ Pas de voix fr — utilisation voix système');
+  }
+  
+  u.onstart = function() { l('🟢 onstart — LE SON JOUE !', '#c8e6c9'); };
+  u.onend   = function() { l('🏁 onend — terminé', '#e8f5e9'); };
+  u.onerror = function(e) { l('🔴 onerror: ' + JSON.stringify(e.error), '#ffcdd2'); };
+  
+  synth.speak(u);
+  
+  l('speak() appelé | speaking=' + synth.speaking + ' | pending=' + synth.pending);
+});
+
+// Bouton 2 : lister les voix
+document.getElementById('b2').addEventListener('click', function() {
+  l('--- Voix disponibles ---', '#e3f2fd');
+  var voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  if (voices.length === 0) {
+    l('⚠️ Aucune voix chargée. Attendre onvoiceschanged...');
+    window.speechSynthesis.onvoiceschanged = function() {
+      var v2 = window.speechSynthesis.getVoices();
+      l('onvoiceschanged: ' + v2.length + ' voix');
+      for (var j=0; j<Math.min(v2.length,10); j++) {
+        l('  ['+j+'] '+v2[j].name+' — '+v2[j].lang+(v2[j].localService?' LOCAL':''));
+      }
+    };
+  } else {
+    for (var i=0; i<Math.min(voices.length,15); i++) {
+      l('  ['+i+'] '+voices[i].name+' — '+voices[i].lang+(voices[i].localService?' LOCAL':''));
+    }
+  }
+});
+
+// Bouton 3 : test AudioContext (vérifier si l'audio est autorisé du tout)
+document.getElementById('b3').addEventListener('click', function() {
+  l('Test AudioContext (beep)...', '#fff9c4');
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    osc.frequency.setValueAtTime(440, ctx.currentTime);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.5);
+    l('✅ AudioContext OK — état: ' + ctx.state + ' — tu dois entendre un beep');
+    osc.onended = function() { ctx.close(); l('Beep terminé'); };
+  } catch(e) {
+    l('❌ AudioContext erreur: ' + e.message, '#ffcdd2');
+  }
+});
+
+// Pré-charger les voix
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = function() {
+    var n = window.speechSynthesis.getVoices().length;
+    l('Auto: ' + n + ' voix chargées');
+  };
+  l('speechSynthesis détecté, chargement voix...');
+} else {
+  l('❌ speechSynthesis NON DISPONIBLE sur ce navigateur', '#ffcdd2');
+}
+</script>
+</body></html>

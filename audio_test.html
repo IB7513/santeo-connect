@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Audio Test</title></head>
+<body style="font-family:sans-serif;padding:20px;">
+<h2>🔊 Test Audio HTML5</h2>
+<div id="log" style="background:#111;color:#0f0;padding:16px;border-radius:8px;font-size:13px;min-height:100px;white-space:pre-wrap;"></div>
+
+<button onclick="testOscillator()" style="display:block;width:100%;padding:18px;margin:8px 0;font-size:17px;background:#0097A7;color:white;border:none;border-radius:10px;cursor:pointer;">
+  1️⃣ Test Oscillateur (AudioContext)
+</button>
+
+<button onclick="testMp3()" style="display:block;width:100%;padding:18px;margin:8px 0;font-size:17px;background:#4CAF50;color:white;border:none;border-radius:10px;cursor:pointer;">
+  2️⃣ Test &lt;audio&gt; MP3 en ligne
+</button>
+
+<button onclick="testBeepB64()" style="display:block;width:100%;padding:18px;margin:8px 0;font-size:17px;background:#FF9800;color:white;border:none;border-radius:10px;cursor:pointer;">
+  3️⃣ Test beep base64 WAV
+</button>
+
+<script>
+var logEl = document.getElementById('log');
+function l(msg) { logEl.textContent += '['+new Date().toLocaleTimeString('fr')+'] '+msg+'\n'; }
+
+function testOscillator() {
+  l('Test oscillateur AudioContext...');
+  try {
+    var ctx = new (window.AudioContext || window.webkitAudioContext)();
+    l('AudioContext state: ' + ctx.state);
+    ctx.resume().then(function() {
+      l('AudioContext resumed — state: ' + ctx.state);
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = 440;
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.5);
+      l('✅ Oscillateur démarré — vous devriez entendre un bip 440Hz');
+      osc.onended = function() { l('🏁 Oscillateur terminé'); };
+    }).catch(function(e) { l('❌ resume() error: ' + e); });
+  } catch(e) { l('❌ AudioContext error: ' + e); }
+}
+
+function testMp3() {
+  l('Test <audio> MP3 depuis URL publique...');
+  var a = new Audio('https://www.soundjay.com/buttons/sounds/button-35.mp3');
+  a.oncanplay = function() { l('✅ canplay déclenché'); };
+  a.onplay = function() { l('🟢 play — le son joue!'); };
+  a.onerror = function(e) { l('❌ error: ' + a.error.code + ' — ' + a.error.message); };
+  a.play().then(function() { l('✅ play() promesse résolue'); }).catch(function(e) { l('❌ play() rejeté: ' + e); });
+}
+
+// WAV beep base64 (440Hz, 0.3s, 8-bit, 8000Hz)
+function testBeepB64() {
+  l('Test beep WAV base64...');
+  try {
+    // WAV 8-bit 8000Hz 440Hz beep ~0.3s
+    var sampleRate = 8000, freq = 440, duration = 0.3;
+    var samples = Math.floor(sampleRate * duration);
+    var buf = new Uint8Array(44 + samples);
+    // WAV header
+    var header = [
+      0x52,0x49,0x46,0x46, // "RIFF"
+      ...intToBytes(36+samples,4),
+      0x57,0x41,0x56,0x45, // "WAVE"
+      0x66,0x6d,0x74,0x20, // "fmt "
+      16,0,0,0,            // chunk size
+      1,0,                 // PCM
+      1,0,                 // mono
+      ...intToBytes(sampleRate,4),
+      ...intToBytes(sampleRate,4),
+      1,0, 8,0,            // block align, bits
+      0x64,0x61,0x74,0x61, // "data"
+      ...intToBytes(samples,4)
+    ];
+    for (var i=0; i<header.length; i++) buf[i] = header[i];
+    for (var i=0; i<samples; i++) {
+      buf[44+i] = Math.round(128 + 127*Math.sin(2*Math.PI*freq*i/sampleRate));
+    }
+    var b64 = btoa(String.fromCharCode.apply(null, buf));
+    var audio = new Audio('data:audio/wav;base64,'+b64);
+    audio.onplay = function() { l('🟢 WAV base64 joue!'); };
+    audio.onerror = function(e) { l('❌ WAV error: ' + (audio.error ? audio.error.code : e)); };
+    audio.play().then(function() { l('✅ WAV base64 play() OK'); }).catch(function(e) { l('❌ play() rejeté: '+e); });
+  } catch(e) { l('❌ exception: ' + e); }
+}
+
+function intToBytes(val, n) {
+  var arr = [];
+  for (var i=0; i<n; i++) { arr.push(val & 0xff); val >>= 8; }
+  return arr;
+}
+</script>
+</body>
+</html>

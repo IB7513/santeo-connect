@@ -2,19 +2,15 @@
     "name": "SANTEO Connect",
     "short_name": "SANTEO",
     "description": "Votre assistant santé personnalisé — adapté au Pacifique",
-    "start_url": "/santeo-connect/",
+    "start_url": "/",
     "display": "standalone",
     "background_color": "#26C6DA",
     "theme_color": "#0097A7",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
-    "scope": "/santeo-connect/",
+    "scope": "/",
     "lang": "fr-FR",
-    "categories": [
-        "health",
-        "medical",
-        "fitness"
-    ],
+    "categories": ["health", "medical", "fitness"],
     "icons": [
         {
             "src": "icons/Icon-192.png",

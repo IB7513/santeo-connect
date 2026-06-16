@@ -37,8 +37,7 @@ if (!window._flutter) {
 _flutter.buildConfig = {"engineRevision":"c29809135135e262a912cf583b2c90deb9ded610","builds":[{"compileTarget":"dart2js","renderer":"html","mainJsPath":"main.dart.js"},{}]};
 
 _flutter.loader.load({
-  onEntrypointLoaded: async function(engineInitializer) {
-    const appRunner = await engineInitializer.initializeEngine({});
-    await appRunner.runApp();
+  serviceWorkerSettings: {
+    serviceWorkerVersion: "481721244"
   }
 });

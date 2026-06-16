@@ -1,7 +1,7 @@
 'use strict';
-const MANIFEST = 'flutter-app-manifest';
-const TEMP = 'flutter-temp-cache';
-const CACHE_NAME = 'flutter-app-cache';
+const MANIFEST = 'flutter-app-manifest-v2';
+const TEMP = 'flutter-temp-cache-v2';
+const CACHE_NAME = 'flutter-app-cache-v2';
 
 const RESOURCES = {"canvaskit/chromium/canvaskit.js": "5e27aae346eee469027c80af0751d53d",
 "canvaskit/chromium/canvaskit.js.symbols": "193deaca1a1424049326d4a91ad1d88d",

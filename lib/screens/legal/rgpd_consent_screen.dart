@@ -1,3 +1,8 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  SANTEO Connect — Écran RGPD / Consentement
+//  © 2026 Imen BELHIBA — Tous droits réservés
+//  Auteure & Créatrice : Imen BELHIBA
+// ═══════════════════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -677,12 +682,11 @@ class _ConsentTile extends StatelessWidget {
 class PrivacyPolicyContent {
   static const String text = '''
 POLITIQUE DE CONFIDENTIALITÉ — SANTEO Connect
-Dernière mise à jour : Juin 2025
+Dernière mise à jour : Juin 2026
 
 1. RESPONSABLE DU TRAITEMENT
 SANTEO Connect
-Email : contact@santeoconnect.nc
-DPO : dpo@santeoconnect.nc
+Email : contact@santeo-connect.com
 
 2. DONNÉES COLLECTÉES
 
@@ -739,7 +743,7 @@ Vous disposez des droits suivants :
 • Droit de retirer votre consentement à tout moment
 
 Pour exercer vos droits : Profil → Exporter/Supprimer mes données
-Ou par email : dpo@santeoconnect.nc
+Ou par email : contact@santeo-connect.com
 
 En cas de réclamation : www.cnil.fr
 
@@ -757,7 +761,7 @@ Toute modification sera notifiée dans l'application. La version en vigueur est 
 class CguContent {
   static const String text = '''
 CONDITIONS GÉNÉRALES D'UTILISATION — SANTEO Connect
-Dernière mise à jour : Juin 2025
+Dernière mise à jour : Juin 2026
 
 1. OBJET
 SANTEO Connect est une application de bien-être et de prévention destinée à tous les utilisateurs (France, DOM-TOM, Nouvelle-Calédonie, Polynésie française, Wallis-et-Futuna et autres territoires).
@@ -799,7 +803,7 @@ Vous vous engagez à :
 • Ne pas utiliser l'application à des fins commerciales sans autorisation
 
 6. PROPRIÉTÉ INTELLECTUELLE
-Tout le contenu de SANTEO Connect (exercices, vidéos, textes, logo, voix off) est protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.
+Tout le contenu de SANTEO Connect (concept, design, logo, textes, programmes d'exercices, algorithmes IA, code source) est protégé par le droit d'auteur. Toute reproduction, adaptation ou exploitation sans autorisation écrite préalable est interdite et constitue une contrefaçon au sens des articles L.335-2 et suivants du Code de la Propriété Intellectuelle.
 
 7. LIMITATION DE RESPONSABILITÉ
 SANTEO Connect ne peut être tenu responsable :
@@ -817,7 +821,6 @@ SANTEO Connect se réserve le droit de modifier les présentes CGU. Les utilisat
 Les présentes CGU sont soumises au droit français. Tout litige relève de la compétence des tribunaux français.
 
 11. CONTACT
-contact@santeoconnect.nc
-SANTEO Connect
+Email : contact@santeo-connect.com
 ''';
 }

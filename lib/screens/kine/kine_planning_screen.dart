@@ -1,5 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  KinePlanningScreen — Interface kiné pour gérer ses créneaux
+//  SANTEO Connect — KinePlanningScreen
+//  © 2026 Imen BELHIBA — Tous droits réservés
+//  Auteure & Créatrice : Imen BELHIBA
+// ───────────────────────────────────────────────────────────────────────────
+//  Interface kiné pour gérer ses créneaux
 //  Accès : onglet "Mon Planning" dans la section Kinés
 // ═══════════════════════════════════════════════════════════════════════════
 

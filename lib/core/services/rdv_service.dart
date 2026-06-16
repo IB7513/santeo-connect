@@ -1,5 +1,9 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  RdvService — Gestion des créneaux et réservations via Firebase Firestore
+//  SANTEO Connect — RdvService
+//  © 2026 Imen BELHIBA — Tous droits réservés
+//  Auteure & Créatrice : Imen BELHIBA
+// ───────────────────────────────────────────────────────────────────────────
+//  Gestion des créneaux et réservations via Firebase Firestore
 //  + Notifications email via EmailJS (sans backend)
 // ═══════════════════════════════════════════════════════════════════════════
 //

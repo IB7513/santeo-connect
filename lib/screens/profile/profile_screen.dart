@@ -1,3 +1,8 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  SANTEO Connect — Écran Profil
+//  © 2026 Imen BELHIBA — Tous droits réservés
+//  Auteure & Créatrice : Imen BELHIBA
+// ═══════════════════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +13,7 @@ import '../../widgets/common/common_widgets.dart';
 import '../landing/landing_screen.dart';
 import '../../core/services/storage_service.dart';
 import '../legal/rgpd_consent_screen.dart';
+import '../legal/mentions_legales_screen.dart';
 import '../dashboard/company_dashboard_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -301,6 +307,28 @@ class ProfileScreen extends StatelessWidget {
                           ),
                           const Divider(height: 1),
                           _ActionItem(
+                            icon: Icons.balance_outlined,
+                            label: 'Mentions légales',
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const MentionsLegalesScreen(),
+                              ),
+                            ),
+                          ),
+                          const Divider(height: 1),
+                          _ActionItem(
+                            icon: Icons.balance_outlined,
+                            label: 'Mentions légales',
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const MentionsLegalesScreen(),
+                              ),
+                            ),
+                          ),
+                          const Divider(height: 1),
+                          _ActionItem(
                             icon: Icons.privacy_tip_outlined,
                             label: 'Politique de confidentialité',
                             onTap: () => _showLegalDoc(context, 'privacy'),
@@ -367,6 +395,12 @@ class ProfileScreen extends StatelessWidget {
                     'SANTEO Connect v1.0.0 · IA Embarquée',
                     style: GoogleFonts.roboto(
                         fontSize: 11, color: AppTheme.textLight),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '© 2024-2025 Imen BELHIBA',
+                    style: GoogleFonts.roboto(
+                        fontSize: 10, color: AppTheme.textLight),
                   ),
                   const SizedBox(height: 20),
                 ],

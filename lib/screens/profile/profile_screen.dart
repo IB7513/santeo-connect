@@ -1,7 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
 //  SANTEO Connect — Écran Profil
-//  © 2026 Imen BELHIBA — Tous droits réservés
-//  Auteure & Créatrice : Imen BELHIBA
 // ═══════════════════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

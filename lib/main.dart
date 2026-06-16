@@ -1,7 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
 //  SANTEO Connect — main.dart
-//  © 2026 Imen BELHIBA — Tous droits réservés
-//  Auteure & Créatrice : Imen BELHIBA
 // ═══════════════════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -248,7 +248,7 @@ class RdvService {
       ),
       _sendBookingEmail(
         toEmail: _copyEmail,
-        toName: 'Imen — SANTEO',
+        toName: 'SANTEO Connect',
         kineNom: slot.kineName,
         patientNom: patientNom,
         patientMail: patientMail,

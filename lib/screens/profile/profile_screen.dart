@@ -396,12 +396,6 @@ class ProfileScreen extends StatelessWidget {
                     style: GoogleFonts.roboto(
                         fontSize: 11, color: AppTheme.textLight),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '© 2024-2025 Imen BELHIBA',
-                    style: GoogleFonts.roboto(
-                        fontSize: 10, color: AppTheme.textLight),
-                  ),
                   const SizedBox(height: 20),
                 ],
               ),

@@ -336,15 +336,15 @@
     <div style="color:rgba(255,255,255,0.9);font-size:18px;margin-bottom:32px;">
       votre santé en main.
     </div>
-    <button onclick="document.getElementById('landing-html').style.display='none'" style="
+    <button id="btn-commencer" onclick="santeoStartApp()" style="
       display:block;width:100%;max-width:420px;margin:0 auto 14px;
       background:white;color:#00838F;
       border:none;border-radius:30px;
       padding:16px 24px;font-size:16px;font-weight:700;
       cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.15);
     ">Commencer mon programme</button>
-    <div style="color:rgba(255,255,255,0.85);font-size:14px;cursor:pointer;"
-         onclick="document.getElementById('landing-html').style.display='none'">
+    <div id="btn-login" style="color:rgba(255,255,255,0.85);font-size:14px;cursor:pointer;"
+         onclick="santeoStartApp()">
       Déjà un compte ? Se connecter
     </div>
   </div>
@@ -384,20 +384,50 @@
   </div>
 </div>
 <script>
-// Masquer le landing HTML quand Flutter est prêt — transition fluide
-window.addEventListener('flutter-first-frame', function() {
+// ── Gestion du bouton Commencer ────────────────────────────────────────
+var _santeoFlutterReady = false;
+var _santeoUserClicked = false;
+
+function santeoStartApp() {
+  _santeoUserClicked = true;
+  var btn = document.getElementById('btn-commencer');
+  var login = document.getElementById('btn-login');
+  if (btn) {
+    btn.innerHTML = '<span style="display:inline-block;width:18px;height:18px;border:3px solid #00838F;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px;"></span>Chargement...';
+    btn.style.opacity = '0.85';
+    btn.onclick = null;
+  }
+  if (login) login.style.display = 'none';
+  // Si Flutter est déjà prêt → masquer tout de suite
+  if (_santeoFlutterReady) { santeoHideLanding(); }
+  // Sinon on attend l'event flutter-first-frame (voir ci-dessous)
+}
+
+function santeoHideLanding() {
   var el = document.getElementById('landing-html');
   if (el) {
     el.style.transition = 'opacity 0.3s';
     el.style.opacity = '0';
     setTimeout(function() { if (el) el.remove(); }, 350);
   }
+}
+
+// Ajouter l'animation CSS spin
+var styleEl = document.createElement('style');
+styleEl.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(styleEl);
+
+// Masquer la landing quand Flutter est prêt
+window.addEventListener('flutter-first-frame', function() {
+  _santeoFlutterReady = true;
+  if (_santeoUserClicked) {
+    santeoHideLanding(); // L'utilisateur avait déjà cliqué
+  } else {
+    santeoHideLanding(); // Auto-masquage même sans clic
+  }
 });
-// Fallback 12s
-setTimeout(function() {
-  var el = document.getElementById('landing-html');
-  if (el) { el.style.transition='opacity 0.3s'; el.style.opacity='0'; setTimeout(function(){if(el)el.remove();},350); }
-}, 12000);
+// Fallback 15s
+setTimeout(function() { santeoHideLanding(); }, 15000);
 </script>
 
 </body>

@@ -1,7 +1,7 @@
 'use strict';
-const MANIFEST = 'flutter-app-manifest-v3';
-const TEMP = 'flutter-temp-cache-v3';
-const CACHE_NAME = 'flutter-app-cache-v3';
+const MANIFEST = 'flutter-app-manifest-v4';
+const TEMP = 'flutter-temp-cache-v4';
+const CACHE_NAME = 'flutter-app-cache-v4';
 
 const RESOURCES = {"canvaskit/chromium/canvaskit.js": "5e27aae346eee469027c80af0751d53d",
 "canvaskit/chromium/canvaskit.js.symbols": "193deaca1a1424049326d4a91ad1d88d",
@@ -17,8 +17,8 @@ const RESOURCES = {"canvaskit/chromium/canvaskit.js": "5e27aae346eee469027c80af0
 "canvaskit/skwasm_heavy.wasm": "8034ad26ba2485dab2fd49bdd786837b",
 "flutter.js": "888483df48293866f9f41d3d9274a779",
 "flutter_bootstrap.js": "a1883f2c2710614cbb25a6962173629b",
-"index.html": "16e1b09b3929bd6b9c6911d405d58906",
-"/": "16e1b09b3929bd6b9c6911d405d58906",
+"index.html": "f88aca40cf1857184bc19097face5901",
+"/": "f88aca40cf1857184bc19097face5901",
 "main.dart.js": "04b5621ee0644d6b74c324c831f5876a",
 "version.json": "6f6dbe57f71d048c19be125e4db75e56",
 "assets/assets/images/santeo_logo.png": "a91f1f12feb96c8150c6d31caff6b470",

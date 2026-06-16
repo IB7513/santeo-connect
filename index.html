@@ -393,11 +393,11 @@ window.addEventListener('flutter-first-frame', function() {
     setTimeout(function() { if (el) el.remove(); }, 350);
   }
 });
-// Fallback 12s
+// Fallback 1s — se cache toujours après 1 seconde
 setTimeout(function() {
   var el = document.getElementById('landing-html');
-  if (el) { el.style.transition='opacity 0.3s'; el.style.opacity='0'; setTimeout(function(){if(el)el.remove();},350); }
-}, 12000);
+  if (el) { el.style.transition='opacity 0.5s'; el.style.opacity='0'; setTimeout(function(){if(el)el.remove();},500); }
+}, 1000);
 </script>
 
 </body>

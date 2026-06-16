@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <base href="/">
+  <base href="/santeo-connect/">
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -358,7 +358,6 @@
 </script>
 
 <script>
-  // Force renderer HTML (pas de CanvasKit/WASM = chargement 3x plus rapide)
   window._flutter_config = { renderer: "html" };
 </script>
 <script src="flutter_bootstrap.js" async></script>
@@ -370,5 +369,40 @@ window.addEventListener('flutter-first-frame', function() {
 // Fallback : masquer après 8s max
 setTimeout(function() { if (window._santeoLoadingDone) window._santeoLoadingDone(); }, 8000);
 </script>
+
+<!-- Écran de chargement -->
+<div id="loading-screen" style="
+  position:fixed;inset:0;z-index:99999999;
+  background:linear-gradient(135deg,#0097A7 0%,#26C6DA 100%);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:24px;
+">
+  <img src="icons/Icon-192.png" width="88" height="88"
+       style="border-radius:22px;box-shadow:0 8px 32px rgba(0,0,0,0.25);">
+  <div style="color:white;font-family:sans-serif;font-size:22px;font-weight:700;">SANTEO Connect</div>
+  <div style="width:180px;height:4px;background:rgba(255,255,255,0.25);border-radius:2px;overflow:hidden;">
+    <div id="loading-bar" style="height:100%;width:0%;background:white;border-radius:2px;transition:width 0.4s ease;"></div>
+  </div>
+  <div style="color:rgba(255,255,255,0.8);font-family:sans-serif;font-size:13px;">Chargement en cours…</div>
+</div>
+<script>
+(function(){
+  var bar=document.getElementById('loading-bar'),pct=0;
+  var iv=setInterval(function(){pct=pct<85?pct+(85-pct)*0.06:pct;if(bar)bar.style.width=pct+'%';},200);
+  window._santeoLoadingDone=function(){
+    clearInterval(iv);if(bar)bar.style.width='100%';
+    setTimeout(function(){
+      var s=document.getElementById('loading-screen');
+      if(s){s.style.transition='opacity 0.4s';s.style.opacity='0';}
+      setTimeout(function(){var s2=document.getElementById('loading-screen');if(s2)s2.remove();},450);
+    },200);
+  };
+})();
+</script>
+<script>
+  window.addEventListener('flutter-first-frame',function(){if(window._santeoLoadingDone)window._santeoLoadingDone();});
+  setTimeout(function(){if(window._santeoLoadingDone)window._santeoLoadingDone();},10000);
+</script>
+
 </body>
 </html>

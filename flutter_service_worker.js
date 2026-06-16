@@ -216,6 +216,10 @@ self.addEventListener("fetch", (event) => {
   if (event.request.url == origin || event.request.url.startsWith(origin + '/#') || key == '') {
     key = '/';
   }
+  // Gérer le base-href /santeo-connect/ pour la PWA
+  if (key == 'santeo-connect/' || key == 'santeo-connect') {
+    key = '/';
+  }
   // If the URL is not the RESOURCE list then return to signal that the
   // browser should take over.
   if (!RESOURCES[key]) {

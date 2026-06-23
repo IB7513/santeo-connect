@@ -1,16 +1,15 @@
-# santeo_connect
+# SANTEO Connect
 
-A new Flutter project.
+Application mobile de bien-être, prévention et accompagnement kinésithérapeutique.
 
-## Getting Started
+## Fonctionnalités
 
-This project is a starting point for a Flutter application.
+- Programmes d'exercices personnalisés
+- Prise de rendez-vous avec les kinésithérapeutes
+- Suivi de progression
+- Messagerie avec les professionnels de santé
+- Gestion du profil et des données personnelles (RGPD)
 
-A few resources to get you started if this is your first Flutter project:
+## Contact
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+contact@santeo-connect.com

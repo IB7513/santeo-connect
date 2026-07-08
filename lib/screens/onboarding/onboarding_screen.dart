@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -21,20 +22,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _pageController = PageController();
   int _currentPage = 0;
 
-  // Étape 1 — Profil
+  // étape 1
   final _prenomCtrl = TextEditingController();
-  final _villeCtrl = TextEditingController(); // champ libre ville
+  final _villeCtrl = TextEditingController();
   String? _age;
   String? _territoire;
 
-  // Étape 2 — Bilan corporel kiné
+  // étape 2 — bilan fonctionnel
   bool _douleursOuiNon = false;
   final List<String> _zonesDouleur = [];
   double _niveauMobilite = 3;
   String? _niveauActivite;
   final List<String> _problemesSante = [];
 
-  // Étape 3 — Programme
+  // étape 3
   String? _objectif;
   String? _dureeSeance;
   String? _frequenceSemaine;
@@ -311,7 +312,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // ── Header ──────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
@@ -357,14 +357,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // ── Pages ────────────────────────────────────────────
             Expanded(
               child: PageView(
                 controller: _pageController,
                 physics: const NeverScrollableScrollPhysics(),
                 onPageChanged: (i) => setState(() => _currentPage = i),
                 children: [
-                  // ── ÉTAPE 1 : Votre profil ───────────────────
                   _KineStep1Profil(
                     prenomCtrl: _prenomCtrl,
                     villeCtrl: _villeCtrl,
@@ -375,7 +373,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         setState(() => _territoire = v),
                   ),
 
-                  // ── ÉTAPE 2 : Bilan corporel kiné ────────────
                   _KineStep2Bilan(
                     douleursOuiNon: _douleursOuiNon,
                     zonesDouleur: _zonesDouleur,
@@ -408,7 +405,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     },
                   ),
 
-                  // ── ÉTAPE 3 : Votre programme ────────────────
                   _KineStep3Programme(
                     objectif: _objectif,
                     dureeSeance: _dureeSeance,
@@ -432,7 +428,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               ),
             ),
 
-            // ── Bottom CTA ───────────────────────────────────────
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               child: Column(
@@ -467,9 +462,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-// ================================================================
 // ÉTAPE 1 : Votre profil
-// ================================================================
+
 class _KineStep1Profil extends StatelessWidget {
   final TextEditingController prenomCtrl;
   final TextEditingController villeCtrl;
@@ -626,9 +620,8 @@ class _KineStep1Profil extends StatelessWidget {
   }
 }
 
-// ================================================================
 // ÉTAPE 2 : Bilan corporel kiné (fusion fonctionnel + antécédents)
-// ================================================================
+
 class _KineStep2Bilan extends StatelessWidget {
   final bool douleursOuiNon;
   final List<String> zonesDouleur;
@@ -669,7 +662,6 @@ class _KineStep2Bilan extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // ── Douleurs ────────────────────────────────────────
           _SectionLabel(label: 'DOULEURS ACTUELLES'),
           const SizedBox(height: 8),
           SanteoCard(
@@ -739,7 +731,6 @@ class _KineStep2Bilan extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // ── Mobilité ─────────────────────────────────────────
           _SectionLabel(label: 'ÉVALUATION FONCTIONNELLE'),
           const SizedBox(height: 8),
           SanteoCard(
@@ -812,7 +803,6 @@ class _KineStep2Bilan extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // ── Antécédents (condensés) ───────────────────────────
           _SectionLabel(label: 'ANTÉCÉDENTS MÉDICAUX'),
           const SizedBox(height: 8),
           Text('Problèmes de santé (sélectionnez tout ce qui s\'applique)',
@@ -868,9 +858,8 @@ class _KineStep2Bilan extends StatelessWidget {
   }
 }
 
-// ================================================================
 // ÉTAPE 3 : Votre programme
-// ================================================================
+
 class _KineStep3Programme extends StatelessWidget {
   final String? objectif;
   final String? dureeSeance;
@@ -1024,9 +1013,6 @@ class _KineStep3Programme extends StatelessWidget {
   }
 }
 
-// ================================================================
-// SHARED HELPERS
-// ================================================================
 class _StepHeader extends StatelessWidget {
   final IconData icon;
   final String title;

@@ -1,15 +1,25 @@
 # SANTEO Connect
 
-Application mobile de bien-être, prévention et accompagnement kinésithérapeutique.
+**Votre kiné en poche, votre santé en main !**
 
-## Fonctionnalités
+**© 2026 Imen BELHIBA. Tous droits réservés.**
 
-- Programmes d'exercices personnalisés
-- Prise de rendez-vous avec les kinésithérapeutes
-- Suivi de progression
-- Messagerie avec les professionnels de santé
-- Gestion du profil et des données personnelles (RGPD)
+Développé par Imen BELHIBA — COO de SANTEO Connect.  
+Contact : imen@santeo-connect.com
 
-## Contact
+---
 
-contact@santeo-connect.com
+## Stack technique
+- Flutter 3.35.4 / Dart 3.9.2
+- Firebase Firestore + Authentication
+- OpenAI API
+- GitHub Pages
+
+## Démarrage
+```bash
+flutter pub get
+flutter run
+```
+
+---
+*Toute reproduction ou réutilisation du code sans autorisation écrite de l'auteure est interdite.*

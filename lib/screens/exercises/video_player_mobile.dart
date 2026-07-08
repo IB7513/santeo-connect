@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Stub mobile du lecteur vidéo — affiche un placeholder sur Android/iOS
-/// (les vidéos Drive ne sont accessibles qu'en Web via iframe)
+// Stub mobile du lecteur vidéo — affiche un placeholder sur Android/iOS
+// (les vidéos Drive ne sont accessibles qu'en Web via iframe)
 class VideoPlayerWeb extends StatelessWidget {
   final String videoUrl;
   const VideoPlayerWeb({super.key, required this.videoUrl});

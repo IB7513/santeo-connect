@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
+    // validation ok
     setState(() {
       _isLoading = true;
       _error = null;
@@ -100,7 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
                 ],
 
-                // ── Prénom ────────────────────────────────────────
                 TextFormField(
                   controller: _prenomCtrl,
                   textCapitalization: TextCapitalization.words,
@@ -116,7 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
 
-                // ── Mot de passe ──────────────────────────────────
                 TextFormField(
                   controller: _passwordCtrl,
                   obscureText: _obscurePass,
@@ -162,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 const Divider(),
                 const SizedBox(height: 12),
 
-                // ── Mode démo — intact ────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(

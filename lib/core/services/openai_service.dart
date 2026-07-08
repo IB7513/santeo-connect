@@ -8,9 +8,8 @@ class OpenAIService {
 
   OpenAIService(this._apiKey);
 
-  // =====================================================
   // 1. ÉVALUATION PERSONNALISÉE (generate_assessment)
-  // =====================================================
+
   Future<String> generateAssessment({
     required String prenom,
     required String age,
@@ -76,9 +75,8 @@ $contexteTerritoire''';
     return await _callOpenAI(systemPrompt, userPrompt);
   }
 
-  // =====================================================
   // 2. PROGRAMME PERSONNALISÉ (generate_program)
-  // =====================================================
+
   Future<String> generateProgram({
     required String prenom,
     required String objectif,
@@ -104,9 +102,8 @@ Génère un programme adapté sans matériel, tenant compte du contexte local.''
     return await _callOpenAI(systemPrompt, userPrompt, maxTokens: 1500);
   }
 
-  // =====================================================
   // 3. ANALYSE PROGRESSION (analyze_progress)
-  // =====================================================
+
   Future<String> analyzeProgress({
     required double adherence,
     required int tempsTotal,
@@ -123,9 +120,8 @@ Génère recommandations pour la semaine prochaine.''';
     return await _callOpenAI(systemPrompt, userPrompt, maxTokens: 400);
   }
 
-  // =====================================================
   // 4. DÉTECTION ESCALADE (detect_escalation)
-  // =====================================================
+
   Future<Map<String, String>> detectEscalation({
     required double douleur,
     required double adherence,
@@ -145,7 +141,7 @@ Durée du programme: $dureeEnSemaines semaines
 Réponds en JSON uniquement.''';
 
     final response = await _callOpenAI(systemPrompt, userPrompt, maxTokens: 300);
-    
+
     try {
       final cleanJson = response.replaceAll(RegExp(r'```json\n?|\n?```'), '').trim();
       final Map<String, dynamic> parsed = jsonDecode(cleanJson);
@@ -158,9 +154,6 @@ Réponds en JSON uniquement.''';
     }
   }
 
-  // =====================================================
-  // APPEL API OPENAI (privé)
-  // =====================================================
   Future<String> _callOpenAI(
     String systemPrompt,
     String userPrompt, {

@@ -1,4 +1,5 @@
 // ignore_for_file: constant_identifier_names
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 
 import '../../models/app_models.dart';
 
@@ -20,20 +21,16 @@ class AppConstants {
 
   // Territories
   static const List<String> territories = [
-    // ── France ────────────────────────────────────────────
     'France',
     'France métropolitaine',
-    // ── DOM-TOM ───────────────────────────────────────────
     'Réunion',
     'Martinique',
     'Guadeloupe',
     'Guyane',
     'Mayotte',
-    // ── Pacifique français ────────────────────────────────
     'Nouvelle-Calédonie',
     'Polynésie française',
     'Wallis-et-Futuna',
-    // ── Europe ────────────────────────────────────────────
     'Belgique',
     'Suisse',
     'Luxembourg',
@@ -42,21 +39,18 @@ class AppConstants {
     'Portugal',
     'Allemagne',
     'Royaume-Uni',
-    // ── Afrique du Nord & Subsaharienne ───────────────────
     'Canada',
     'Maroc',
     'Tunisie',
     'Algérie',
     'Sénégal',
     'Côte d\'Ivoire',
-    // ── Pacifique (autres) ────────────────────────────────
     'Vanuatu',
     'Fidji',
     'Samoa',
     'Tonga',
     'Îles Cook',
     'Kiribati',
-    // ── Autre ────────────────────────────────────────────
     'Autre pays',
   ];
 
@@ -158,7 +152,7 @@ class AppConstants {
     'cardio': 'Cardio',
   };
 
-  // ====== 33 EXERCICES RÉELS — URLs Google Drive ======
+  // exercices réels
   static final List<Exercise> seedExercises = [
     Exercise(
       id: 'ex_abdos_2_temps',

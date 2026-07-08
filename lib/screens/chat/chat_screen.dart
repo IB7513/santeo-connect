@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -5,9 +6,6 @@ import '../../core/theme/app_theme.dart';
 import '../../core/services/chat_ai_service.dart';
 import '../../providers/app_providers.dart';
 
-// ============================================================
-// MODÈLE MESSAGE
-// ============================================================
 class _ChatMessage {
   final String text;
   final bool isUser;
@@ -22,9 +20,6 @@ class _ChatMessage {
   }) : time = time ?? DateTime.now();
 }
 
-// ============================================================
-// ÉCRAN CHAT
-// ============================================================
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
@@ -107,8 +102,6 @@ class _ChatScreenState extends State<ChatScreen>
     super.dispose();
   }
 
-
-
   Future<void> _sendMessage(String text) async {
     if (text.trim().isEmpty) return;
     _textCtrl.clear();
@@ -154,10 +147,8 @@ class _ChatScreenState extends State<ChatScreen>
           body: SafeArea(
             child: Column(
               children: [
-                // ── HEADER ──
                 _ChatHeader(provider: provider),
 
-                // ── MESSAGES ──
                 Expanded(
                   child: ListView.builder(
                     controller: _scrollCtrl,
@@ -172,13 +163,11 @@ class _ChatScreenState extends State<ChatScreen>
                   ),
                 ),
 
-                // ── SUGGESTIONS ──
                 if (!_isTyping) _SuggestionsRow(
                   suggestions: _suggestions,
                   onTap: _sendMessage,
                 ),
 
-                // ── INPUT ──
                 _ChatInput(
                   controller: _textCtrl,
                   isTyping: _isTyping,
@@ -193,9 +182,6 @@ class _ChatScreenState extends State<ChatScreen>
   }
 }
 
-// ============================================================
-// HEADER
-// ============================================================
 class _ChatHeader extends StatelessWidget {
   final AppProvider provider;
   const _ChatHeader({required this.provider});
@@ -296,9 +282,6 @@ class _ChatHeader extends StatelessWidget {
   }
 }
 
-// ============================================================
-// BULLES DE MESSAGE
-// ============================================================
 class _MessageBubble extends StatelessWidget {
   final _ChatMessage message;
   const _MessageBubble({required this.message});
@@ -418,9 +401,6 @@ class _MessageBubble extends StatelessWidget {
   }
 }
 
-// ============================================================
-// AVATAR IA
-// ============================================================
 class _AIAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -438,9 +418,6 @@ class _AIAvatar extends StatelessWidget {
   }
 }
 
-// ============================================================
-// AVATAR UTILISATEUR
-// ============================================================
 class _UserAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -456,9 +433,6 @@ class _UserAvatar extends StatelessWidget {
   }
 }
 
-// ============================================================
-// INDICATEUR DE FRAPPE
-// ============================================================
 class _TypingBubble extends StatefulWidget {
   @override
   State<_TypingBubble> createState() => _TypingBubbleState();
@@ -539,9 +513,6 @@ class _TypingBubbleState extends State<_TypingBubble>
   }
 }
 
-// ============================================================
-// SUGGESTIONS RAPIDES
-// ============================================================
 class _SuggestionsRow extends StatelessWidget {
   final List<String> suggestions;
   final Function(String) onTap;
@@ -593,9 +564,6 @@ class _SuggestionsRow extends StatelessWidget {
   }
 }
 
-// ============================================================
-// INPUT
-// ============================================================
 class _ChatInput extends StatelessWidget {
   final TextEditingController controller;
   final bool isTyping;

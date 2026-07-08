@@ -1,15 +1,10 @@
-// core/services/daily_plan_service.dart
-// Service Plan Quotidien — 2 exercices/jour + déblocage séquentiel
-// SANTEO Connect — Architecture SharedPreferences + Firestore catalogue
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/constants/app_constants.dart';
 
-// ═══════════════════════════════════════════════════════════════════
-//  MODÈLE — Slot exercice du plan quotidien
-// ═══════════════════════════════════════════════════════════════════
+// modèle slot
 
 enum DailySlotStatus { locked, available, completed }
 
@@ -41,7 +36,7 @@ class DailyExerciseSlot {
   bool get isAvailable => status == DailySlotStatus.available;
   bool get isCompleted => status == DailySlotStatus.completed;
 
-  /// Durée estimée en minutes
+  // Durée estimée en minutes
   int get estimatedMinutes {
     if (dureeSerieSec > 0) {
       return ((series * dureeSerieSec) / 60).ceil().clamp(1, 30);
@@ -59,10 +54,6 @@ class DailyExerciseSlot {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  SERVICE
-// ═══════════════════════════════════════════════════════════════════
-
 class DailyPlanService {
   static final DailyPlanService _instance = DailyPlanService._internal();
   factory DailyPlanService() => _instance;
@@ -70,7 +61,6 @@ class DailyPlanService {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // ── Cache des voix depuis seedExercises (indexé par id et titre) ──────────
   static final Map<String, Map<String, String>> _voixCache = _buildVoixCache();
 
   static Map<String, Map<String, String>> _buildVoixCache() {
@@ -91,8 +81,8 @@ class DailyPlanService {
     return cache;
   }
 
-  /// Enrichit une Map exercice Firestore avec les voix depuis seedExercises
-  /// si les champs voix_* sont manquants.
+  // Enrichit une Map exercice Firestore avec les voix depuis seedExercises
+  // si les champs voix_* sont manquants.
   static Map<String, dynamic> _enrichWithVoix(Map<String, dynamic> data) {
     // Déjà complet ?
     final hasVoix = (data['voix_intro'] as String?)?.isNotEmpty == true ||
@@ -115,28 +105,22 @@ class DailyPlanService {
     return data;
   }
 
-  // ── Clés SharedPreferences ────────────────────────────────────────────────
-  static const _keyPlanDate       = 'daily_plan_date';
-  static const _keyPlanSlot0Id    = 'daily_plan_slot0_id';
-  static const _keyPlanSlot1Id    = 'daily_plan_slot1_id';
+  static const _keyPlanDate = 'daily_plan_date';
+  static const _keyPlanSlot0Id = 'daily_plan_slot0_id';
+  static const _keyPlanSlot1Id = 'daily_plan_slot1_id';
   static const _keySlot0Completed = 'daily_plan_slot0_completed';
   static const _keySlot1Completed = 'daily_plan_slot1_completed';
-  static const _keySlot0CompAt    = 'daily_plan_slot0_completed_at';
-  static const _keySlot1CompAt    = 'daily_plan_slot1_completed_at';
-  static const _keyRecentIds      = 'daily_plan_recent_ids';  // JSON list
-  static const _keyStreak         = 'daily_plan_streak';
+  static const _keySlot0CompAt = 'daily_plan_slot0_completed_at';
+  static const _keySlot1CompAt = 'daily_plan_slot1_completed_at';
+  static const _keyRecentIds = 'daily_plan_recent_ids';  // JSON list
+  static const _keyStreak = 'daily_plan_streak';
   static const _keyLastStreakDate = 'daily_plan_last_streak_date';
 
-  // ── Cache mémoire ─────────────────────────────────────────────────────────
   List<DailyExerciseSlot>? _cachedPlan;
   String? _cachedDate;
 
-  // ═════════════════════════════════════════════════════════════════
-  //  OBTENIR LE PLAN DU JOUR
-  // ═════════════════════════════════════════════════════════════════
-
-  /// Retourne les 2 slots du plan quotidien avec leur statut.
-  /// Même plan toute la journée — reset automatique à minuit.
+  // Retourne les 2 slots du plan quotidien avec leur statut.
+  // Même plan toute la journée — reset automatique à minuit.
   Future<List<DailyExerciseSlot>> getDailyPlan({
     String? userProfile,  // 'sedentaire' | 'actif' | 'senior' | etc.
     String? difficulty,   // 'debutant' | 'intermediaire' | 'avance'
@@ -144,7 +128,6 @@ class DailyPlanService {
     try {
       final today = _todayString();
 
-      // ── Cache hit ─────────────────────────────────────────────────────────
       if (_cachedDate == today && _cachedPlan != null) {
         return await _refreshStatuses(_cachedPlan!);
       }
@@ -152,12 +135,10 @@ class DailyPlanService {
       final prefs = await SharedPreferences.getInstance();
       final storedDate = prefs.getString(_keyPlanDate);
 
-      // ── Reset à minuit ────────────────────────────────────────────────────
       if (storedDate != today) {
         await _resetDailyPlan(prefs);
       }
 
-      // ── Vérifier si on a déjà les IDs du jour ─────────────────────────────
       final slot0Id = prefs.getString(_keyPlanSlot0Id);
       final slot1Id = prefs.getString(_keyPlanSlot1Id);
 
@@ -178,11 +159,10 @@ class DailyPlanService {
         await prefs.setString(_keyPlanDate, today);
       }
 
-      // ── Construire les slots avec statuts ─────────────────────────────────
       final slot0Done = prefs.getBool(_keySlot0Completed) ?? false;
       final slot1Done = prefs.getBool(_keySlot1Completed) ?? false;
-      final slot0At   = prefs.getString(_keySlot0CompAt);
-      final slot1At   = prefs.getString(_keySlot1CompAt);
+      final slot0At = prefs.getString(_keySlot0CompAt);
+      final slot1At = prefs.getString(_keySlot1CompAt);
 
       final plan = [
         DailyExerciseSlot(
@@ -214,10 +194,6 @@ class DailyPlanService {
     }
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  MARQUER UN EXERCICE COMME COMPLÉTÉ
-  // ═════════════════════════════════════════════════════════════════
-
   Future<List<DailyExerciseSlot>> markSlotCompleted(int slot) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -245,10 +221,6 @@ class DailyPlanService {
     }
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  GETTERS ÉTAT
-  // ═════════════════════════════════════════════════════════════════
-
   Future<bool> isBothCompleted() async {
     final prefs = await SharedPreferences.getInstance();
     final today = _todayString();
@@ -271,10 +243,6 @@ class DailyPlanService {
     return prefs.getBool(_keySlot0Completed) ?? false;
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  SÉLECTION INTELLIGENTE — 2 exercices complémentaires
-  // ═════════════════════════════════════════════════════════════════
-
   Future<List<Map<String, dynamic>>> _selectDailyExercises(
     SharedPreferences prefs,
     String? userProfile,
@@ -293,7 +261,6 @@ class DailyPlanService {
           .map((doc) => _enrichWithVoix({'id': doc.id, ...doc.data()}))
           .toList();
 
-      // ── Filtre profil utilisateur ─────────────────────────────────────────
       if (userProfile != null && userProfile != 'tous') {
         final filtered = allExercises.where((e) {
           final cibles = List<String>.from(e['cibles'] as List? ?? []);
@@ -302,7 +269,6 @@ class DailyPlanService {
         if (filtered.isNotEmpty) allExercises = filtered;
       }
 
-      // ── Filtre difficulté ─────────────────────────────────────────────────
       if (difficulty != null) {
         final filtered = allExercises
             .where((e) => e['difficulte'] == difficulty)
@@ -310,7 +276,6 @@ class DailyPlanService {
         if (filtered.isNotEmpty) allExercises = filtered;
       }
 
-      // ── Anti-répétition ───────────────────────────────────────────────────
       final recentIds = prefs.getStringList(_keyRecentIds) ?? [];
       final withoutRecent = allExercises
           .where((e) => !recentIds.contains(e['id']))
@@ -319,7 +284,6 @@ class DailyPlanService {
 
       if (pool.isEmpty) return [];
 
-      // ── Sélection déterministe + diversité catégorie ──────────────────────
       final dayIndex = DateTime.now().difference(DateTime(2024, 1, 1)).inDays;
 
       // Premier exercice
@@ -353,10 +317,6 @@ class DailyPlanService {
     }
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  HELPERS FIRESTORE
-  // ═════════════════════════════════════════════════════════════════
-
   Future<List<Map<String, dynamic>>> _fetchExercisesById(List<String> ids) async {
     final results = <Map<String, dynamic>>[];
     for (final id in ids) {
@@ -382,18 +342,14 @@ class DailyPlanService {
     }
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  REFRESH STATUTS (depuis cache)
-  // ═════════════════════════════════════════════════════════════════
-
   Future<List<DailyExerciseSlot>> _refreshStatuses(
     List<DailyExerciseSlot> plan,
   ) async {
     final prefs = await SharedPreferences.getInstance();
     final slot0Done = prefs.getBool(_keySlot0Completed) ?? false;
     final slot1Done = prefs.getBool(_keySlot1Completed) ?? false;
-    final slot0At   = prefs.getString(_keySlot0CompAt);
-    final slot1At   = prefs.getString(_keySlot1CompAt);
+    final slot0At = prefs.getString(_keySlot0CompAt);
+    final slot1At = prefs.getString(_keySlot1CompAt);
 
     return [
       plan[0].copyWith(
@@ -409,10 +365,6 @@ class DailyPlanService {
         ),
     ];
   }
-
-  // ═════════════════════════════════════════════════════════════════
-  //  STREAK
-  // ═════════════════════════════════════════════════════════════════
 
   Future<void> _updateStreak(SharedPreferences prefs) async {
     final today = _todayString();
@@ -438,10 +390,6 @@ class DailyPlanService {
     await prefs.setString(_keyLastStreakDate, today);
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  RESET
-  // ═════════════════════════════════════════════════════════════════
-
   Future<void> _resetDailyPlan(SharedPreferences prefs) async {
     await prefs.remove(_keyPlanSlot0Id);
     await prefs.remove(_keyPlanSlot1Id);
@@ -453,16 +401,11 @@ class DailyPlanService {
     _cachedDate = null;
   }
 
-  // ── Reset forcé (pour debug / tests) ─────────────────────────────────────
   Future<void> forceReset() async {
     final prefs = await SharedPreferences.getInstance();
     await _resetDailyPlan(prefs);
     await prefs.remove(_keyPlanDate);
   }
-
-  // ═════════════════════════════════════════════════════════════════
-  //  FALLBACK (si Firestore indisponible)
-  // ═════════════════════════════════════════════════════════════════
 
   List<DailyExerciseSlot> _fallbackPlan() {
     return [
@@ -510,10 +453,6 @@ class DailyPlanService {
       ),
     ];
   }
-
-  // ═════════════════════════════════════════════════════════════════
-  //  HELPER DATE
-  // ═════════════════════════════════════════════════════════════════
 
   String _todayString() {
     final now = DateTime.now();

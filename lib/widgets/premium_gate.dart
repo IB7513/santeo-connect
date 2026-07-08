@@ -4,12 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/services/subscription_service.dart';
 import '../screens/subscription/paywall_screen.dart';
 
-/// Widget qui verrouille son contenu si l'utilisateur n'est pas Premium.
-/// Usage :
-///   PremiumGate(
-///     featureName: 'Séances personnalisées',
-///     child: SeancePersonnaliseeScreen(),
-///   )
+// Widget qui verrouille son contenu si l'utilisateur n'est pas Premium.
 class PremiumGate extends StatelessWidget {
   final Widget child;
   final String featureName;
@@ -36,9 +31,7 @@ class PremiumGate extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-/// Écran affiché quand une feature est verrouillée
-// ─────────────────────────────────────────────────────────────────────────────
+// Écran affiché quand une feature est verrouillée
 class _LockedScreen extends StatelessWidget {
   final String featureName;
   final String? featureDescription;
@@ -50,9 +43,9 @@ class _LockedScreen extends StatelessWidget {
     this.featureIcon,
   });
 
-  static const _teal   = Color(0xFF00897B);
+  static const _teal = Color(0xFF00897B);
   static const _tealLt = Color(0xFF4DB6AC);
-  static const _bg     = Color(0xFF0D1F2D);
+  static const _bg = Color(0xFF0D1F2D);
 
   @override
   Widget build(BuildContext context) {
@@ -193,9 +186,7 @@ class _LockedScreen extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-/// Badge 🔒 à apposer sur un bouton/card pour signaler une feature premium
-// ─────────────────────────────────────────────────────────────────────────────
+// Badge 🔒 à apposer sur un bouton/card pour signaler une feature premium
 class PremiumBadge extends StatelessWidget {
   final Widget child;
   final bool showIfPremium; // false = masquer le badge si déjà abonné
@@ -231,9 +222,7 @@ class PremiumBadge extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-/// Bannière compacte "Passez à Premium" pour le dashboard
-// ─────────────────────────────────────────────────────────────────────────────
+// Bannière compacte "Passez à Premium" pour le dashboard
 class PremiumBanner extends StatelessWidget {
   const PremiumBanner({super.key});
 
@@ -299,14 +288,12 @@ class PremiumBanner extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-/// Badge de statut d'abonnement (pour l'écran Profil)
-// ─────────────────────────────────────────────────────────────────────────────
+// Badge de statut d'abonnement (pour l'écran Profil)
 class SubscriptionStatusCard extends StatelessWidget {
   const SubscriptionStatusCard({super.key});
 
   static const _teal = Color(0xFF00897B);
-  static const _bg   = Color(0xFF0D1F2D);
+  static const _bg = Color(0xFF0D1F2D);
 
   @override
   Widget build(BuildContext context) {

@@ -198,7 +198,6 @@ class LandingScreen extends StatelessWidget {
   }
 }
 
-// ── Widget feature ─────────────────────────────────────────────────────────
 class _FeatureItem extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -259,7 +258,6 @@ class _FeatureItem extends StatelessWidget {
   }
 }
 
-// ── Widget stat ─────────────────────────────────────────────────────────────
 class _StatChip extends StatelessWidget {
   final String value;
   final String label;

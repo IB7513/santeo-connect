@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -13,14 +14,12 @@ class StorageService {
     return _prefs!;
   }
 
-  // ====== OpenAI API Key ======
   static Future<void> saveApiKey(String key) async {
     await prefs.setString('openai_api_key', key);
   }
 
   static String? getApiKey() => prefs.getString('openai_api_key');
 
-  // ====== User Session ======
   static Future<void> saveUserId(String uid) async {
     await prefs.setString('user_id', uid);
   }
@@ -39,7 +38,6 @@ class StorageService {
 
   static String? getUserEmail() => prefs.getString('user_email');
 
-  // ====== Onboarding State ======
   static Future<void> setOnboardingComplete(bool value) async {
     await prefs.setBool('onboarding_complete', value);
   }
@@ -47,7 +45,7 @@ class StorageService {
   static bool isOnboardingComplete() =>
       prefs.getBool('onboarding_complete') ?? false;
 
-  // ====== User Profile (local cache) ======
+  // profil local
   static Future<void> saveUserProfile(Map<String, dynamic> profile) async {
     await prefs.setString('user_profile', jsonEncode(profile));
   }
@@ -62,7 +60,6 @@ class StorageService {
     }
   }
 
-  // ====== AI Assessment Cache ======
   static Future<void> saveAssessment(String text) async {
     await prefs.setString('last_assessment', text);
     await prefs.setString(
@@ -72,7 +69,6 @@ class StorageService {
   static String? getAssessment() => prefs.getString('last_assessment');
   static String? getAssessmentDate() => prefs.getString('assessment_date');
 
-  // ====== Sessions Data ======
   static Future<void> saveSessionData(Map<String, dynamic> session) async {
     final sessions = getAllSessions();
     sessions.add(session);
@@ -91,7 +87,6 @@ class StorageService {
     }
   }
 
-  // ====== Progress Data ======
   static Future<void> saveWeeklyProgress(Map<String, dynamic> data) async {
     await prefs.setString('weekly_progress', jsonEncode(data));
   }
@@ -106,12 +101,11 @@ class StorageService {
     }
   }
 
-  // ====== RGPD: Clear all data ======
+  // effacement données
   static Future<void> clearAllData() async {
     await prefs.clear();
   }
 
-  // ====== Logout ======
   static Future<void> logout() async {
     await prefs.remove('user_id');
     await prefs.remove('user_name');

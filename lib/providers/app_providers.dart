@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/foundation.dart';
 import '../core/services/embedded_ai_service.dart';
 import '../core/services/storage_service.dart';
@@ -6,10 +7,10 @@ import '../models/app_models.dart';
 import '../core/constants/app_constants.dart';
 
 class AppProvider extends ChangeNotifier {
-  // ====== IA Embarquée ======
-  final _ai = EmbeddedAIService();
+  // IA
+  final _ai = EmbeddedAIService(); // à passer en DI un jour
 
-  // ====== User State ======
+  // state user
   String? _userId;
   String? _userName;
   String? _userEmail;
@@ -20,18 +21,18 @@ class AppProvider extends ChangeNotifier {
   bool _isDemoUser = false;
   DemoProfile? _activeDemoProfile;
 
-  // ====== Profile & Assessment ======
+  // profil
   UserProfile? _userProfile;
   String? _aiAssessment;
   bool _isLoadingAssessment = false;
   String? _assessmentError;
 
-  // ====== Exercises ======
+  // exercices
   List<Exercise> _exercises = [];
   List<Exercise> _filteredExercises = [];
   String _activeFilter = 'all';
 
-  // ====== Sessions & Progress ======
+  // progress
   List<WorkoutSession> _sessions = [];
   double _weeklyAdherence = 0.0;
   int _totalActiveDays = 0;
@@ -41,13 +42,12 @@ class AppProvider extends ChangeNotifier {
   String? _aiWeeklyAnalysis;
   bool _isLoadingProgress = false;
 
-  // ====== Demo Profiles ======
   List<DemoProfile> _demoProfiles = [];
 
-  // ====== Onboarding Form State ======
+  // onboarding
   final Map<String, dynamic> _onboardingData = {};
 
-  // ====== Getters ======
+  // getters
   String? get userId => _userId;
   String? get userName => _userName;
   String? get userEmail => _userEmail;
@@ -78,7 +78,6 @@ class AppProvider extends ChangeNotifier {
   Map<String, dynamic> get onboardingData => _onboardingData;
   List<DemoProfile> get demoProfiles => _demoProfiles;
 
-  // ====== Init ======
   void initialize() {
     _demoProfiles = DemoService.getDemoProfiles();
     _userId = StorageService.getUserId();
@@ -114,7 +113,6 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====== Demo Login ======
   Future<void> demoLogin(DemoProfile profile) async {
     _userId = profile.id;
     _userName = profile.name;
@@ -139,7 +137,7 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====== Login / Logout ======
+  // auth
   Future<void> login(String userId, String name, String email) async {
     await StorageService.saveUserId(userId);
     await StorageService.saveUserName(name);
@@ -154,6 +152,7 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // reset complet
   Future<void> logout() async {
     await StorageService.logout();
     _userId = null;
@@ -174,7 +173,6 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====== Onboarding ======
   void updateOnboardingData(Map<String, dynamic> data) {
     _onboardingData.addAll(data);
     notifyListeners();
@@ -218,7 +216,6 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====== Génération Programme Personnalisé Embarquée ======
   Future<void> generateAssessment() async {
     if (_userProfile == null) return;
 
@@ -260,7 +257,6 @@ class AppProvider extends ChangeNotifier {
     }
   }
 
-  // ====== Analyse Progression Hebdomadaire ======
   Future<void> analyzeWeeklyProgress() async {
     if (_userProfile == null) return;
 
@@ -285,7 +281,6 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====== Enregistrement Session ======
   Future<void> recordSession(WorkoutSession session) async {
     _sessions.add(session);
     if (!_isDemoUser) {
@@ -305,6 +300,7 @@ class AppProvider extends ChangeNotifier {
     );
   }
 
+  // j'aurais dû nommer ça getWeeksInApp mais bon
   int _getWeeksActive() {
     if (_sessions.isEmpty) return 0;
     final oldest = _sessions
@@ -313,7 +309,6 @@ class AppProvider extends ChangeNotifier {
     return DateTime.now().difference(oldest).inDays ~/ 7;
   }
 
-  // ====== Calcul Stats ======
   void _computeStats() {
     if (_sessions.isEmpty) {
       _totalActiveDays = 0;
@@ -354,7 +349,7 @@ class AppProvider extends ChangeNotifier {
     return int.tryParse(match?.group(0) ?? '3') ?? 3;
   }
 
-  // ====== Exercises ======
+  // exercices
   void _loadExercises() {
     _exercises = List.from(AppConstants.seedExercises);
     if (_userProfile != null) {
@@ -394,7 +389,6 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====== Mise à jour nom ======
   Future<void> updateUserName(String name) async {
     if (!_isDemoUser) {
       await StorageService.saveUserName(name);

@@ -1,6 +1,4 @@
-// TTS Service — Audio pré-généré ElevenLabs, joué via <audio> HTML5
-// Double méthode : js.context.callMethod + postMessage (fallback)
-// 66 fichiers MP3 dans web/audio/
+// tts — audio pré-généré, fallback postMessage
 
 import 'package:flutter/foundation.dart';
 // ignore: avoid_web_libraries_in_flutter

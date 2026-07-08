@@ -1,10 +1,7 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import '../../models/app_models.dart';
 
-/// ============================================================
-/// SANTEO Connect — Moteur de Chat IA Embarqué
-/// Répond aux questions santé, exercices, Pacifique
-/// 100% offline · Gratuit · Contextuel
-/// ============================================================
+// moteur chat
 class ChatAIService {
   final UserProfile? userProfile;
 
@@ -14,23 +11,17 @@ class ChatAIService {
   String get _territoire => userProfile?.localisation ?? 'votre territoire';
   String get _objectif => userProfile?.objectifSante ?? '';
 
-  // ============================================================
-  // POINT D'ENTRÉE PRINCIPAL
-  // ============================================================
   String reply(String message) {
     final msg = message.toLowerCase().trim();
 
-    // === SALUTATIONS ===
     if (_matches(msg, ['bonjour', 'salut', 'hello', 'coucou', 'bonsoir', 'bonne nuit'])) {
       return _greet();
     }
 
-    // === QUI ES-TU / L'IA ===
     if (_matches(msg, ['qui es-tu', 'qui es tu', 'qui êtes', 'tu es quoi', 'c\'est quoi', 'comment tu fonctionne', 'comment fonctionne', 'tu es une ia', 'es-tu une ia'])) {
       return _whoAmI();
     }
 
-    // === EXERCICES SPÉCIFIQUES ===
     if (_matches(msg, ['chat vache', 'chat-vache', 'chatvache'])) {
       return _explainChatVache();
     }
@@ -71,7 +62,6 @@ class ChatAIService {
       return _explainChevilles();
     }
 
-    // === DOULEUR ===
     if (_matches(msg, ['douleur', 'mal', 'douleurs', 'souffre', 'souffrir', 'ça fait mal', 'j\'ai mal'])) {
       return _handleDouleur(msg);
     }
@@ -79,7 +69,6 @@ class ChatAIService {
       return _urgenceDouleur();
     }
 
-    // === PROGRAMME / SÉANCE ===
     if (_matches(msg, ['programme', 'séance', 'seance', 'exercice', 'exercices', 'entraînement', 'entrainement', 'sport'])) {
       return _aboutProgram();
     }
@@ -93,7 +82,6 @@ class ChatAIService {
       return _bestTime();
     }
 
-    // === CHALEUR / CLIMAT ===
     if (_matches(msg, ['chaleur', 'chaud', 'humidité', 'humide', 'tropical', 'soleil', 'température'])) {
       return _aboutHeat();
     }
@@ -101,7 +89,6 @@ class ChatAIService {
       return _aboutHydration();
     }
 
-    // === MOTIVATION ===
     if (_matches(msg, ['motivat', 'courage', 'fatigué', 'fatigue', 'pas envie', 'difficile', 'dur', 'abandonne', 'arrêter'])) {
       return _motivation();
     }
@@ -112,7 +99,6 @@ class ChatAIService {
       return _aboutWeight();
     }
 
-    // === TERRITOIRE PACIFIQUE ===
     if (_matches(msg, ['calédonie', 'caledonie', 'nouméa', 'noumea'])) {
       return _aboutNewCaledonia();
     }
@@ -126,43 +112,32 @@ class ChatAIService {
       return _aboutPacific();
     }
 
-    // === BILAN ===
     if (_matches(msg, ['bilan', 'évaluation', 'evaluation', 'résultat', 'resultat', 'diagnostic'])) {
       return _aboutBilan();
     }
 
-    // === PROGRESSION / SUIVI ===
     if (_matches(msg, ['progrès', 'progres', 'progression', 'amélioration', 'amelioration', 'résultat', 'résultats'])) {
       return _aboutProgress();
     }
 
-    // === ALIMENTATION ===
     if (_matches(msg, ['manger', 'alimentation', 'nourriture', 'régime', 'nutrition', 'fruit', 'légume'])) {
       return _aboutNutrition();
     }
 
-    // === REMERCIEMENTS ===
     if (_matches(msg, ['merci', 'thank', 'super', 'génial', 'excellent', 'parfait', 'bravo', 'bien', 'top'])) {
       return _thanks();
     }
 
-    // === AU REVOIR ===
     if (_matches(msg, ['au revoir', 'bye', 'à bientôt', 'a bientot', 'ciao', 'tchao'])) {
       return _goodbye();
     }
 
-    // === AIDE ===
     if (_matches(msg, ['aide', 'help', 'comment', 'que faire', 'quoi faire', 'je ne sais pas', 'je sais pas'])) {
       return _help();
     }
 
-    // === RÉPONSE PAR DÉFAUT ===
     return _defaultReply(msg);
   }
-
-  // ============================================================
-  // RÉPONSES
-  // ============================================================
 
   bool get _isPacifique {
     final t = _territoire.toLowerCase();
@@ -355,9 +330,6 @@ class ChatAIService {
     return 'Je n\'ai pas bien compris votre question 🤔\n\nJe suis spécialisé en santé fonctionnelle et exercices. Essayez de me demander par exemple :\n\n• "${suggestions[0]}"\n• "${suggestions[1]}"\n• "${suggestions[2]}"\n\nOu tapez **"aide"** pour voir tout ce que je peux faire ! 😊';
   }
 
-  // ============================================================
-  // UTILITAIRE
-  // ============================================================
   bool _matches(String message, List<String> keywords) {
     return keywords.any((k) => message.contains(k));
   }

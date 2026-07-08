@@ -1,5 +1,4 @@
-/// VideoWebService — Version MOBILE (stub no-op)
-/// Sur Android/iOS : pas de platformViewRegistry web
+// stub mobile — pas de platformViewRegistry
 
 class VideoWebService {
   static void registerPlayer(String viewId, String videoUrl) {

@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -31,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  /// Ouvre l'écran RGPD complet — le consentement est enregistré là-bas
+  // Ouvre l'écran RGPD complet — le consentement est enregistré là-bas
   Future<void> _openRgpdScreen() async {
     final accepted = await Navigator.push<bool>(
       context,
@@ -131,7 +132,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 28),
 
-                // ── Prénom ────────────────────────────────────────
                 TextFormField(
                   controller: _prenomCtrl,
                   textCapitalization: TextCapitalization.words,
@@ -148,7 +148,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 14),
 
-                // ── Email ─────────────────────────────────────────
                 TextFormField(
                   controller: _emailCtrl,
                   keyboardType: TextInputType.emailAddress,
@@ -165,7 +164,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 14),
 
-                // ── Mot de passe ──────────────────────────────────
                 TextFormField(
                   controller: _passwordCtrl,
                   obscureText: _obscurePass,
@@ -188,7 +186,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // ── Bloc RGPD — ouverture écran complet ──────────
                 GestureDetector(
                   onTap: _openRgpdScreen,
                   child: AnimatedContainer(

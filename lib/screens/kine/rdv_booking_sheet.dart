@@ -1,7 +1,5 @@
-// ═══════════════════════════════════════════════════════════════════════════
 //  RdvBookingSheet — Prise de RDV intégrée (bottom sheet patient)
 //  Affiche les créneaux disponibles du kiné + formulaire de réservation
-// ═══════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -71,8 +69,6 @@ class _RdvBookingSheetState extends State<RdvBookingSheet> {
       ),
     );
   }
-
-  // ── Vue succès ─────────────────────────────────────────────────────────
 
   Widget _buildSuccess(ScrollController scroll) {
     return SingleChildScrollView(
@@ -173,8 +169,6 @@ class _RdvBookingSheetState extends State<RdvBookingSheet> {
       ),
     );
   }
-
-  // ── Formulaire principal ───────────────────────────────────────────────
 
   Widget _buildForm(ScrollController scroll) {
     return SingleChildScrollView(
@@ -306,8 +300,6 @@ class _RdvBookingSheetState extends State<RdvBookingSheet> {
     );
   }
 
-  // ── Sélecteur de créneaux ─────────────────────────────────────────────
-
   Widget _buildSlotPicker() {
     return StreamBuilder<List<KineSlot>>(
       stream: _rdv.availableSlotsStream(widget.kineId),
@@ -430,8 +422,6 @@ class _RdvBookingSheetState extends State<RdvBookingSheet> {
     );
   }
 
-  // ── Validation + soumission ────────────────────────────────────────────
-
   Future<void> _submitBooking() async {
     setState(() => _error = null);
 
@@ -474,8 +464,6 @@ class _RdvBookingSheetState extends State<RdvBookingSheet> {
       });
     }
   }
-
-  // ── Widgets helpers ────────────────────────────────────────────────────
 
   Widget _buildHandle() => Center(
         child: Container(

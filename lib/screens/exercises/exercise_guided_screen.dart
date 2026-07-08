@@ -3,6 +3,7 @@
 // Vidéo Google Drive en boucle + chrono + TTS + séries + signal sonore
 // Portrait : vidéo 16:9 + contrôles en bas
 // Paysage  : vidéo plein écran automatique (SystemChrome)
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 
 import 'dart:async';
 import '../../core/services/tts_service.dart';
@@ -13,10 +14,6 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/daily_exercise_service.dart';
-
-// ═══════════════════════════════════════════════════════════════════
-//  MODÈLE DONNÉES EXERCICE GUIDÉ
-// ═══════════════════════════════════════════════════════════════════
 
 class ExerciseGuidedData {
   final String id;
@@ -80,15 +77,7 @@ class ExerciseGuidedData {
   bool get isParCote => typeComptage == 'reps_par_cote' || typeComptage == 'chrono_par_cote';
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  PHASE DE LA SÉANCE
-// ═══════════════════════════════════════════════════════════════════
-
 enum _Phase { intro, serie, repos, fin }
-
-// ═══════════════════════════════════════════════════════════════════
-//  WIDGET PRINCIPAL
-// ═══════════════════════════════════════════════════════════════════
 
 class ExerciseGuidedScreen extends StatefulWidget {
   final Map<String, dynamic> exerciseData;
@@ -109,10 +98,8 @@ class ExerciseGuidedScreen extends StatefulWidget {
 class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     with TickerProviderStateMixin {
 
-  // ── Données exercice ───────────────────────────────────────────────────────
   late ExerciseGuidedData _exercise;
 
-  // ── État séance ────────────────────────────────────────────────────────────
   _Phase _phase = _Phase.intro;
   int _currentSerie = 0;      // 0-based
   int _currentCote = 0;       // 0 = gauche/premier, 1 = droite/second (par côté)
@@ -122,30 +109,24 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
   bool _isPaused = false;
   bool _sessionCompleted = false;
 
-  // ── Timers & animations ────────────────────────────────────────────────────
   Timer? _timer;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnim;
   late AnimationController _fadeController;
   late Animation<double> _fadeAnim;
 
-  // ── TTS Web (Speech Synthesis API) ────────────────────────────────────────
   bool _ttsEnabled = true;
 
-  // ── Vidéo WebView ──────────────────────────────────────────────────────────
   late final String _videoViewId;
   static final Set<String> _registeredVideoIds = {};
 
-  // ── Orientation ────────────────────────────────────────────────────────────
   bool _isLandscape = false;
-
 
   @override
   void initState() {
     super.initState();
     _exercise = ExerciseGuidedData.fromMap(widget.exerciseData);
 
-    // ── Autoriser toutes les orientations pour cet écran ────────────────────
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -153,7 +134,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       DeviceOrientation.landscapeRight,
     ]);
 
-    // ── Animations ───────────────────────────────────────────────────────────
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
@@ -168,12 +148,8 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     )..forward();
     _fadeAnim = CurvedAnimation(parent: _fadeController, curve: Curves.easeIn);
 
-    // ── Enregistrer le lecteur vidéo ─────────────────────────────────────────
     _registerVideoPlayer();
 
-    // ── Vérifier support TTS ─────────────────────────────────────────────────
-
-    // ── Démarrer l'intro après un court délai ─────────────────────────────────
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startIntro();
     });
@@ -181,7 +157,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
 
   @override
   void dispose() {
-    // ── Revenir au portrait seulement ────────────────────────────────────────
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
         overlays: SystemUiOverlay.values);
@@ -192,13 +167,9 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     super.dispose();
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  VIDÉO WEBVIEW — Google Drive iframe en boucle
-  // ═════════════════════════════════════════════════════════════════
-
   void _registerVideoPlayer() {
-    // ViewId STABLE basé sur l'exercice uniquement — pas de timestamp
-    // Un timestamp génèrerait un nouveau ID à chaque rebuild sans l'enregistrer
+    // viewId stable sinon Flutter re-enregistre à chaque rebuild et ça crash
+    // j'ai perdu 2h dessus un jeudi soir, ne pas toucher
     _videoViewId = 'guided-video-${_exercise.id}';
     if (!_registeredVideoIds.contains(_videoViewId)) {
       _registeredVideoIds.add(_videoViewId);
@@ -211,7 +182,8 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       return _videoPlaceholder('Vidéo non disponible', Icons.videocam_off_rounded);
     }
     if (!kIsWeb) {
-      // Android : ouvrir la vidéo Drive dans un WebView via url_launcher ou placeholder
+      // sur Android la vidéo Drive ne s'ouvre pas en inline
+      // launch URL ça marcherait mais c'est moche — placeholder pour l'instant
       return _videoPlaceholder('Vidéo disponible\nsur l\'application web', Icons.play_circle_outline);
     }
     // Web : HtmlElementView avec le viewId stable
@@ -243,10 +215,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     );
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  TTS — Speech Synthesis API Web
-  // ═════════════════════════════════════════════════════════════════
-
   void _ttsSpeak(String text, {bool isFin = false}) {
     if (text.isEmpty) return;
     // Rebuild pour afficher la transcription
@@ -263,10 +231,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     if (mounted) setState(() {});
     TtsService.stop();
   }
-
-  // ═════════════════════════════════════════════════════════════════
-  //  LOGIQUE SÉANCE
-  // ═════════════════════════════════════════════════════════════════
 
   void _startIntro() {
     setState(() {
@@ -401,7 +365,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     }
   }
 
-  // ── Comptage reps manuel ──────────────────────────────────────────────────
   int _repsDone = 0;
 
   void _incrementRep() {
@@ -420,12 +383,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     _onSerieEnd();
   }
 
-
-
-  // ═════════════════════════════════════════════════════════════════
-  //  ORIENTATION
-  // ═════════════════════════════════════════════════════════════════
-
   void _handleOrientationChange(bool isLandscape) {
     if (_isLandscape == isLandscape) return;
     setState(() => _isLandscape = isLandscape);
@@ -440,10 +397,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       );
     }
   }
-
-  // ═════════════════════════════════════════════════════════════════
-  //  BUILD PRINCIPAL
-  // ═════════════════════════════════════════════════════════════════
 
   @override
   Widget build(BuildContext context) {
@@ -468,21 +421,15 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     );
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  LAYOUT PAYSAGE — Vidéo plein écran
-  // ═════════════════════════════════════════════════════════════════
-
   Widget _buildLandscapeLayout(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // ── Vidéo plein écran ─────────────────────────────────────────
           Positioned.fill(
             child: _buildVideoPlayer(),
           ),
 
-          // ── Overlay sombre semi-transparent (info + contrôles) ────────
           Positioned(
             top: 0,
             left: 0,
@@ -547,7 +494,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
             ),
           ),
 
-          // ── Transcription voix — overlay haut centré ─────────────────
           if (_phaseVoiceText.isNotEmpty)
             Positioned(
               top: 56,
@@ -582,7 +528,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
               ),
             ),
 
-          // ── Overlay bas : chrono + contrôles ─────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
@@ -662,16 +607,11 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
             ),
           ),
 
-          // ── Tournez l'écran hint (portrait) ──────────────────────────
           // Déjà en paysage, rien à afficher
         ],
       ),
     );
   }
-
-  // ═════════════════════════════════════════════════════════════════
-  //  LAYOUT PORTRAIT
-  // ═════════════════════════════════════════════════════════════════
 
   Widget _buildPortraitLayout(BuildContext context) {
     return Scaffold(
@@ -679,16 +619,12 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // ── Header ────────────────────────────────────────────────
             _buildHeader(context),
 
-            // ── Vidéo 16:9 ────────────────────────────────────────────
             _buildVideoSection(),
 
-            // ── Transcription voix — FIXE, toujours visible ───────────
             _buildVoiceDisplay(),
 
-            // ── Contenu scrollable (phase, séries, chrono) ────────────
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
@@ -699,19 +635,15 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
                     children: [
                       const SizedBox(height: 12),
 
-                      // ── Phase banner ─────────────────────────────────
                       _buildPhaseBanner(),
                       const SizedBox(height: 12),
 
-                      // ── Indicateur séries ─────────────────────────────
                       if (_phase != _Phase.intro && _phase != _Phase.fin)
                         _buildSeriesIndicator(),
 
-                      // ── Chrono ou compteur reps ───────────────────────
                       if (_phase == _Phase.serie || _phase == _Phase.repos)
                         _buildChronoOrReps(),
 
-                      // ── Conseil rotation ──────────────────────────────
                       _buildRotationHint(),
                     ],
                   ),
@@ -719,7 +651,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
               ),
             ),
 
-            // ── Boutons d'action — FIXES en bas, toujours visibles ─────
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: _buildActionButtons(context),
@@ -729,10 +660,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       ),
     );
   }
-
-  // ─────────────────────────────────────────────────────────────────
-  //  HEADER
-  // ─────────────────────────────────────────────────────────────────
 
   Widget _buildHeader(BuildContext context) {
     return Container(
@@ -813,10 +740,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     );
   }
 
-  // ─────────────────────────────────────────────────────────────────
-  //  SECTION VIDÉO — 16:9 avec hint rotation
-  // ─────────────────────────────────────────────────────────────────
-
   Widget _buildVideoSection() {
     return Container(
       color: Colors.black,
@@ -880,10 +803,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       ''');
     } catch (_) {}
   }
-
-  // ─────────────────────────────────────────────────────────────────
-  //  PHASE BANNER
-  // ─────────────────────────────────────────────────────────────────
 
   Widget _buildPhaseBanner() {
     Color bannerColor;
@@ -952,10 +871,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     );
   }
 
-  // ─────────────────────────────────────────────────────────────────
-  //  INDICATEUR SÉRIES
-  // ─────────────────────────────────────────────────────────────────
-
   Widget _buildSeriesIndicator() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -982,10 +897,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       ),
     );
   }
-
-  // ─────────────────────────────────────────────────────────────────
-  //  CHRONO OU COMPTEUR REPS
-  // ─────────────────────────────────────────────────────────────────
 
   Widget _buildChronoOrReps() {
     final isRepos = _phase == _Phase.repos;
@@ -1112,14 +1023,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
       );
     }
   }
-
-  // ─────────────────────────────────────────────────────────────────
-  //  VOIX TTS DISPLAY
-  // ─────────────────────────────────────────────────────────────────
-
-  // ─────────────────────────────────────────────────────────────────
-  //  VOIX TTS DISPLAY — texte toujours visible selon la phase
-  // ─────────────────────────────────────────────────────────────────
 
   // Retourne le texte d'instruction de la phase courante
   String get _phaseVoiceText {
@@ -1249,10 +1152,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     );
   }
 
-  // ─────────────────────────────────────────────────────────────────
-  //  BOUTONS D'ACTION
-  // ─────────────────────────────────────────────────────────────────
-
   Widget _buildActionButtons(BuildContext context) {
     switch (_phase) {
       case _Phase.intro:
@@ -1348,10 +1247,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     }
   }
 
-  // ─────────────────────────────────────────────────────────────────
-  //  HINT ROTATION
-  // ─────────────────────────────────────────────────────────────────
-
   Widget _buildRotationHint() {
     return Padding(
       padding: const EdgeInsets.only(top: 16),
@@ -1371,10 +1266,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     );
   }
 
-  // ═════════════════════════════════════════════════════════════════
-  //  ACTIONS
-  // ═════════════════════════════════════════════════════════════════
-
   void _onBackPressed() {
     _timer?.cancel();
     _ttsStop();
@@ -1390,10 +1281,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     Navigator.of(context).pop(true);
     // Afficher snackbar succès depuis le parent
   }
-
-  // ═════════════════════════════════════════════════════════════════
-  //  HELPERS
-  // ═════════════════════════════════════════════════════════════════
 
   String _formatTime(int totalSeconds) {
     if (totalSeconds < 0) return '0:00';
@@ -1413,10 +1300,6 @@ class _ExerciseGuidedScreenState extends State<ExerciseGuidedScreen>
     }
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════
-//  WIDGETS RÉUTILISABLES PORTRAIT
-// ═══════════════════════════════════════════════════════════════════
 
 class _ActionButton extends StatelessWidget {
   final String label;
@@ -1494,10 +1377,6 @@ class _DifficultyDot extends StatelessWidget {
     );
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════
-//  WIDGETS RÉUTILISABLES PAYSAGE
-// ═══════════════════════════════════════════════════════════════════
 
 class _LandscapeButton extends StatelessWidget {
   final String label;

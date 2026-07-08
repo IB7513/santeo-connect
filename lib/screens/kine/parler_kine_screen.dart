@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -7,9 +8,6 @@ import '../../providers/app_providers.dart';
 import 'kine_planning_screen.dart';
 import 'rdv_booking_sheet.dart';
 
-// ═══════════════════════════════════════════════════
-//  ÉCRAN PARLER À UN KINÉ
-// ═══════════════════════════════════════════════════
 class ParlerKineScreen extends StatefulWidget {
   const ParlerKineScreen({super.key});
 
@@ -163,9 +161,7 @@ class _ParlerKineScreenState extends State<ParlerKineScreen>
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  ONGLET 1 — LISTE DES KINÉS
-// ═══════════════════════════════════════════════════
 class _KinesListTab extends StatelessWidget {
   final List<_KineData> _kines = const [
     _KineData(
@@ -414,9 +410,7 @@ class _KineCard extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  PROFIL KINÉ — BOTTOM SHEET
-// ═══════════════════════════════════════════════════
 class _KineProfileSheet extends StatelessWidget {
   final _KineData kine;
   const _KineProfileSheet({required this.kine});
@@ -541,7 +535,6 @@ class _KineProfileSheet extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 // Boutons d'action
-                // ── Bouton RDV intégré ──────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -719,9 +712,7 @@ class _KineProfileSheet extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  ONGLET PLANNING — Vue admin SANTEO (lecture seule)
-// ═══════════════════════════════════════════════════
 class _PlanningAdminTab extends StatelessWidget {
   const _PlanningAdminTab();
 
@@ -850,9 +841,7 @@ class _PlanningAdminTab extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  ONGLET 3 — DEMANDE DE CONSULTATION
-// ═══════════════════════════════════════════════════
 class _DemandeConsultationTab extends StatefulWidget {
   final AppProvider provider;
   const _DemandeConsultationTab({required this.provider});
@@ -1210,9 +1199,7 @@ class _DemandeConsultationTabState extends State<_DemandeConsultationTab> {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  ONGLET 3 — MESSAGES
-// ═══════════════════════════════════════════════════
 class _MessagesTab extends StatelessWidget {
   final AppProvider provider;
   const _MessagesTab({required this.provider});
@@ -1259,9 +1246,7 @@ class _MessagesTab extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  AVATAR KINÉ — Style Apple (cercle coloré + initiale)
-// ═══════════════════════════════════════════════════
 class _KineAvatar extends StatelessWidget {
   final _KineData kine;
   const _KineAvatar({required this.kine});
@@ -1332,9 +1317,6 @@ class _KineAvatarLarge extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  DATA MODEL KINÉ
-// ═══════════════════════════════════════════════════
 class _KineData {
   final String nom;
   final String specialite;
@@ -1343,7 +1325,7 @@ class _KineData {
   final Color avatarColor;
   final List<String> langues;
   final double note;
-  /// Lien Calendly du kiné — null si non renseigné (bouton masqué)
+  // Lien Calendly du kiné — null si non renseigné (bouton masqué)
   final String? calendlyUrl;
 
   const _KineData({

@@ -1,25 +1,18 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'dart:math';
 import '../../models/app_models.dart';
 
-/// ============================================================
-/// SANTEO Connect — Moteur IA Embarquée
-/// 100% offline · Gratuit · Adapté Pacifique
-/// ============================================================
 class EmbeddedAIService {
   final _rand = Random();
 
-  // ============================================================
-  // 1. GÉNÉRATION DU BILAN PERSONNALISÉ
-  // ============================================================
+  // point d'entrée — assemble le bilan complet
   String generateAssessment(UserProfile profile) {
     final sb = StringBuffer();
 
-    // === ANALYSE PROFIL FONCTIONNEL ===
     sb.writeln('📋 ANALYSE DE VOTRE PROFIL FONCTIONNEL\n');
     sb.writeln(_analyzeProfile(profile));
     sb.writeln();
 
-    // === RECOMMANDATIONS PERSONNALISÉES ===
     sb.writeln('✅ RECOMMANDATIONS PERSONNALISÉES\n');
     final recs = _generateRecommendations(profile);
     for (var i = 0; i < recs.length; i++) {
@@ -27,7 +20,6 @@ class EmbeddedAIService {
     }
     sb.writeln();
 
-    // === PROGRAMME SUGGÉRÉ ===
     sb.writeln('🏃 PROGRAMME D\'EXERCICES SUGGÉRÉ\n');
     final exercises = _suggestExercises(profile);
     for (final ex in exercises) {
@@ -35,20 +27,16 @@ class EmbeddedAIService {
     }
     sb.writeln();
 
-    // === NOTE CONTEXTUELLE PACIFIQUE ===
     sb.writeln(_pacificContextNote(profile.localisation));
     sb.writeln();
 
-    // === DISCLAIMER ===
     sb.writeln(
         '⚕️ Approche de prévention fonctionnelle complémentaire aux parcours de soins.');
 
     return sb.toString();
   }
 
-  // ============================================================
-  // 2. ANALYSE DU PROFIL
-  // ============================================================
+  // j'espère qu'on aura du vrai GPT un jour 🪖
   String _analyzeProfile(UserProfile profile) {
     final parts = <String>[];
 
@@ -87,9 +75,7 @@ class EmbeddedAIService {
     return parts.join(' ');
   }
 
-  // ============================================================
-  // 3. RECOMMANDATIONS PERSONNALISÉES
-  // ============================================================
+  // max 4 recs sinon c'est trop lourd à lire
   List<String> _generateRecommendations(UserProfile profile) {
     final recs = <String>[];
 
@@ -151,9 +137,6 @@ class EmbeddedAIService {
     return recs.take(4).toList();
   }
 
-  // ============================================================
-  // 4. PROGRAMME D'EXERCICES SUGGÉRÉS
-  // ============================================================
   List<String> _suggestExercises(UserProfile profile) {
     final exercises = <String>[];
     final preferences = profile.preferencesExercices;
@@ -212,9 +195,8 @@ class EmbeddedAIService {
     return exercises.take(7).toList();
   }
 
-  // ============================================================
   // 5. NOTE CONTEXTUELLE PACIFIQUE
-  // ============================================================
+
   String _pacificContextNote(String localisation) {
     final territory = _detectTerritory(localisation);
 
@@ -230,6 +212,7 @@ class EmbeddedAIService {
     }
   }
 
+  // détection basique, pas de ML — si ça tient en prod on garde comme ça
   String _detectTerritory(String localisation) {
     final lower = localisation.toLowerCase();
     if (lower.contains('calédonie') ||
@@ -250,9 +233,8 @@ class EmbeddedAIService {
     return 'pacifique';
   }
 
-  // ============================================================
   // 6. ANALYSE PROGRESSION HEBDOMADAIRE
-  // ============================================================
+
   String analyzeProgress({
     required double adherence,
     required int tempsTotal,
@@ -291,9 +273,8 @@ class EmbeddedAIService {
     return sb.toString();
   }
 
-  // ============================================================
   // 7. DÉTECTION ESCALADE
-  // ============================================================
+
   Map<String, String> detectEscalation({
     required double douleur,
     required double adherence,
@@ -335,9 +316,8 @@ class EmbeddedAIService {
     };
   }
 
-  // ============================================================
   // 8. GÉNÉRATION PROGRAMME 7 JOURS
-  // ============================================================
+
   List<Exercise> generateWeekProgram(UserProfile profile) {
     final allExercises = _getExercisePool(profile);
     allExercises.shuffle(_rand);
@@ -484,9 +464,6 @@ class EmbeddedAIService {
     return pool;
   }
 
-  // ============================================================
-  // UTILITAIRES
-  // ============================================================
   int _parseFrequency(String freq) {
     final match = RegExp(r'\d+').firstMatch(freq);
     return int.tryParse(match?.group(0) ?? '3') ?? 3;

@@ -7,9 +7,7 @@ import '../../providers/app_providers.dart';
 import '../../core/constants/app_constants.dart';
 import 'exercise_guided_screen.dart';
 
-// ═══════════════════════════════════════════════════════════════════
 //  SÉLECTION INTELLIGENTE depuis seedExercises
-// ═══════════════════════════════════════════════════════════════════
 
 List<Exercise> _selectionnerExos(UserProfile? profile, List<Exercise> allExos) {
   if (allExos.isEmpty) return [];
@@ -46,9 +44,6 @@ List<Exercise> _selectionnerExos(UserProfile? profile, List<Exercise> allExos) {
   return sorted.take(10).map((e) => e.key).toList();
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  ÉCRAN SÉANCE PERSONNALISÉE
-// ═══════════════════════════════════════════════════════════════════
 class SeancePersonnaliseeScreen extends StatefulWidget {
   const SeancePersonnaliseeScreen({super.key});
 
@@ -61,8 +56,8 @@ class _SeancePersonnaliseeScreenState
     extends State<SeancePersonnaliseeScreen> {
   final Set<int> _exosTermines = {};
 
-  /// Lance l'exercice à l'index [idx] dans ExerciseGuidedScreen.
-  /// À la fin, enchaîne sur le suivant ou affiche le dialogue de fin.
+  // Lance l'exercice à l'index [idx] dans ExerciseGuidedScreen.
+  // À la fin, enchaîne sur le suivant ou affiche le dialogue de fin.
   void _lancerExercice(
       BuildContext context, List<Exercise> exos, int idx, AppProvider provider) {
     if (idx >= exos.length) {
@@ -255,9 +250,7 @@ class _SeancePersonnaliseeScreenState
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  INTRO + LISTE SÉANCE (vue unique)
-// ═══════════════════════════════════════════════════════════════════
 class _IntroSeance extends StatelessWidget {
   final String prenom;
   final UserProfile? profile;
@@ -285,7 +278,6 @@ class _IntroSeance extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Bannière personnalisée ──────────────────────────────
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -325,7 +317,6 @@ class _IntroSeance extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // ── Badges info ──────────────────────────────────────────
           Row(children: [
             _StatBadge(emoji: '🎙️', label: 'Voix guidée', sublabel: 'fr-FR'),
             const SizedBox(width: 12),
@@ -341,7 +332,6 @@ class _IntroSeance extends StatelessWidget {
           ]),
           const SizedBox(height: 20),
 
-          // ── Bouton principal : lancer directement ───────────────
           SizedBox(
             width: double.infinity,
             height: 56,
@@ -371,7 +361,6 @@ class _IntroSeance extends StatelessWidget {
           ),
           const SizedBox(height: 8),
 
-          // ── Indication voix ──────────────────────────────────────
           Center(
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -391,7 +380,6 @@ class _IntroSeance extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // ── Liste des exercices ──────────────────────────────────
           Text('Vos exercices du jour',
               style: GoogleFonts.montserrat(
                   fontSize: 15,
@@ -418,9 +406,7 @@ class _IntroSeance extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
 //  TUILE EXERCICE (ligne cliquable)
-// ═══════════════════════════════════════════════════════════════════
 class _ExoListTile extends StatelessWidget {
   final Exercise exo;
   final int index;
@@ -542,9 +528,6 @@ class _ExoListTile extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-//  BADGE STAT
-// ═══════════════════════════════════════════════════════════════════
 class _StatBadge extends StatelessWidget {
   final String emoji;
   final String label;

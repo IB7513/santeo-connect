@@ -1,16 +1,12 @@
-// ═══════════════════════════════════════════════════════════════════════════
 //  SANTEO Connect — KinePlanningScreen
-// ───────────────────────────────────────────────────────────────────────────
 //  Interface kiné pour gérer ses créneaux
 //  Accès : onglet "Mon Planning" dans la section Kinés
-// ═══════════════════════════════════════════════════════════════════════════
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/services/rdv_service.dart';
 import '../../core/theme/app_theme.dart';
-
-// ─── Données des kinés (source unique — email inclus) ──────────────────────
 
 class KineInfo {
   final String id;       // slug identifiant
@@ -53,11 +49,9 @@ const List<KineInfo> kineInfoList = [
   ),
 ];
 
-// ─── Écran principal ───────────────────────────────────────────────────────
-
 class KinePlanningScreen extends StatefulWidget {
-  /// kineId : si null → vue admin (tous les kinés)
-  /// si renseigné → vue kiné (seulement ses créneaux)
+  // si kineId est null → vue admin globale
+  // si renseigné → vue kiné sur ses propres créneaux uniquement
   final String? kineId;
   final bool isAdmin;
 
@@ -248,8 +242,6 @@ class _KinePlanningScreenState extends State<KinePlanningScreen>
     );
   }
 
-  // ── Dialog ajout créneau ───────────────────────────────────────────────
-
   void _showAddSlotSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -264,9 +256,7 @@ class _KinePlanningScreenState extends State<KinePlanningScreen>
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  Onglet Créneaux
-// ═══════════════════════════════════════════════════
 
 class _SlotsTab extends StatelessWidget {
   final RdvService rdv;
@@ -394,9 +384,7 @@ class _SlotsTab extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  Tuile d'un créneau
-// ═══════════════════════════════════════════════════
 
 class _SlotTile extends StatelessWidget {
   final KineSlot slot;
@@ -556,9 +544,7 @@ class _SlotTile extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  Onglet Réservations
-// ═══════════════════════════════════════════════════
 
 class _BookingsTab extends StatelessWidget {
   final RdvService rdv;
@@ -639,15 +625,12 @@ class _BookingsTab extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  Tuile d'une réservation
-// ═══════════════════════════════════════════════════
 
 class _BookingTile extends StatelessWidget {
   final KineBooking booking;
   final bool showKineName;
-  /// hidePatientMail : true en vue admin SANTEO
-  /// (supervision sans accès aux données personnelles)
+  // on masque le mail en vue admin — RGPD
   final bool hidePatientMail;
 
   const _BookingTile({
@@ -752,9 +735,7 @@ class _BookingTile extends StatelessWidget {
       );
 }
 
-// ═══════════════════════════════════════════════════
 //  Bottom Sheet — Ajouter un créneau
-// ═══════════════════════════════════════════════════
 
 class _AddSlotSheet extends StatefulWidget {
   final String kineId;

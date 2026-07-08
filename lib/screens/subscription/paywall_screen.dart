@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/services/subscription_service.dart';
 
 class PaywallScreen extends StatefulWidget {
-  /// Si true → modal (retour possible), si false → écran bloquant
+  // Si true → modal (retour possible), si false → écran bloquant
   final bool canDismiss;
   const PaywallScreen({super.key, this.canDismiss = true});
 
@@ -40,7 +40,7 @@ class _PaywallScreenState extends State<PaywallScreen>
     super.initState();
     _ctrl = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 600));
-    _fadeIn  = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _fadeIn = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
     _slideUp = Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
         .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
     _ctrl.forward();
@@ -53,11 +53,10 @@ class _PaywallScreenState extends State<PaywallScreen>
     super.dispose();
   }
 
-  // ── Couleurs ──
-  static const _teal    = Color(0xFF00897B);
-  static const _tealDk  = Color(0xFF00695C);
-  static const _gold    = Color(0xFFFFB300);
-  static const _bg      = Color(0xFF0D1F2D);
+  static const _teal = Color(0xFF00897B);
+  static const _tealDk = Color(0xFF00695C);
+  static const _gold = Color(0xFFFFB300);
+  static const _bg = Color(0xFF0D1F2D);
 
   @override
   Widget build(BuildContext context) {
@@ -454,7 +453,6 @@ class _PaywallScreenState extends State<PaywallScreen>
         ),
       );
 
-  // ── Actions ──
   Future<void> _applyPromo() async {
     final code = _promoCtrl.text.trim().toUpperCase();
     if (code.isEmpty) {
@@ -560,7 +558,6 @@ class _PaywallScreenState extends State<PaywallScreen>
   }
 }
 
-// ── Widget ligne feature ──
 class _FeatureRow extends StatelessWidget {
   final IconData icon;
   final String title;

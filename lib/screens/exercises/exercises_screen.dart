@@ -338,9 +338,6 @@ class _ExerciseCard extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  BANNIÈRE SÉANCE PERSONNALISÉE
-// ═══════════════════════════════════════════════════
 class _SeanceBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -412,8 +409,6 @@ class _SeanceBanner extends StatelessWidget {
     );
   }
 }
-
-
 
 class _ExerciseDetailSheet extends StatelessWidget {
   final Exercise exercise;
@@ -655,10 +650,6 @@ class _ExerciseDetailSheet extends StatelessWidget {
     );
   }
 }
-
-// ═══════════════════════════════════════════════════
-//  MILESTONE DIALOG
-// ═══════════════════════════════════════════════════
 
 void _showMilestoneDialog(
     BuildContext context, String message, int sessionCount) {

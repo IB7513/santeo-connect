@@ -3,9 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/assets/logo_data.dart';
 
-// ═══════════════════════════════════════════════════
-//  DONNÉES PATHOLOGIES
-// ═══════════════════════════════════════════════════
 class _Pathologie {
   final String id;
   final String titre;
@@ -91,9 +88,6 @@ const List<_Pathologie> _pathologies = [
   ),
 ];
 
-// ═══════════════════════════════════════════════════
-//  ÉCRAN PRINCIPAL ACADÉMIE
-// ═══════════════════════════════════════════════════
 class AcademieScreen extends StatefulWidget {
   const AcademieScreen({super.key});
 
@@ -259,9 +253,6 @@ class _AcademieScreenState extends State<AcademieScreen>
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  AVATAR SANI
-// ═══════════════════════════════════════════════════
 class _AvatarSani extends StatelessWidget {
   final Animation<double> bounceAnimation;
   final bool parle;
@@ -398,9 +389,6 @@ class _AvatarSani extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  CARTE PATHOLOGIE
-// ═══════════════════════════════════════════════════
 class _PathologieCard extends StatelessWidget {
   final _Pathologie pathologie;
   final VoidCallback onTap;
@@ -473,9 +461,7 @@ class _PathologieCard extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  DÉTAIL PATHOLOGIE (Bottom Sheet)
-// ═══════════════════════════════════════════════════
 class _PathologieDetail extends StatelessWidget {
   final _Pathologie pathologie;
   const _PathologieDetail({required this.pathologie});

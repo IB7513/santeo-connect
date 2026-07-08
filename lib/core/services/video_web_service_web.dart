@@ -1,10 +1,3 @@
-/// VideoWebService — Version WEB
-/// Enregistre le HtmlElementView via ui_web.platformViewRegistry
-/// Supporte les URLs Google Drive sous toutes formes :
-///   - https://drive.google.com/file/d/ID/view
-///   - https://drive.google.com/file/d/ID/preview
-///   - https://drive.google.com/open?id=ID
-///   - https://drive.google.com/uc?id=ID
 
 import 'dart:js_interop';
 // ignore: avoid_web_libraries_in_flutter
@@ -13,7 +6,7 @@ import 'dart:ui_web' as ui_web;
 import 'package:web/web.dart' as web;
 
 class VideoWebService {
-  /// Extrait l'ID Drive depuis n'importe quel format d'URL Drive
+  // Extrait l'ID Drive depuis n'importe quel format d'URL Drive
   static String? _extractDriveId(String url) {
     // Format /file/d/ID/...
     final m1 = RegExp(r'/file/d/([a-zA-Z0-9_-]+)').firstMatch(url);

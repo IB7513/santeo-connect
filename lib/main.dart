@@ -1,6 +1,4 @@
-// ═══════════════════════════════════════════════════════════════════════════
-//  SANTEO Connect — main.dart
-// ═══════════════════════════════════════════════════════════════════════════
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,7 +16,6 @@ import 'core/services/storage_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ── Initialisation Firebase (non-bloquante) ───────────────────────────────
   // L'app fonctionne même si Firebase est indisponible (ex: web sans app Web
   // enregistrée dans Firebase Console)
   try {

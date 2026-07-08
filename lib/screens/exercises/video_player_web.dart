@@ -5,9 +5,7 @@ import 'dart:ui_web' as ui_web;
 import 'package:web/web.dart' as web;
 import 'package:flutter/material.dart';
 
-/// Lecteur vidéo Web — fichiers Google Drive publics (.MOV, .MP4, etc.)
-/// ViewId STABLE basé sur le hash de l'URL (pas de timestamp) pour éviter
-/// les enregistrements orphelins dans platformViewRegistry.
+// Lecteur vidéo Web — fichiers Google Drive publics (.MOV, .MP4, etc.)
 class VideoPlayerWeb extends StatefulWidget {
   final String videoUrl;
   const VideoPlayerWeb({super.key, required this.videoUrl});

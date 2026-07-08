@@ -6,19 +6,16 @@ import 'dart:ui_web' as ui_web;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-// ─── Bindings JS ─────────────────────────────────────────────────────────
 @JS('window.__santeoSpeak')
 external void _jsSanteoSpeak(JSString text);
 
 @JS('window.__santeoTtsStop')
 external void _jsSanteoTtsStop();
 
-// ─── Compteur pour IDs uniques ────────────────────────────────────────────
 int _viewCounter = 0;
 final Set<String> _registeredViews = {};
 
 class TtsService {
-  // ── speak() classique via @JS ─────────────────────────────────────────
   static void speak(String text) {
     if (text.isEmpty) return;
     try {
@@ -32,7 +29,6 @@ class TtsService {
     try { _jsSanteoTtsStop(); } catch (_) {}
   }
 
-  // ── runJs : injection de script dans le DOM ───────────────────────────
   static void runJs(String js) {
     try {
       final s = web.document.createElement('script') as web.HTMLScriptElement;
@@ -42,7 +38,6 @@ class TtsService {
     } catch (_) {}
   }
 
-  // ── buildSpeakButton : HtmlElementView avec vrai <button> HTML ────────
   // Chaque instance génère un viewId unique → plusieurs boutons possibles.
   static Widget buildSpeakButton({
     required String text,

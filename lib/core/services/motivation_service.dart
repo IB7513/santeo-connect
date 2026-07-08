@@ -1,13 +1,9 @@
 import 'dart:math';
 
-/// Service centralisé de messages motivationnels et félicitations
-/// Adapté à tous les territoires (France, DOM-TOM, Pacifique...)
+// messages motiv + félicitations
+// assez verbeux mais les users adorent ça
 class MotivationService {
   static final _random = Random();
-
-  // ══════════════════════════════════════════════════════
-  //  MESSAGES ONBOARDING
-  // ══════════════════════════════════════════════════════
 
   static String stepCompleted(int step, String prenom) {
     final name = prenom.isNotEmpty ? prenom : 'vous';
@@ -48,10 +44,6 @@ class MotivationService {
     return msgs[_random.nextInt(msgs.length)];
   }
 
-  // ══════════════════════════════════════════════════════
-  //  MESSAGES PROGRAMME
-  // ══════════════════════════════════════════════════════
-
   static String assessmentReady(String prenom) {
     final name = prenom.isNotEmpty ? prenom : 'vous';
     final msgs = [
@@ -61,10 +53,6 @@ class MotivationService {
     ];
     return msgs[_random.nextInt(msgs.length)];
   }
-
-  // ══════════════════════════════════════════════════════
-  //  MESSAGES EXERCICES
-  // ══════════════════════════════════════════════════════
 
   static String exerciseCompleted(String exerciseName, int totalSessions) {
     if (totalSessions == 1) {
@@ -103,10 +91,6 @@ class MotivationService {
     }
   }
 
-  // ══════════════════════════════════════════════════════
-  //  MESSAGES PROGRESSION
-  // ══════════════════════════════════════════════════════
-
   static String adherenceMessage(double adherence) {
     if (adherence >= 90) {
       return '🌟 Adhérence de ${adherence.toStringAsFixed(0)}% — PARFAIT ! Vous êtes exceptionnel(le) cette semaine !';
@@ -139,10 +123,6 @@ class MotivationService {
     return '💪 $streak jours consécutifs ! Continuez, c\'est votre meilleur streak !';
   }
 
-  // ══════════════════════════════════════════════════════
-  //  MESSAGES DASHBOARD
-  // ══════════════════════════════════════════════════════
-
   static String dashboardGreeting(String prenom, int sessions, double adherence, bool hasAssessment) {
     if (sessions == 0 && !hasAssessment) {
       return '🌺 Bienvenue ! Générez votre programme pour démarrer votre parcours santé personnalisé.';
@@ -171,10 +151,6 @@ class MotivationService {
     return '💙 Bonne séance aujourd\'hui, $prenom ! Chaque effort compte.';
   }
 
-  // ══════════════════════════════════════════════════════
-  //  MESSAGES D'ENCOURAGEMENT (adaptés à tous les territoires)
-  // ══════════════════════════════════════════════════════
-
   static List<String> universalEncouragement() {
     return [
       '🌟 Prendre soin de sa santé, c\'est prendre soin de sa famille.',
@@ -185,7 +161,7 @@ class MotivationService {
     ];
   }
 
-  /// Messages Pacifique (gardés pour compatibilité)
+  // Messages Pacifique (gardés pour compatibilité)
   static List<String> pacificEncouragement() {
     return [
       '🌺 Ia orana ! Prendre soin de sa santé, c\'est prendre soin de sa famille.',
@@ -209,10 +185,6 @@ class MotivationService {
     final msgs = pacificEncouragement();
     return msgs[_random.nextInt(msgs.length)];
   }
-
-  // ══════════════════════════════════════════════════════
-  //  COULEURS ET ICÔNES PAR NIVEAU
-  // ══════════════════════════════════════════════════════
 
   static MotivationLevel getLevel(int sessions, double adherence) {
     if (sessions >= 30 || adherence >= 90) return MotivationLevel.champion;

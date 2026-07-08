@@ -1,31 +1,11 @@
-// ═══════════════════════════════════════════════════════════════════════════
-//  SANTEO Connect — RdvService
-// ───────────────────────────────────────────────────────────────────────────
-//  Gestion des créneaux et réservations via Firebase Firestore
-//  + Notifications email via EmailJS (sans backend)
-// ═══════════════════════════════════════════════════════════════════════════
-//
-//  STRUCTURE FIRESTORE :
-//  ┌─ kine_slots/{slotId}
-//  │     • kineId    : String   — identifiant du kiné (nom slug ex: "axel")
-//  │     • kineName  : String   — nom affiché
-//  │     • date      : Timestamp
-//  │     • duree     : int      — minutes (30, 45, 60)
-//  │     • label     : String   — ex: "Séance kiné 45 min"
-//  │     • reserve   : bool
-//  │     • patientId : String?
-//  │
-//  └─ kine_bookings/{bookingId}
-//        • kineId, kineName, slotId, date, patientNom, patientMail,
-//          motif, createdAt, status
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
+// rdv + créneaux kiné — firebase + emailjs pour les notifs
 
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Color;
 import 'package:http/http.dart' as http;
-
-// ─── Modèle KineSlot ───────────────────────────────────────────────────────
 
 class KineSlot {
   final String id;
@@ -71,8 +51,6 @@ class KineSlot {
         'patientId': patientId,
       };
 }
-
-// ─── Modèle KineBooking ────────────────────────────────────────────────────
 
 class KineBooking {
   final String id;
@@ -128,8 +106,6 @@ class KineBooking {
       };
 }
 
-// ─── Service RDV ──────────────────────────────────────────────────────────
-
 class RdvService {
   static final RdvService _instance = RdvService._internal();
   factory RdvService() => _instance;
@@ -137,17 +113,13 @@ class RdvService {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // ══ Configuration EmailJS ════════════════════════════════════════════════
-  static const _emailjsServiceId  = 'service_k2izqyi';
+  static const _emailjsServiceId = 'service_k2izqyi';
   static const _emailjsTemplateId = 'mezfzp9';
-  static const _emailjsPublicKey  = 'GIVe6CBVir_GaDqQL';
+  static const _emailjsPublicKey = 'GIVe6CBVir_GaDqQL'; // ne pas commiter en clair — TODO env var
   // Copie systématique de chaque RDV à la coordinatrice SANTEO
-  static const _copyEmail         = 'imen@santeo-connect.com';
-  // ════════════════════════════════════════════════════════════════════════
+  static const _copyEmail = 'imen@santeo-connect.com';
 
-  // ── CRÉNEAUX ──────────────────────────────────────────────────────────
-
-  /// Tous les créneaux d'un kiné (kiné + admin)
+  // créneaux du kiné — stream pour maj temps réel
   Stream<List<KineSlot>> slotsStream(String kineId) {
     return _db
         .collection('kine_slots')
@@ -162,7 +134,7 @@ class RdvService {
     });
   }
 
-  /// Créneaux disponibles d'un kiné (patient)
+  // créneaux dispo
   Stream<List<KineSlot>> availableSlotsStream(String kineId) {
     final now = DateTime.now();
     return _db
@@ -180,7 +152,7 @@ class RdvService {
     });
   }
 
-  /// Tous les créneaux — TOUS kinés (vue admin SANTEO)
+  // vue admin
   Stream<List<KineSlot>> allSlotsStream() {
     return _db.collection('kine_slots').snapshots().map((snap) {
       final list = snap.docs
@@ -191,19 +163,17 @@ class RdvService {
     });
   }
 
-  /// Ajouter un créneau (kiné)
+  // ajout créneau
   Future<void> addSlot(KineSlot slot) async {
     await _db.collection('kine_slots').add(slot.toFirestore());
   }
 
-  /// Supprimer un créneau (kiné)
+  // suppression
   Future<void> deleteSlot(String slotId) async {
     await _db.collection('kine_slots').doc(slotId).delete();
   }
 
-  // ── RÉSERVATIONS ──────────────────────────────────────────────────────
-
-  /// Réserver un créneau + créer booking + envoyer email
+  // réservation + email
   Future<String> bookSlot({
     required KineSlot slot,
     required String patientNom,
@@ -258,7 +228,7 @@ class RdvService {
     return ref.id;
   }
 
-  /// Réservations d'un kiné (vue kiné & admin)
+  // réservations kiné
   Stream<List<KineBooking>> bookingsForKineStream(String kineId) {
     return _db
         .collection('kine_bookings')
@@ -273,7 +243,7 @@ class RdvService {
     });
   }
 
-  /// Toutes les réservations — TOUS kinés (admin SANTEO)
+  // toutes réservations
   Stream<List<KineBooking>> allBookingsStream() {
     return _db.collection('kine_bookings').snapshots().map((snap) {
       final list = snap.docs
@@ -283,8 +253,6 @@ class RdvService {
       return list;
     });
   }
-
-  // ── EMAIL EmailJS ──────────────────────────────────────────────────────
 
   Future<void> _sendBookingEmail({
     required String toEmail,
@@ -354,8 +322,6 @@ class RdvService {
       }
     }
   }
-
-  // ── Helpers ───────────────────────────────────────────────────────────
 
   static String formatSlotDate(DateTime d) {
     const jours = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];

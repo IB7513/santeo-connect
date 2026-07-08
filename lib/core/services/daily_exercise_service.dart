@@ -1,6 +1,4 @@
-// core/services/daily_exercise_service.dart
-// Service exercice du jour SANTEO Connect
-// Architecture : catalogue Firestore extensible + anti-répétition + filtre profil
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -15,18 +13,13 @@ class DailyExerciseService {
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // ── Clés SharedPreferences ────────────────────────────────────────────────
-  static const _keyDailyExerciseId   = 'daily_exercise_id';
+  static const _keyDailyExerciseId = 'daily_exercise_id';
   static const _keyDailyExerciseDate = 'daily_exercise_date';
-  static const _keyRecentExercises   = 'recent_exercise_ids';
-  static const _keyStreak            = 'daily_exercise_streak';
+  static const _keyRecentExercises = 'recent_exercise_ids';
+  static const _keyStreak = 'daily_exercise_streak';
   static const _keyLastCompletedDate = 'daily_exercise_last_completed';
 
-  // ── Obtenir l'exercice du jour ────────────────────────────────────────────
-  /// Retourne l'exercice du jour.
-  /// - Même exercice toute la journée (stocké en SharedPreferences)
-  /// - Anti-répétition sur les 7 derniers jours
-  /// - Filtre optionnel par zone cible (dos, epaules, etc.)
+  // exercice du jour
   Future<Exercise?> getDailyExercise({
     String? userProfile,
     String? difficulte,   // 'facile' | 'moyen' | 'difficile'
@@ -35,9 +28,8 @@ class DailyExerciseService {
       final prefs = await SharedPreferences.getInstance();
       final today = _todayString();
 
-      // ── 1. Vérifier si on a déjà sélectionné un exercice aujourd'hui ─────
       final storedDate = prefs.getString(_keyDailyExerciseDate);
-      final storedId   = prefs.getString(_keyDailyExerciseId);
+      final storedId = prefs.getString(_keyDailyExerciseId);
 
       if (storedDate == today && storedId != null && storedId.isNotEmpty) {
         // Essayer d'abord dans Firestore
@@ -52,7 +44,6 @@ class DailyExerciseService {
         if (seed != null) return seed;
       }
 
-      // ── 2. Sélectionner un nouvel exercice ────────────────────────────────
       final exercise = await _selectNewExercise(prefs, userProfile, difficulte);
       if (exercise != null) {
         await prefs.setString(_keyDailyExerciseId, exercise.id);
@@ -67,7 +58,6 @@ class DailyExerciseService {
     }
   }
 
-  // ── Sélection intelligente ────────────────────────────────────────────────
   Future<Exercise?> _selectNewExercise(
     SharedPreferences prefs,
     String? userProfile,
@@ -99,7 +89,6 @@ class DailyExerciseService {
       exercises = List<Exercise>.from(AppConstants.seedExercises);
     }
 
-    // ── Filtre zone / profil utilisateur (en mémoire) ─────────────────────
     if (userProfile != null && userProfile != 'tous' && userProfile.isNotEmpty) {
       final filtered = exercises
           .where((e) => e.targetZone.toLowerCase().contains(userProfile.toLowerCase()))
@@ -107,7 +96,6 @@ class DailyExerciseService {
       if (filtered.isNotEmpty) exercises = filtered;
     }
 
-    // ── Filtre difficulté (en mémoire) ────────────────────────────────────
     if (difficulte != null && difficulte.isNotEmpty) {
       final filtered = exercises
           .where((e) => e.difficulty == difficulte)
@@ -115,19 +103,16 @@ class DailyExerciseService {
       if (filtered.isNotEmpty) exercises = filtered;
     }
 
-    // ── Anti-répétition : exclure les 7 derniers ──────────────────────────
     final withoutRecent = exercises.where((e) => !recentIds.contains(e.id)).toList();
     final pool = withoutRecent.isNotEmpty ? withoutRecent : exercises;
 
     if (pool.isEmpty) return null;
 
-    // ── Sélection déterministe basée sur la date (même exo toute la journée)
     final dayIndex = DateTime.now().difference(DateTime(2024, 1, 1)).inDays;
     final index = dayIndex % pool.length;
     return pool[index];
   }
 
-  // ── Marquer l'exercice comme complété ────────────────────────────────────
   Future<void> markCompleted(String exerciseId) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -159,7 +144,6 @@ class DailyExerciseService {
     }
   }
 
-  // ── Getters état ──────────────────────────────────────────────────────────
   Future<int> getStreak() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt(_keyStreak) ?? 0;
@@ -171,7 +155,6 @@ class DailyExerciseService {
     return last == _todayString();
   }
 
-  // ── Récupérer tout le catalogue ────────────────────────────────────────
   Future<List<Exercise>> getCatalogue({
     String? categorie,    // 'renforcement' | 'mobilite' | 'etirement' | 'cardio'
     String? difficulte,   // 'facile' | 'moyen' | 'difficile'
@@ -209,7 +192,6 @@ class DailyExerciseService {
     }
   }
 
-  // ── Helpers privés ────────────────────────────────────────────────────────
   String _todayString() {
     final now = DateTime.now();
     return '${now.year}-${now.month.toString().padLeft(2,'0')}-${now.day.toString().padLeft(2,'0')}';

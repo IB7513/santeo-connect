@@ -1,6 +1,5 @@
-// ═══════════════════════════════════════════════════════════════════════════
 //  SANTEO Connect — Écran Profil
-// ═══════════════════════════════════════════════════════════════════════════
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +33,6 @@ class ProfileScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // ── Header ──────────────────────────────────────
                   Container(
                     color: Colors.white,
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
@@ -57,7 +55,6 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
 
-                  // ── Avatar & Nom ────────────────────────────────
                   Container(
                     color: Colors.white,
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
@@ -150,8 +147,6 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 12),
 
-
-                  // ── Infos de santé ──────────────────────────────
                   if (profile != null) ...[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -199,7 +194,6 @@ class ProfileScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                   ],
 
-                  // ── Comment fonctionne l'IA ─────────────────────
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SanteoCard(
@@ -265,7 +259,6 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // ── Actions RGPD & Paramètres ───────────────────
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: SanteoCard(
@@ -358,7 +351,6 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // ── Déconnexion ─────────────────────────────────
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: OutlinedButton.icon(
@@ -403,8 +395,6 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
-
-  // ── Dialogues ─────────────────────────────────────────────
 
   void _editName(BuildContext context, AppProvider provider) {
     final ctrl =
@@ -596,8 +586,6 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-// ── Widgets helpers ──────────────────────────────────────────
-
 class _ProfileInfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -730,9 +718,7 @@ class _ActionItem extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  FEUILLE GESTION CONSENTEMENTS (accessible depuis profil)
-// ═══════════════════════════════════════════════════
 class _ConsentSettingsSheet extends StatefulWidget {
   @override
   State<_ConsentSettingsSheet> createState() => _ConsentSettingsSheetState();

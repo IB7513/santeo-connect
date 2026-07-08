@@ -1,6 +1,7 @@
-// Models
+// modèles principaux
+// à refactoriser en fichiers séparés si ça grossit
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 
-// ====== Exercise Model ======
 class Exercise {
   final String id;
   final String name;
@@ -129,8 +130,6 @@ class Exercise {
   int get dureeTotaleMinutes => (dureeTotaleSecondes / 60).ceil();
 }
 
-
-// ====== User Profile Model ======
 class UserProfile {
   final String userId;
   final String prenom;
@@ -217,7 +216,6 @@ class UserProfile {
   };
 }
 
-// ====== Session Model ======
 class WorkoutSession {
   final String id;
   final String userId;
@@ -245,7 +243,6 @@ class WorkoutSession {
   };
 }
 
-// ====== Weekly Progress Model ======
 class WeeklyProgress {
   final String userId;
   final DateTime weekStartDate;

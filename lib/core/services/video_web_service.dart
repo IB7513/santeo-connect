@@ -1,6 +1,4 @@
-/// Import conditionnel VideoWebService.
-/// Sur Web : enregistre les HtmlElementView via platformViewRegistry.
-/// Sur mobile : no-op.
+// Import conditionnel VideoWebService.
 
 export 'video_web_service_stub.dart'
     if (dart.library.html) 'video_web_service_web.dart'

@@ -1,6 +1,4 @@
-// ═══════════════════════════════════════════════════════════════════════════
 //  SANTEO Connect — Mentions Légales
-// ═══════════════════════════════════════════════════════════════════════════
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -33,7 +31,6 @@ class MentionsLegalesScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
         children: [
-          // ── En-tête ─────────────────────────────────────────────────────
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -83,7 +80,6 @@ class MentionsLegalesScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // ── Éditeur ─────────────────────────────────────────────────────
           _Section(
             icon: Icons.apartment_outlined,
             title: 'Éditeur de l\'application',
@@ -95,7 +91,6 @@ class MentionsLegalesScreen extends StatelessWidget {
             ],
           ),
 
-          // ── Hébergement ─────────────────────────────────────────────────
           _Section(
             icon: Icons.cloud_outlined,
             title: 'Hébergement',
@@ -106,7 +101,6 @@ class MentionsLegalesScreen extends StatelessWidget {
             ],
           ),
 
-          // ── Propriété intellectuelle ─────────────────────────────────────
           _Section(
             icon: Icons.copyright_outlined,
             title: 'Propriété intellectuelle',
@@ -125,7 +119,6 @@ class MentionsLegalesScreen extends StatelessWidget {
             ],
           ),
 
-          // ── Données personnelles ─────────────────────────────────────────
           _Section(
             icon: Icons.shield_outlined,
             title: 'Données personnelles & RGPD',
@@ -145,7 +138,6 @@ class MentionsLegalesScreen extends StatelessWidget {
             ],
           ),
 
-          // ── Avertissement médical ────────────────────────────────────────
           _Section(
             icon: Icons.medical_services_outlined,
             title: 'Avertissement médical',
@@ -161,7 +153,6 @@ class MentionsLegalesScreen extends StatelessWidget {
             ],
           ),
 
-          // ── Droit applicable ─────────────────────────────────────────────
           _Section(
             icon: Icons.gavel_outlined,
             title: 'Droit applicable & juridiction',
@@ -174,7 +165,6 @@ class MentionsLegalesScreen extends StatelessWidget {
             ],
           ),
 
-          // ── Contact ──────────────────────────────────────────────────────
           _Section(
             icon: Icons.mail_outline,
             title: 'Contact',
@@ -183,7 +173,6 @@ class MentionsLegalesScreen extends StatelessWidget {
             ],
           ),
 
-          // ── Pied de page ─────────────────────────────────────────────────
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
@@ -205,8 +194,6 @@ class MentionsLegalesScreen extends StatelessWidget {
     );
   }
 }
-
-// ── Widgets internes ──────────────────────────────────────────────────────────
 
 class _Section extends StatelessWidget {
   final IconData icon;

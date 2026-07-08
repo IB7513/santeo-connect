@@ -1,4 +1,4 @@
-// Demo Service — données réalistes pour les 5 profils de démonstration
+// données démo
 import '../../models/app_models.dart';
 import '../constants/app_constants.dart';
 
@@ -40,7 +40,6 @@ class DemoService {
   static List<DemoProfile> getDemoProfiles() {
     final now = DateTime.now();
 
-    // ──────────────── MARIE DUPONT (Patient - Lombalgie) ────────────────
     final marieSessions = [
       WorkoutSession(
         id: 'demo_s1',
@@ -84,7 +83,6 @@ class DemoService {
       ),
     ];
 
-    // ──────────────── JEAN TAOFIFENUA (Professionnel) ────────────────
     final jeanSessions = [
       WorkoutSession(
         id: 'demo_j1',
@@ -128,7 +126,6 @@ class DemoService {
       ),
     ];
 
-    // ──────────────── SARAH TERIITEHAU (Admin) ────────────────
     final sarahSessions = [
       WorkoutSession(
         id: 'demo_sa1',
@@ -164,7 +161,6 @@ class DemoService {
       ),
     ];
 
-    // ──────────────── LÉA FAARUIA (Jeune 16 ans) ────────────────
     final leaSessions = [
       WorkoutSession(
         id: 'demo_l1',
@@ -184,7 +180,6 @@ class DemoService {
       ),
     ];
 
-    // ──────────────── PIERRE WALLES (Senior 68 ans) ────────────────
     final pierreSessions = [
       WorkoutSession(
         id: 'demo_p1',
@@ -213,7 +208,6 @@ class DemoService {
     ];
 
     return [
-      // ────────────── MARIE DUPONT ──────────────
       DemoProfile(
         id: 'demo_marie',
         name: 'Marie Dupont',
@@ -285,7 +279,6 @@ Vous êtes sur la bonne voie, Marie ! 🌟''',
         exercises: AppConstants.seedExercises.take(5).toList(),
       ),
 
-      // ────────────── JEAN TAOFIFENUA ──────────────
       DemoProfile(
         id: 'demo_jean',
         name: 'Jean Taofifenua',
@@ -354,7 +347,6 @@ Vous êtes dans le top 5% des utilisateurs SANTEO. Continuez ! 🥇''',
         exercises: AppConstants.seedExercises,
       ),
 
-      // ────────────── SARAH TERIITEHAU ──────────────
       DemoProfile(
         id: 'demo_sarah',
         name: 'Sarah Teriitehau',
@@ -424,7 +416,6 @@ Ia ora na, Sarah ! Votre parcours bien-être est en bonne voie 🌺''',
         exercises: AppConstants.seedExercises.take(6).toList(),
       ),
 
-      // ────────────── LÉA FAARUIA ──────────────
       DemoProfile(
         id: 'demo_lea',
         name: 'Léa Faaruia',
@@ -493,7 +484,6 @@ Tu fais du super travail pour ton dos ! Continue comme ça ⭐''',
         exercises: AppConstants.seedExercises.take(4).toList(),
       ),
 
-      // ────────────── PIERRE WALLES ──────────────
       DemoProfile(
         id: 'demo_pierre',
         name: 'Pierre Walles',

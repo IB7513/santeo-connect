@@ -1,3 +1,4 @@
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +25,8 @@ class _DashboardScreenState extends State<DashboardScreen>
     with TickerProviderStateMixin {
   late AnimationController _fadeCtrl;
   late Animation<double> _fadeAnim;
+  // j'avais un scroll listener ici pour le header sticky
+  // finalement abandonné, trop de rebuild inutiles
 
   @override
   void initState() {
@@ -64,19 +67,19 @@ class _DashboardScreenState extends State<DashboardScreen>
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
                           const SizedBox(height: 16),
-                          // Bannière félicitations dynamique
+
                           _CongratsBanner(provider: provider),
                           const SizedBox(height: 16),
-                          // KPIs
+
                           _KpiRow(provider: provider),
                           const SizedBox(height: 16),
-                          // Programme personnalisé
+
                           _AIAssessmentCard(provider: provider),
                           const SizedBox(height: 16),
-                          // Actions rapides : Séance + Kiné
+
                           _QuickActionsRow(provider: provider),
                           const SizedBox(height: 16),
-                          // Métriques santé
+
                           _HealthMetricsRow(provider: provider),
                           const SizedBox(height: 16),
                           // Programme du jour
@@ -104,9 +107,6 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  HERO HEADER
-// ═══════════════════════════════════════════════════
 class _HeroHeader extends StatelessWidget {
   final AppProvider provider;
   const _HeroHeader({required this.provider});
@@ -290,9 +290,6 @@ class _HeroHeader extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  BANNIÈRE FÉLICITATIONS DYNAMIQUE
-// ═══════════════════════════════════════════════════
 class _CongratsBanner extends StatelessWidget {
   final AppProvider provider;
   const _CongratsBanner({required this.provider});
@@ -367,9 +364,6 @@ class _CongratsBanner extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  KPI ROW
-// ═══════════════════════════════════════════════════
 class _KpiRow extends StatelessWidget {
   final AppProvider provider;
   const _KpiRow({required this.provider});
@@ -469,12 +463,11 @@ class _KpiCard extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  AI ASSESSMENT CARD
-// ═══════════════════════════════════════════════════
 class _AIAssessmentCard extends StatelessWidget {
   final AppProvider provider;
   const _AIAssessmentCard({required this.provider});
+  // cette card est cliquable mais visuellement on le voit pas trop
+  // à améliorer avec un ripple plus visible — low priority
 
   @override
   Widget build(BuildContext context) {
@@ -625,9 +618,6 @@ class _AIAssessmentCard extends StatelessWidget {
       text.length <= max ? text : '${text.substring(0, max)}...';
 }
 
-// ═══════════════════════════════════════════════════
-//  HEALTH METRICS ROW
-// ═══════════════════════════════════════════════════
 class _HealthMetricsRow extends StatelessWidget {
   final AppProvider provider;
   const _HealthMetricsRow({required this.provider});
@@ -822,12 +812,7 @@ class _MetricCard extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  TODAY'S PROGRAM
-// ═══════════════════════════════════════════════════
-// ═══════════════════════════════════════════════════
 //  PROGRAMME DU JOUR — 2 exercices IA avec déblocage
-// ═══════════════════════════════════════════════════
 class _TodayProgramSection extends StatefulWidget {
   final AppProvider provider;
   const _TodayProgramSection({required this.provider});
@@ -854,6 +839,7 @@ class _TodayProgramSectionState extends State<_TodayProgramSection> {
     try {
       final slots = await _planService.getDailyPlan();
       final streak = await _planService.getStreak();
+      // mounted check obligatoire — j'ai eu des setState after dispose ici
       if (mounted) setState(() { _slots = slots; _streak = streak; _loading = false; });
     } catch (_) {
       if (mounted) setState(() => _loading = false);
@@ -906,7 +892,6 @@ class _TodayProgramSectionState extends State<_TodayProgramSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // ── En-tête ─────────────────────────────────────────────────
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -938,7 +923,6 @@ class _TodayProgramSectionState extends State<_TodayProgramSection> {
         ),
         const SizedBox(height: 10),
 
-        // ── Contenu ─────────────────────────────────────────────────
         if (_loading)
           _buildSkeleton()
         else if (_slots.isEmpty)
@@ -1002,9 +986,6 @@ class _TodayProgramSectionState extends State<_TodayProgramSection> {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  DAILY SLOT CARD
-// ═══════════════════════════════════════════════════
 class _DailySlotCard extends StatelessWidget {
   final DailyExerciseSlot slot;
   final VoidCallback? onTap;
@@ -1051,9 +1032,9 @@ class _DailySlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLocked    = slot.isLocked;
+    final isLocked = slot.isLocked;
     final isCompleted = slot.isCompleted;
-    final cardColor   = isLocked ? const Color(0xFFF5F7FA) : Colors.white;
+    final cardColor = isLocked ? const Color(0xFFF5F7FA) : Colors.white;
 
     return GestureDetector(
       onTap: onTap,
@@ -1080,7 +1061,6 @@ class _DailySlotCard extends StatelessWidget {
           padding: const EdgeInsets.all(14),
           child: Row(
             children: [
-              // ── Icône catégorie ────────────────────────────────────────
               Container(
                 width: 48,
                 height: 48,
@@ -1099,7 +1079,6 @@ class _DailySlotCard extends StatelessWidget {
               ),
               const SizedBox(width: 12),
 
-              // ── Texte ──────────────────────────────────────────────────
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1192,7 +1171,6 @@ class _DailySlotCard extends StatelessWidget {
                 ),
               ),
 
-              // ── Bouton action ──────────────────────────────────────────
               if (!isLocked && !isCompleted)
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -1256,9 +1234,7 @@ class _Tag extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  ANCIEN _ExerciseListItem (conservé pour compat)
-// ═══════════════════════════════════════════════════
 class _ExerciseListItem extends StatelessWidget {
   final Exercise exercise;
   final VoidCallback onStart;
@@ -1448,9 +1424,6 @@ class _EmptyProgramCard extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  WEEKLY ANALYSIS
-// ═══════════════════════════════════════════════════
 class _WeeklyAnalysisCard extends StatefulWidget {
   final AppProvider provider;
   const _WeeklyAnalysisCard({required this.provider});
@@ -1559,9 +1532,7 @@ class _WeeklyAnalysisCardState extends State<_WeeklyAnalysisCard> {
   }
 }
 
-// ═══════════════════════════════════════════════════
 //  QUICK ACTIONS ROW (Séance du jour + Parler à un kiné)
-// ═══════════════════════════════════════════════════
 class _QuickActionsRow extends StatelessWidget {
   final AppProvider provider;
   const _QuickActionsRow({required this.provider});
@@ -1679,9 +1650,6 @@ class _QuickActionsRow extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  QUICK ACTIONS
-// ═══════════════════════════════════════════════════
 class _QuickActionsSection extends StatelessWidget {
   final AppProvider provider;
   const _QuickActionsSection({required this.provider});
@@ -1800,9 +1768,6 @@ class _ActionBtn extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  RECENT SESSIONS
-// ═══════════════════════════════════════════════════
 class _RecentSessionsCard extends StatelessWidget {
   final AppProvider provider;
   const _RecentSessionsCard({required this.provider});
@@ -1970,5 +1935,4 @@ class _SessionRow extends StatelessWidget {
     );
   }
 }
-
 

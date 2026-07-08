@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // === SANTEO DESIGN SYSTEM ===
   static const Color primary = Color(0xFF26C6DA);      // Turquoise
   static const Color primaryDark = Color(0xFF0097A7);  // Turquoise foncé
   static const Color primaryLight = Color(0xFFB2EBF2); // Turquoise clair

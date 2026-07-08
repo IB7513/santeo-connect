@@ -1,6 +1,7 @@
 // lib/screens/dashboard/company_dashboard_screen.dart
 // Dashboard Entreprise — SANTEO Connect
 // Vue d'ensemble : stats d'usage, utilisateurs actifs, progression, alertes
+// © 2026 Imen BELHIBA — SANTEO Connect. Tous droits réservés.
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,7 +21,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
   bool _isLoading = true;
   String? _error;
 
-  // ── Métriques chargées ────────────────────────────────────────────────
   int _totalUsers = 0;
   int _activeUsersThisWeek = 0;
   int _sessionsThisWeek = 0;
@@ -45,10 +45,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     super.dispose();
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  //  CHARGEMENT DES DONNÉES
-  // ════════════════════════════════════════════════════════════════════
-
   Future<void> _loadDashboardData() async {
     setState(() {
       _isLoading = true;
@@ -60,11 +56,9 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
       final now = DateTime.now();
       final weekAgo = now.subtract(const Duration(days: 7));
 
-      // ── 1. Nombre total d'utilisateurs ─────────────────────────────
       final usersSnapshot = await db.collection('users').get();
       _totalUsers = usersSnapshot.docs.length;
 
-      // ── 2. Sessions de la semaine ───────────────────────────────────
       final sessionsSnapshot = await db.collection('sessions').get();
       _totalSessionsAll = sessionsSnapshot.docs.length;
 
@@ -89,7 +83,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
           .toSet();
       _activeUsersThisWeek = activeUids.length;
 
-      // ── 3. Taux de complétion moyen ─────────────────────────────────
       if (sessionsSnapshot.docs.isNotEmpty) {
         final completions = sessionsSnapshot.docs
             .map((d) => (d.data()['completed'] as bool?) == true ? 1 : 0)
@@ -98,12 +91,10 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
             completions / sessionsSnapshot.docs.length * 100;
       }
 
-      // ── 4. Sessions / utilisateur ────────────────────────────────────
       if (_totalUsers > 0) {
         _avgSessionsPerUser = _totalSessionsAll / _totalUsers;
       }
 
-      // ── 5. Top exercices ─────────────────────────────────────────────
       final exCount = <String, int>{};
       for (final doc in sessionsSnapshot.docs) {
         final exId = doc.data()['exercise_id'] as String? ?? '';
@@ -119,7 +110,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
         'name': _exerciseName(e.key),
       }).toList();
 
-      // ── 6. Sessions par jour (7 derniers jours) ──────────────────────
       _sessionsByDay = {};
       for (var i = 6; i >= 0; i--) {
         final day = now.subtract(Duration(days: i));
@@ -137,7 +127,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
         }
       }
 
-      // ── 7. Répartition par zone ciblée ──────────────────────────────
       _usersByZone = {};
       for (final doc in usersSnapshot.docs) {
         final zones = (doc.data()['pain_zones'] as List?)?.cast<String>() ?? [];
@@ -146,7 +135,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
         }
       }
 
-      // ── 8. Utilisateurs récents ──────────────────────────────────────
       final recentDocs = usersSnapshot.docs.take(10).toList();
       _recentUsers = recentDocs.map((doc) {
         final data = doc.data();
@@ -185,10 +173,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     return names[id] ?? id.replaceAll('ex_', '').replaceAll('_', ' ');
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  //  BUILD
-  // ════════════════════════════════════════════════════════════════════
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,7 +208,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     );
   }
 
-  // ── Header ────────────────────────────────────────────────────────
   Widget _buildHeader() {
     return Container(
       decoration: const BoxDecoration(
@@ -303,7 +286,7 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
           ),
           const SizedBox(height: 16),
 
-          // KPIs express
+          // kpi
           Row(
             children: [
               _KpiChip(
@@ -330,7 +313,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     );
   }
 
-  // ── TabBar ────────────────────────────────────────────────────────
   Widget _buildTabBar() {
     return Container(
       color: Colors.white,
@@ -353,7 +335,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     );
   }
 
-  // ── Error ─────────────────────────────────────────────────────────
   Widget _buildError() {
     return Center(
       child: Padding(
@@ -385,17 +366,12 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  //  TAB 1 : VUE GLOBALE
-  // ════════════════════════════════════════════════════════════════════
-
   Widget _buildOverviewTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Métriques principales ──────────────────────────────────
           _SectionTitle(title: 'Métriques clés'),
           const SizedBox(height: 12),
           GridView.count(
@@ -439,14 +415,12 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
 
           const SizedBox(height: 24),
 
-          // ── Graphique sessions/jour ────────────────────────────────
           _SectionTitle(title: 'Sessions par jour (7 derniers jours)'),
           const SizedBox(height: 12),
           _buildSessionsChart(),
 
           const SizedBox(height: 24),
 
-          // ── Zones ciblées ──────────────────────────────────────────
           if (_usersByZone.isNotEmpty) ...[
             _SectionTitle(title: 'Zones corporelles les plus ciblées'),
             const SizedBox(height: 12),
@@ -631,10 +605,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  //  TAB 2 : UTILISATEURS
-  // ════════════════════════════════════════════════════════════════════
-
   Widget _buildUsersTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -805,10 +775,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════
-  //  TAB 3 : EXERCICES
-  // ════════════════════════════════════════════════════════════════════
-
   Widget _buildExercisesTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -974,10 +940,6 @@ class _CompanyDashboardScreenState extends State<CompanyDashboardScreen>
     );
   }
 }
-
-// ═══════════════════════════════════════════════════════════════════
-//  WIDGETS UTILITAIRES
-// ═══════════════════════════════════════════════════════════════════
 
 class _SectionTitle extends StatelessWidget {
   final String title;

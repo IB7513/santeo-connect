@@ -1,18 +1,14 @@
-// ═══════════════════════════════════════════════════════════════════════════
 //  SANTEO Connect — Écran RGPD / Consentement
-// ═══════════════════════════════════════════════════════════════════════════
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_theme.dart';
 
-// ═══════════════════════════════════════════════════
 //  ÉCRAN RGPD — CONSENTEMENT PREMIER LANCEMENT
-// ═══════════════════════════════════════════════════
 class RgpdConsentScreen extends StatefulWidget {
   final VoidCallback onAccepted;
-  /// Callback optionnel : si fourni, remplace le bouton "Refuser et quitter l'app"
-  /// par un bouton "Annuler" (mode inscription). Si null → comportement originel.
+  // Callback optionnel : si fourni, remplace le bouton "Refuser et quitter l'app"
+  // par un bouton "Annuler" (mode inscription). Si null → comportement originel.
   final VoidCallback? onRefused;
 
   const RgpdConsentScreen({
@@ -566,9 +562,6 @@ class _RgpdConsentScreenState extends State<RgpdConsentScreen> {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  WIDGET CONSENT TILE
-// ═══════════════════════════════════════════════════
 class _ConsentTile extends StatelessWidget {
   final IconData icon;
   final Color iconColor;
@@ -674,9 +667,6 @@ class _ConsentTile extends StatelessWidget {
   }
 }
 
-// ═══════════════════════════════════════════════════
-//  CONTENU POLITIQUE DE CONFIDENTIALITÉ
-// ═══════════════════════════════════════════════════
 class PrivacyPolicyContent {
   static const String text = '''
 POLITIQUE DE CONFIDENTIALITÉ — SANTEO Connect
@@ -753,9 +743,6 @@ Toute modification sera notifiée dans l'application. La version en vigueur est 
 ''';
 }
 
-// ═══════════════════════════════════════════════════
-//  CONTENU CGU
-// ═══════════════════════════════════════════════════
 class CguContent {
   static const String text = '''
 CONDITIONS GÉNÉRALES D'UTILISATION — SANTEO Connect

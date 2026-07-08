@@ -207,9 +207,6 @@ class _AssessmentResultScreenState extends State<AssessmentResultScreen> {
   }
 }
 
-// ============================================================
-// LOADING
-// ============================================================
 class _LoadingAssessment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -286,9 +283,6 @@ class _LoadingStep extends StatelessWidget {
   }
 }
 
-// ============================================================
-// ERREUR
-// ============================================================
 class _ErrorAssessment extends StatelessWidget {
   final String error;
   final VoidCallback onRetry;
@@ -351,9 +345,6 @@ class _ErrorAssessment extends StatelessWidget {
   }
 }
 
-// ============================================================
-// CONTENU DU BILAN
-// ============================================================
 class _AssessmentContent extends StatelessWidget {
   final String assessment;
   final dynamic profile;
